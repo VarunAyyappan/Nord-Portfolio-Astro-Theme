@@ -1,0 +1,46 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { base } from "../lib/url";
+---
+
+<BaseLayout title="Page not found">
+  <section class="not-found" aria-labelledby="not-found-heading">
+    <p class="status">404</p>
+    <h1 id="not-found-heading">Page not found</h1>
+    <p>There's nothing at this address. It may have moved, or never existed.</p>
+    <a href={base}>Back to Home</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: clamp(3rem, 12vw, 8rem) 1.5rem;
+  }
+
+  .status {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+  }
+
+  h1 {
+    margin: 0.25rem 0 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  p:not(.status) {
+    margin: 1rem 0 1.5rem;
+    color: var(--color-text-muted);
+    font-size: 1.125rem;
+  }
+
+  a {
+    font-weight: 600;
+  }
+</style>

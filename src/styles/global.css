@@ -60,10 +60,31 @@ html {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   min-height: 100vh;
   background-color: var(--color-background);
   color: var(--color-text);
+}
+
+main {
+  flex: 1;
+}
+
+/* Links are text-colored with an accent underline, which keeps them at AA
+   contrast in light mode, where the accent itself can't be used for text. */
+a {
+  color: var(--color-text);
+  text-decoration-color: var(--color-accent);
+  text-decoration-thickness: 0.125em;
+  text-underline-offset: 0.25em;
+}
+
+:focus-visible {
+  outline: 0.1875rem solid var(--color-accent);
+  outline-offset: 0.1875rem;
+  border-radius: 0.125rem;
 }
 
 code,

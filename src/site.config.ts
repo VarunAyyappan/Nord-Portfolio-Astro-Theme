@@ -16,6 +16,33 @@ export interface SiteConfig {
   url: string;
   /** The path the site is served under, starting with "/". */
   base: string;
+  /** The header links, in order. Remove an entry to hide that Section. */
+  navigation: NavLink[];
+  /** Links to the Adopter elsewhere. */
+  social: SocialLinks;
+}
+
+/** A link in the header navigation. */
+export interface NavLink {
+  /** The text shown for the link. */
+  label: string;
+  /** A path on this site, starting with "/". The base path is added for you. */
+  href: string;
+}
+
+/**
+ * Links to the Adopter elsewhere, shown as icons in the footer. Leave one out
+ * and its icon disappears.
+ */
+export interface SocialLinks {
+  /** Profile URLs. */
+  github?: string;
+  linkedin?: string;
+  mastodon?: string;
+  bluesky?: string;
+  x?: string;
+  /** An email address, linked with mailto:. */
+  email?: string;
 }
 
 export const siteConfig: SiteConfig = {
@@ -25,4 +52,13 @@ export const siteConfig: SiteConfig = {
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
   url: "https://varunayyappan.github.io",
   base: "/Nord-Portfolio-Astro-Theme",
+  navigation: [{ label: "Home", href: "/" }],
+  social: {
+    github: "https://github.com/adalovelace",
+    linkedin: "https://www.linkedin.com/in/adalovelace",
+    mastodon: "https://mastodon.social/@adalovelace",
+    bluesky: "https://bsky.app/profile/adalovelace.bsky.social",
+    // x: "https://x.com/adalovelace",
+    email: "ada@example.com",
+  },
 };

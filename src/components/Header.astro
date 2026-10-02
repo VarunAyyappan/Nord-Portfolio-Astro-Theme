@@ -1,0 +1,132 @@
+---
+import { base, withBase, withTrailingSlash } from "../lib/url";
+import { siteConfig } from "../site.config";
+import MenuIcon from "./icons/Menu.astro";
+
+const currentPath = withTrailingSlash(Astro.url.pathname);
+const links = siteConfig.navigation.map(({ label, href }) => {
+  const target = withBase(href);
+  // Home is current only on Home; any other Section is also current, as the
+  // enclosing Section rather than the page itself, on its subpages.
+  const inSection = target !== base && currentPath.startsWith(target);
+  const current =
+    currentPath === target ? ("page" as const) : inSection ? true : undefined;
+  return { label, href: target, current };
+});
+---
+
+<header class="site-header">
+  <a class="site-name" href={base}>{siteConfig.name}</a>
+  <button
+    class="menu-button"
+    type="button"
+    aria-label="Menu"
+    aria-expanded="false"
+    aria-controls="main-menu"
+  >
+    <MenuIcon />
+  </button>
+  <nav id="main-menu" aria-label="Main">
+    <ul>
+      {
+        links.map(({ label, href, current }) => (
+          <li>
+            <a href={href} aria-current={current}>
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  // Without JavaScript the menu button stays hidden and the nav stays open
+  // (see the `scripting` media query below).
+  for (const button of document.querySelectorAll<HTMLButtonElement>(
+    ".menu-button",
+  )) {
+    button.addEventListener("click", () => {
+      const expanded = button.getAttribute("aria-expanded") === "true";
+      button.setAttribute("aria-expanded", String(!expanded));
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    width: 100%;
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 1rem 1.5rem;
+  }
+
+  .site-name {
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  nav a {
+    display: block;
+    padding: 0.5rem 0;
+    color: var(--color-text-muted);
+    text-decoration-line: none;
+  }
+
+  nav a:hover,
+  nav a[aria-current] {
+    color: var(--color-text);
+    text-decoration-line: underline;
+  }
+
+  .menu-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    background: none;
+    color: var(--color-text);
+    font-size: 1.5rem;
+    cursor: pointer;
+  }
+
+  /* Phone width with JavaScript: the button toggles the nav open and closed. */
+  @media (scripting: enabled) and (width < 48em) {
+    .menu-button {
+      display: inline-flex;
+    }
+
+    nav {
+      flex-basis: 100%;
+    }
+
+    ul {
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .menu-button[aria-expanded="false"] + nav {
+      display: none;
+    }
+  }
+</style>
