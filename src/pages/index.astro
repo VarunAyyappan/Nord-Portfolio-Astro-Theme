@@ -1,0 +1,50 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../site.config";
+---
+
+<BaseLayout>
+  <section class="hero" aria-labelledby="hero-name">
+    <h1 id="hero-name">{siteConfig.name}</h1>
+    <p class="tagline">{siteConfig.tagline}</p>
+    <p class="intro">{siteConfig.intro}</p>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: clamp(3rem, 12vw, 8rem) 1.5rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 8vw, 4rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h1::after {
+    content: "";
+    display: block;
+    width: 4rem;
+    height: 0.25rem;
+    margin-top: 1rem;
+    border-radius: 0.125rem;
+    background-color: var(--color-accent);
+  }
+
+  .tagline {
+    margin: 1.5rem 0 0;
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-weight: 600;
+  }
+
+  .intro {
+    margin: 1rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 1.125rem;
+  }
+</style>

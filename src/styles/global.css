@@ -1,0 +1,74 @@
+/*
+ * The Nord palette and the color roles built from it.
+ *
+ * Only the 16 official Nord hex values appear here. Components use the color
+ * roles, never the palette directly, so the look can be changed in one place.
+ *
+ * Each role is defined once with light-dark(), and `color-scheme` decides
+ * which half applies. Pairing rules that keep text at WCAG AA contrast:
+ *   - nord3 is never used for text (it is 1.7:1 on nord0).
+ *   - Dark mode: Polar Night backgrounds, Snow Storm text, Frost and Aurora
+ *     accents.
+ *   - Light mode: Snow Storm backgrounds, Polar Night text. Frost and Aurora
+ *     only on non-text elements, since all of them fail AA on nord6.
+ */
+:root {
+  /* Polar Night */
+  --nord0: #2e3440;
+  --nord1: #3b4252;
+  --nord2: #434c5e;
+  --nord3: #4c566a;
+  /* Snow Storm */
+  --nord4: #d8dee9;
+  --nord5: #e5e9f0;
+  --nord6: #eceff4;
+  /* Frost */
+  --nord7: #8fbcbb;
+  --nord8: #88c0d0;
+  --nord9: #81a1c1;
+  --nord10: #5e81ac;
+  /* Aurora */
+  --nord11: #bf616a;
+  --nord12: #d08770;
+  --nord13: #ebcb8b;
+  --nord14: #a3be8c;
+  --nord15: #b48ead;
+
+  /* Color roles: light-dark(<light mode>, <dark mode>) */
+  --color-background: light-dark(var(--nord6), var(--nord0));
+  --color-surface: light-dark(var(--nord5), var(--nord1));
+  --color-text: light-dark(var(--nord0), var(--nord6));
+  --color-text-muted: light-dark(var(--nord2), var(--nord4));
+  /* Accent is for non-text elements in light mode. */
+  --color-accent: light-dark(var(--nord10), var(--nord8));
+  --color-border: light-dark(var(--nord4), var(--nord3));
+
+  color-scheme: light dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
+}
