@@ -53,12 +53,16 @@ export const siteConfig: SiteConfig = {
   url: "https://varunayyappan.github.io",
   base: "/Nord-Portfolio-Astro-Theme",
   navigation: [{ label: "Home", href: "/" }],
+  // Placeholders that can never belong to a real account: GitHub and
+  // LinkedIn don't allow underscores in usernames, X doesn't allow hyphens,
+  // and .example domains are reserved (RFC 2606), so no Mastodon server or
+  // Bluesky handle can use one.
   social: {
-    github: "https://github.com/adalovelace",
-    linkedin: "https://www.linkedin.com/in/adalovelace",
-    mastodon: "https://mastodon.social/@adalovelace",
-    bluesky: "https://bsky.app/profile/adalovelace.bsky.social",
-    // x: "https://x.com/adalovelace",
+    github: "https://github.com/your_username",
+    linkedin: "https://www.linkedin.com/in/your_username",
+    mastodon: "https://mastodon.example/@your_username",
+    bluesky: "https://bsky.app/profile/your-username.example",
+    // x: "https://x.com/your-username",
     email: "ada@example.com",
   },
 };
