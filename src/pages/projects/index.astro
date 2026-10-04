@@ -1,0 +1,30 @@
+---
+import ProjectGrid from "../../components/ProjectGrid.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getProjects } from "../../lib/projects";
+
+const projects = await getProjects();
+---
+
+<BaseLayout title="Projects">
+  <section class="projects" aria-labelledby="projects-heading">
+    <h1 id="projects-heading">Projects</h1>
+    <ProjectGrid projects={projects} />
+  </section>
+</BaseLayout>
+
+<style>
+  .projects {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  h1 {
+    margin: 0 0 2rem;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+</style>

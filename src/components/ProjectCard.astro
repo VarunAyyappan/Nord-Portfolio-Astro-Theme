@@ -1,0 +1,102 @@
+---
+import { Image } from "astro:assets";
+import { type Project, projectPath } from "../lib/projects";
+import { withBase } from "../lib/url";
+import ProjectMeta from "./ProjectMeta.astro";
+import Stack from "./Stack.astro";
+
+interface Props {
+  project: Project;
+  /** The heading level of the title, so the card fits the page outline. */
+  headingLevel?: 2 | 3;
+}
+
+const { project, headingLevel = 2 } = Astro.props;
+const { title, summary, stack, cover } = project.data;
+const Heading = `h${headingLevel}` as const;
+---
+
+<article class="project-card">
+  {
+    cover && (
+      <Image
+        src={cover}
+        alt=""
+        widths={[400, 800]}
+        sizes="(width < 48em) calc(100vw - 3rem), 22rem"
+      />
+    )
+  }
+  <div class="body">
+    <Heading class="title">
+      <a href={withBase(projectPath(project))}>{title}</a>
+    </Heading>
+    <ProjectMeta project={project} />
+    <p class="summary">{summary}</p>
+    <Stack items={stack} />
+  </div>
+</article>
+
+<style>
+  .project-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background-color: var(--color-surface);
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  /* The title link covers the whole card, so the card is one click target. */
+  .title a {
+    text-decoration-line: none;
+  }
+
+  .title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .project-card:hover .title a {
+    text-decoration-line: underline;
+  }
+
+  .project-card:has(:focus-visible) {
+    outline: 0.1875rem solid var(--color-accent);
+    outline-offset: 0.1875rem;
+  }
+
+  .title a:focus-visible {
+    outline: none;
+  }
+
+  .summary {
+    flex: 1;
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+</style>

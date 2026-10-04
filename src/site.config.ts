@@ -52,7 +52,10 @@ export const siteConfig: SiteConfig = {
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
   url: "https://varunayyappan.github.io",
   base: "/Nord-Portfolio-Astro-Theme",
-  navigation: [{ label: "Home", href: "/" }],
+  navigation: [
+    { label: "Home", href: "/" },
+    { label: "Projects", href: "/projects/" },
+  ],
   // Placeholders that can never belong to a real account: GitHub and
   // LinkedIn don't allow underscores in usernames, X doesn't allow hyphens,
   // and .example domains are reserved (RFC 2606), so no Mastodon server or

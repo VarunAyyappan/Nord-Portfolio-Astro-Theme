@@ -1,0 +1,125 @@
+---
+import { Image } from "astro:assets";
+import { render } from "astro:content";
+import ProjectMeta from "../../components/ProjectMeta.astro";
+import Prose from "../../components/Prose.astro";
+import Stack from "../../components/Stack.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getProjects, type Project } from "../../lib/projects";
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { id: project.id },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { title, summary, stack, repository, live, cover } = project.data;
+const { Content } = await render(project);
+const links = [
+  { label: "Repository", href: repository },
+  { label: "Live site", href: live },
+].filter((link) => link.href);
+---
+
+<BaseLayout title={title}>
+  <article class="project" aria-labelledby="project-title">
+    <header>
+      <ProjectMeta project={project} />
+      <h1 id="project-title">{title}</h1>
+      <p class="summary">{summary}</p>
+      <Stack items={stack} />
+      {
+        links.length > 0 && (
+          <ul class="links">
+            {links.map(({ label, href }) => (
+              <li>
+                <a href={href}>{label}</a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </header>
+    {
+      cover && (
+        <Image
+          src={cover}
+          alt=""
+          widths={[720, 1440]}
+          sizes="(width < 48em) calc(100vw - 3rem), 45rem"
+          loading="eager"
+        />
+      )
+    }
+    <Prose>
+      <Content />
+    </Prose>
+  </article>
+</BaseLayout>
+
+<style>
+  .project {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .summary {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 1.25rem;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .links a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    font-weight: 600;
+    text-decoration-line: none;
+  }
+
+  .links a:hover {
+    border-color: var(--color-accent);
+    text-decoration-line: underline;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+  }
+</style>

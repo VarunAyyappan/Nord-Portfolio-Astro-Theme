@@ -1,6 +1,11 @@
 ---
+import ProjectGrid from "../components/ProjectGrid.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getFeaturedProjects } from "../lib/projects";
+import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
+
+const featuredProjects = await getFeaturedProjects();
 ---
 
 <BaseLayout>
@@ -9,13 +14,41 @@ import { siteConfig } from "../site.config";
     <p class="tagline">{siteConfig.tagline}</p>
     <p class="intro">{siteConfig.intro}</p>
   </section>
+  {
+    featuredProjects.length > 0 && (
+      <section class="featured" aria-labelledby="featured-heading">
+        <h2 id="featured-heading">Featured Projects</h2>
+        <ProjectGrid projects={featuredProjects} headingLevel={3} />
+        <a class="all" href={withBase("/projects/")}>
+          All Projects
+        </a>
+      </section>
+    )
+  }
 </BaseLayout>
 
 <style>
-  .hero {
+  .hero,
+  .featured {
     max-width: 48rem;
     margin: 0 auto;
     padding: clamp(3rem, 12vw, 8rem) 1.5rem;
+  }
+
+  .featured {
+    padding-top: 0;
+  }
+
+  h2 {
+    margin: 0 0 1.5rem;
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+
+  .all {
+    display: inline-block;
+    margin-top: 1.5rem;
+    font-weight: 600;
   }
 
   h1 {

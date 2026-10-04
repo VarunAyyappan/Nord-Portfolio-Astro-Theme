@@ -1,0 +1,38 @@
+---
+interface Props {
+  /** The technologies a Project or Experience entry was built with. */
+  items: string[];
+}
+
+const { items } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <ul class="stack" aria-label="Stack">
+      {items.map((item) => (
+        <li>{item}</li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .stack {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    padding: 0.125rem 0.625rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background-color: var(--color-background);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+</style>
