@@ -1,6 +1,7 @@
 ---
 import { base, withBase, withTrailingSlash } from "../lib/url";
 import { siteConfig } from "../site.config";
+import ColorModeToggle from "./ColorModeToggle.astro";
 import MenuIcon from "./icons/Menu.astro";
 
 const currentPath = withTrailingSlash(Astro.url.pathname);
@@ -17,6 +18,7 @@ const links = siteConfig.navigation.map(({ label, href }) => {
 
 <header class="site-header">
   <a class="site-name" href={base}>{siteConfig.name}</a>
+  <ColorModeToggle />
   <button
     class="menu-button"
     type="button"
@@ -68,6 +70,7 @@ const links = siteConfig.navigation.map(({ label, href }) => {
   }
 
   .site-name {
+    margin-right: auto;
     font-size: 1.125rem;
     font-weight: 700;
     text-decoration: none;

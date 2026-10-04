@@ -6,3 +6,9 @@ export const viewports = [
 
 /** The two rendered color modes, as emulated `prefers-color-scheme` values. */
 export const colorModes = ["dark", "light"] as const;
+
+/** Polar Night nord0 and Snow Storm nord6, the page backgrounds, as computed CSS colors. */
+export const backgrounds = {
+  dark: "rgb(46, 52, 64)",
+  light: "rgb(236, 239, 244)",
+} as const;

@@ -1,12 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { expectNoAxeViolations } from "./axe";
-import { colorModes, viewports } from "./matrix";
-
-/** Polar Night nord0 and Snow Storm nord6, as computed CSS colors. */
-const backgrounds = {
-  dark: "rgb(46, 52, 64)",
-  light: "rgb(236, 239, 244)",
-} as const;
+import { backgrounds, colorModes, viewports } from "./matrix";
 
 for (const colorScheme of colorModes) {
   test.describe(`Home in ${colorScheme} mode`, () => {

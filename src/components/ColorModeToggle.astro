@@ -1,0 +1,104 @@
+---
+import MonitorIcon from "./icons/Monitor.astro";
+import MoonIcon from "./icons/Moon.astro";
+import SunIcon from "./icons/Sun.astro";
+---
+
+<!--
+  The active setting lives on the root element as `data-color-mode` ("dark" or
+  "light"; absent means system). CSS shows only the matching span, and a
+  display: none span drops out of the accessible name too, so the icon and
+  the label always agree, from the first frame.
+-->
+<button class="color-mode-toggle" type="button">
+  <span class="setting" data-setting="system">
+    <MonitorIcon /><span class="label">Color mode: system</span>
+  </span>
+  <span class="setting" data-setting="dark">
+    <MoonIcon /><span class="label">Color mode: dark</span>
+  </span>
+  <span class="setting" data-setting="light">
+    <SunIcon /><span class="label">Color mode: light</span>
+  </span>
+</button>
+
+<script>
+  import {
+    type ColorModeSetting,
+    colorModeSettings,
+    colorModeStorageKey,
+    nextColorModeSetting,
+  } from "../lib/color-mode";
+
+  const root = document.documentElement;
+
+  function currentSetting(): ColorModeSetting {
+    return (
+      colorModeSettings.find((setting) => setting === root.dataset.colorMode) ??
+      "system"
+    );
+  }
+
+  for (const button of document.querySelectorAll<HTMLButtonElement>(
+    ".color-mode-toggle",
+  )) {
+    button.addEventListener("click", () => {
+      const next = nextColorModeSetting(currentSetting());
+      try {
+        if (next === "system") {
+          delete root.dataset.colorMode;
+          localStorage.removeItem(colorModeStorageKey);
+        } else {
+          root.dataset.colorMode = next;
+          localStorage.setItem(colorModeStorageKey, next);
+        }
+      } catch {
+        // Storage is unavailable: the setting lasts until the page unloads.
+      }
+    });
+  }
+</script>
+
+<style>
+  .color-mode-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+    background: none;
+    color: var(--color-text);
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+
+  .setting {
+    display: none;
+  }
+
+  :global(:root:not([data-color-mode])) .setting[data-setting="system"],
+  :global(:root[data-color-mode="dark"]) .setting[data-setting="dark"],
+  :global(:root[data-color-mode="light"]) .setting[data-setting="light"] {
+    display: inline-flex;
+  }
+
+  /* Named for assistive technology, but not shown. */
+  .label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Without JavaScript there is nothing to toggle: the OS preference decides. */
+  @media (scripting: none) {
+    .color-mode-toggle {
+      display: none;
+    }
+  }
+</style>

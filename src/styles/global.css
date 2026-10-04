@@ -5,7 +5,8 @@
  * roles, never the palette directly, so the look can be changed in one place.
  *
  * Each role is defined once with light-dark(), and `color-scheme` decides
- * which half applies. Pairing rules that keep text at WCAG AA contrast:
+ * which half applies: the OS preference, unless the Visitor's Color mode
+ * setting overrides it. Pairing rules that keep text at WCAG AA contrast:
  *   - nord3 is never used for text (it is 1.7:1 on nord0).
  *   - Dark mode: Polar Night backgrounds, Snow Storm text, Frost and Aurora
  *     accents.
@@ -44,6 +45,15 @@
   --color-border: light-dark(var(--nord4), var(--nord3));
 
   color-scheme: light dark;
+}
+
+/* A Color mode setting other than system overrides the OS preference. */
+:root[data-color-mode="dark"] {
+  color-scheme: dark;
+}
+
+:root[data-color-mode="light"] {
+  color-scheme: light;
 }
 
 *,

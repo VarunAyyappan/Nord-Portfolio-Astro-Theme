@@ -2,6 +2,7 @@
 import { Font } from "astro:assets";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
+import { colorModeSettings, colorModeStorageKey } from "../lib/color-mode";
 import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
 import "../styles/global.css";
@@ -13,6 +14,8 @@ interface Props {
 
 const { title } = Astro.props;
 const documentTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
+// The settings that are saved; system is the absence of one.
+const savedColorModes = colorModeSettings.filter((mode) => mode !== "system");
 ---
 
 <!doctype html>
@@ -20,6 +23,17 @@ const documentTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline define:vars={{ colorModeStorageKey, savedColorModes }}>
+      // Applies a saved Color mode setting before first paint, so the wrong
+      // mode never flashes. Blocking and inline on purpose. Any storage
+      // error, or a value that isn't a setting, leaves the system setting.
+      try {
+        const setting = localStorage.getItem(colorModeStorageKey);
+        if (savedColorModes.includes(setting)) {
+          document.documentElement.dataset.colorMode = setting;
+        }
+      } catch {}
+    </script>
     <title>{documentTitle}</title>
     <meta name="description" content={siteConfig.tagline} />
     <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />

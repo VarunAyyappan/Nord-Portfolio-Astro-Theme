@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { colorModeStorageKey } from "../../src/lib/color-mode";
 import { siteConfig } from "../../src/site.config";
 import { basePath, htmlFiles, outputFiles, readPage } from "./output";
 
@@ -62,6 +63,28 @@ describe("site chrome", () => {
       const nameLink = page.querySelector("body > header a");
       expect(nameLink?.textContent.trim()).toBe(siteConfig.name);
       expect(nameLink?.getAttribute("href")).toBe(basePath);
+    });
+
+    it("has a color mode toggle in the header", () => {
+      const toggle = page.querySelector(
+        "body > header button.color-mode-toggle",
+      );
+      expect(toggle?.textContent).toContain("Color mode: system");
+    });
+
+    it("applies the saved color mode from a blocking inline script in the head", () => {
+      // A classic inline script with no async, defer or type="module" runs
+      // as soon as it is parsed, before <body> can be painted.
+      const blocking = page
+        .querySelectorAll("head script")
+        .filter(
+          (script) =>
+            script.text.includes(colorModeStorageKey) &&
+            !["src", "async", "defer", "type"].some((attribute) =>
+              script.hasAttribute(attribute),
+            ),
+        );
+      expect(blocking).toHaveLength(1);
     });
 
     it("lists exactly the Site config navigation in the header nav", () => {
