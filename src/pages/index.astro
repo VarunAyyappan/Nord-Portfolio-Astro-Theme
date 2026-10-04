@@ -1,11 +1,14 @@
 ---
+import PostList from "../components/PostList.astro";
 import ProjectGrid from "../components/ProjectGrid.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getLatestPosts } from "../lib/posts";
 import { getFeaturedProjects } from "../lib/projects";
 import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
 
 const featuredProjects = await getFeaturedProjects();
+const latestPosts = await getLatestPosts();
 ---
 
 <BaseLayout>
@@ -25,17 +28,30 @@ const featuredProjects = await getFeaturedProjects();
       </section>
     )
   }
+  {
+    latestPosts.length > 0 && (
+      <section class="latest" aria-labelledby="latest-heading">
+        <h2 id="latest-heading">Latest Posts</h2>
+        <PostList posts={latestPosts} headingLevel={3} />
+        <a class="all" href={withBase("/blog/")}>
+          All Posts
+        </a>
+      </section>
+    )
+  }
 </BaseLayout>
 
 <style>
   .hero,
-  .featured {
+  .featured,
+  .latest {
     max-width: 48rem;
     margin: 0 auto;
     padding: clamp(3rem, 12vw, 8rem) 1.5rem;
   }
 
-  .featured {
+  .featured,
+  .latest {
     padding-top: 0;
   }
 

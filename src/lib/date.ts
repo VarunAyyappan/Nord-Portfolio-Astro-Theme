@@ -7,3 +7,13 @@ export function formatMonth(date: Date): string {
     timeZone: "UTC",
   });
 }
+
+/** Formats a content date for display with its day, e.g. "June 12, 2026". */
+export function formatDay(date: Date): string {
+  return date.toLocaleDateString("en", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}

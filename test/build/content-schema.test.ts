@@ -10,7 +10,12 @@ import {
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { projectsDir, publishedProjects } from "./content";
+import {
+  postsDir,
+  projectsDir,
+  publishedPosts,
+  publishedProjects,
+} from "./content";
 
 /** What the build is copied without: dependencies and generated files. */
 const skipped = new Set([
@@ -21,34 +26,28 @@ const skipped = new Set([
   "test-results",
 ]);
 
-/** A filler Project's Markdown, with `line` in place of its `field` line. */
-function brokenProject(field: string, line: string): string {
-  const [project] = publishedProjects();
-  const source = readFileSync(
-    path.join(projectsDir, `${project.id}.md`),
-    "utf8",
-  );
-  return source
+/**
+ * Builds a copy of the site with one extra content file in `dir`, named
+ * broken.md: the filler file `id` with `line` in place of its `field` line.
+ * A broken file never touches the real content.
+ */
+function buildWithBrokenFile(
+  dir: string,
+  id: string,
+  field: string,
+  line: string,
+) {
+  const markdown = readFileSync(path.join(dir, `${id}.md`), "utf8")
     .replace(new RegExp(`^${field}:.*\n`, "m"), "")
     .replace(/^---\n/, `---\n${line}\n`);
-}
-
-/**
- * Builds a copy of the site with one extra Project file, so a broken Project
- * never touches the real content.
- */
-function buildWithProject(markdown: string) {
   const root = mkdtempSync(path.join(tmpdir(), "nord-theme-"));
   cpSync(process.cwd(), root, {
     recursive: true,
     filter: (source) => !skipped.has(path.basename(source)),
   });
   symlinkSync(path.resolve("node_modules"), path.join(root, "node_modules"));
-  const copiedProjectsDir = path.join(
-    root,
-    path.relative(process.cwd(), projectsDir),
-  );
-  writeFileSync(path.join(copiedProjectsDir, "broken.md"), markdown);
+  const copiedDir = path.join(root, path.relative(process.cwd(), dir));
+  writeFileSync(path.join(copiedDir, "broken.md"), markdown);
   const build = spawnSync(path.resolve("node_modules/.bin/astro"), ["build"], {
     cwd: root,
     encoding: "utf8",
@@ -57,12 +56,24 @@ function buildWithProject(markdown: string) {
   return { root, status: build.status, output: build.stdout + build.stderr };
 }
 
-describe("Project frontmatter", () => {
-  let root: string | undefined;
-  afterEach(() => {
-    if (root) rmSync(root, { recursive: true, force: true });
-  });
+/** Expects a build that failed on broken.md's `field`. */
+function expectSchemaError(
+  build: ReturnType<typeof buildWithBrokenFile>,
+  field: string,
+) {
+  expect(build.status).not.toBe(0);
+  expect(build.output).toContain("does not match collection schema");
+  expect(build.output).toContain("broken");
+  expect(build.output).toMatch(new RegExp(`\\b${field}\\b`));
+}
 
+let root: string | undefined;
+afterEach(() => {
+  if (root) rmSync(root, { recursive: true, force: true });
+  root = undefined;
+});
+
+describe("Project frontmatter", () => {
   it.each([
     ["date", "date: someday"],
     ["repository", "repository: not a url"],
@@ -71,12 +82,27 @@ describe("Project frontmatter", () => {
   ])(
     "fails the build, naming the Project and the field, when %s is invalid",
     (field, line) => {
-      const build = buildWithProject(brokenProject(field, line));
+      const [project] = publishedProjects();
+      const build = buildWithBrokenFile(projectsDir, project.id, field, line);
       root = build.root;
-      expect(build.status).not.toBe(0);
-      expect(build.output).toContain("does not match collection schema");
-      expect(build.output).toContain("broken");
-      expect(build.output).toMatch(new RegExp(`\\b${field}\\b`));
+      expectSchemaError(build, field);
+    },
+  );
+});
+
+describe("Post frontmatter", () => {
+  it.each([
+    ["date", "date: someday"],
+    ["updated", "updated: soon"],
+    ["tags", "tags: Algorithms"],
+    ["draft", "draft: maybe"],
+  ])(
+    "fails the build, naming the Post and the field, when %s is invalid",
+    (field, line) => {
+      const [post] = publishedPosts();
+      const build = buildWithBrokenFile(postsDir, post.id, field, line);
+      root = build.root;
+      expectSchemaError(build, field);
     },
   );
 });

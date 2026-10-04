@@ -39,4 +39,67 @@
   .prose :global(li::marker) {
     color: var(--color-text-muted);
   }
+
+  .prose :global(li > :is(ul, ol)) {
+    margin: 0.25em 0 0;
+  }
+
+  .prose :global(h4) {
+    font-size: 1.0625rem;
+  }
+
+  /* Code blocks keep their Shiki theme's dark background in both Color
+     modes, so their scrollbars stay dark too. */
+  .prose :global(pre) {
+    margin: 0 0 1.5em;
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color-scheme: dark;
+  }
+
+  .prose :global(:not(pre) > code) {
+    padding: 0.125em 0.375em;
+    border-radius: 0.25rem;
+    background-color: var(--color-surface);
+    font-size: 0.875em;
+  }
+
+  .prose :global(blockquote) {
+    margin: 0 0 1.25em;
+    padding-left: 1.25rem;
+    border-left: 0.25rem solid var(--color-accent);
+    color: var(--color-text-muted);
+    font-style: italic;
+  }
+
+  .prose :global(blockquote > :last-child) {
+    margin-bottom: 0;
+  }
+
+  .prose :global(table) {
+    width: 100%;
+    margin: 0 0 1.5em;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .prose :global(:is(th, td)) {
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .prose :global(thead th) {
+    border-bottom-width: 2px;
+  }
+
+  .prose :global(img) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+  }
 </style>

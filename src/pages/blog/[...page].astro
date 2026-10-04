@@ -1,0 +1,78 @@
+---
+import type { GetStaticPaths, Page } from "astro";
+import PostList from "../../components/PostList.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getPosts, type Post, postsPerPage } from "../../lib/posts";
+import { withTrailingSlash } from "../../lib/url";
+
+// Page 1 is served at /blog/, the rest at /blog/2/, /blog/3/ and so on.
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts();
+  return paginate(posts, { pageSize: postsPerPage });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  page: Page<Post>;
+}
+
+const { page } = Astro.props;
+// Astro's page URLs have no trailing slash; every other link on the site
+// does, so a static host serves them without a redirect.
+const prev = page.url.prev && withTrailingSlash(page.url.prev);
+const next = page.url.next && withTrailingSlash(page.url.next);
+---
+
+<BaseLayout title="Blog">
+  <section class="blog" aria-labelledby="blog-heading">
+    <h1 id="blog-heading">Blog</h1>
+    <PostList posts={page.data} />
+    {
+      (prev || next) && (
+        <nav class="pagination" aria-label="Blog pages">
+          {prev && (
+            <a href={prev} rel="prev">
+              Newer Posts
+            </a>
+          )}
+          {next && (
+            <a href={next} rel="next">
+              Older Posts
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </section>
+</BaseLayout>
+
+<style>
+  .blog {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+
+  .pagination a {
+    font-weight: 600;
+  }
+
+  /* Older Posts stays on the right, even on page 1 where it's alone. */
+  .pagination [rel="next"] {
+    margin-left: auto;
+  }
+
+  h1 {
+    margin: 0 0 2rem;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+</style>

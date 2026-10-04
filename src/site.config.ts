@@ -55,6 +55,7 @@ export const siteConfig: SiteConfig = {
   navigation: [
     { label: "Home", href: "/" },
     { label: "Projects", href: "/projects/" },
+    { label: "Blog", href: "/blog/" },
   ],
   // Placeholders that can never belong to a real account: GitHub and
   // LinkedIn don't allow underscores in usernames, X doesn't allow hyphens,

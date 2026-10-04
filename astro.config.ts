@@ -1,10 +1,15 @@
 import { defineConfig, fontProviders } from "astro/config";
+import { nordTheme } from "./src/shiki/nord-theme";
 import { siteConfig } from "./src/site.config";
 
 // Static output only, with no adapter (see docs/adr/0001-static-only-output.md).
 export default defineConfig({
   site: siteConfig.url,
   base: siteConfig.base,
+  markdown: {
+    // Code blocks stay dark in both Color modes (see src/shiki/nord-theme.ts).
+    shikiConfig: { theme: nordTheme },
+  },
   fonts: [
     {
       provider: fontProviders.fontsource(),
