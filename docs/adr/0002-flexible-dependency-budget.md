@@ -1,0 +1,3 @@
+# Flexible dependency budget
+
+The spec limits runtime dependencies to Astro and official `@astrojs/*` packages, so an Adopter inherits a small dependency tree. That limit is a strong default, not a hard rule: a third-party package is allowed when an Astro feature the theme relies on needs it and there's no reasonable way around it. The first exception is `sharp`. Astro's built-in image handling needs it to optimize Project covers, and strict package managers such as aube don't install Astro's optional dependency on it, so it's declared directly. It stays in `dependencies`, alongside `astro`, so that hosts that skip dev dependencies can still build the site.
