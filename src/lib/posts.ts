@@ -28,6 +28,9 @@ export async function getLatestPosts(): Promise<Post[]> {
   return posts.slice(0, latestLimit);
 }
 
+/** The site path of the RSS feed, before the base path (src/pages/rss.xml.ts). */
+export const feedPath = "/rss.xml";
+
 /** The site path of a Post's page, before the base path. */
 export function postPath(post: Post): string {
   return `/blog/${post.id}/`;
@@ -43,4 +46,44 @@ const wordsPerMinute = 200;
 export function readingMinutes(post: Post): number {
   const words = post.body?.match(/[\p{L}\p{N}]+(?:['’-][\p{L}\p{N}]+)*/gu);
   return Math.max(1, Math.ceil((words?.length ?? 0) / wordsPerMinute));
+}
+
+/** A Tag and the Posts that carry it, newest first. */
+export interface Tag {
+  /** The Tag as the first Post to carry it spells it. */
+  name: string;
+  /** The Tag's URL segment, e.g. "Analytical Engine" becomes "analytical-engine". */
+  slug: string;
+  posts: Post[];
+}
+
+/** Turns a Tag's name into its URL segment. */
+function tagSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/**
+ * Every Tag that a Post a Visitor can see carries, in alphabetical order. A
+ * Tag that only drafts carry is left out of a build. Tags whose names differ
+ * only in case or punctuation, e.g. "Note G" and "note-g", are one Tag.
+ */
+export async function getTags(): Promise<Tag[]> {
+  const tags = new Map<string, Tag>();
+  for (const post of await getPosts()) {
+    for (const name of post.data.tags) {
+      const slug = tagSlug(name);
+      const tag = tags.get(slug) ?? { name, slug, posts: [] };
+      tag.posts.push(post);
+      tags.set(slug, tag);
+    }
+  }
+  return [...tags.values()].toSorted((a, b) => a.name.localeCompare(b.name));
+}
+
+/** The site path of a Tag's page, before the base path. */
+export function tagPath(name: string): string {
+  return `/blog/tags/${tagSlug(name)}/`;
 }

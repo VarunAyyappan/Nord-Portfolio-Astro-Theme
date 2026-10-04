@@ -3,7 +3,7 @@ import path from "node:path";
 import type { HTMLElement } from "node-html-parser";
 import { describe, expect, it } from "vitest";
 import { postSources, publishedPosts } from "./content";
-import { basePath, outDir, outputFiles, readPage } from "./output";
+import { basePath, headingAt, outDir, outputFiles, readPage } from "./output";
 
 /** How many Posts each Blog index page lists. */
 const pageSize = 10;
@@ -11,6 +11,14 @@ const pageSize = 10;
 /** The titles of the given Post list items, from their headings. */
 function listedTitles(posts: HTMLElement[]) {
   return posts.map((post) => post.querySelector("h2, h3")?.textContent.trim());
+}
+
+/** A Tag link's text, and the heading of the page its href resolves to. */
+function linkedTagPage(link: HTMLElement) {
+  return {
+    text: link.textContent.trim(),
+    heading: headingAt(link.getAttribute("href") ?? ""),
+  };
 }
 
 describe("Blog index", () => {
@@ -35,6 +43,23 @@ describe("Blog index", () => {
       published.slice(pageSize).map((post) => post.title),
     );
   });
+
+  it.each(["blog/index.html", "blog/2/index.html"])(
+    "links each listed Post's Tags to their pages on %s",
+    (file) => {
+      const byTitle = new Map(published.map((post) => [post.title, post]));
+      for (const article of readPage(file).querySelectorAll("main article")) {
+        const [title] = listedTitles([article]);
+        const links = article.querySelectorAll('[aria-label="Tags"] a');
+        expect(links.map(linkedTagPage)).toEqual(
+          (byTitle.get(title ?? "")?.tags ?? []).map((tag) => ({
+            text: tag,
+            heading: `Posts tagged ${tag}`,
+          })),
+        );
+      }
+    },
+  );
 
   it("builds no page 3", () => {
     expect(outputFiles().filter((file) => file.startsWith("blog/3/"))).toEqual(
@@ -93,12 +118,11 @@ describe.each(publishedPosts())("$title Post page", (post) => {
     expect(readingMinutes(page)).toBeGreaterThanOrEqual(1);
   });
 
-  it("shows its Tags as plain text", () => {
-    const tags = header?.querySelector('[aria-label="Tags"]');
-    expect(
-      tags?.querySelectorAll("li").map((tag) => tag.textContent.trim()),
-    ).toEqual(post.tags);
-    expect(tags?.querySelectorAll("a")).toEqual([]);
+  it("links each of its Tags to that Tag's page", () => {
+    const links = header?.querySelectorAll('[aria-label="Tags"] a') ?? [];
+    expect(links.map(linkedTagPage)).toEqual(
+      post.tags.map((tag) => ({ text: tag, heading: `Posts tagged ${tag}` })),
+    );
   });
 });
 

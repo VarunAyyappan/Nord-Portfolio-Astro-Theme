@@ -12,6 +12,7 @@ async function openNewestPost(page: Page) {
     .getByRole("main")
     .getByRole("article")
     .first()
+    .getByRole("heading")
     .getByRole("link");
   const title = (await link.textContent()) ?? "";
   await link.click();

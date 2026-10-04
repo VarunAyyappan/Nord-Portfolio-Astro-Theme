@@ -1,13 +1,22 @@
 import { describe, expect, it } from "vitest";
 import { colorModeStorageKey } from "../../src/lib/color-mode";
 import { siteConfig } from "../../src/site.config";
-import { basePath, htmlFiles, outputFiles, readPage } from "./output";
+import {
+  basePath,
+  htmlFiles,
+  outputFiles,
+  readPage,
+  resolveToFile,
+} from "./output";
 
 /** Where a Site config navigation entry should link under the base path. */
 const navTargets = siteConfig.navigation.map(({ label, href }) => ({
   label,
   href: `${basePath}${href.replace(/^\//, "")}`,
 }));
+
+/** Where the footer's RSS link should point under the base path. */
+const feedHref = `${basePath}rss.xml`;
 
 /** The footer links Site config asks for: only the social links it sets. */
 const socialTargets = Object.entries(siteConfig.social)
@@ -97,11 +106,29 @@ describe("site chrome", () => {
       expect(links).toEqual(navTargets);
     });
 
-    it("links exactly the social links set in Site config in the footer", () => {
+    it("links exactly the social links set in Site config, and the RSS feed, in the footer", () => {
       const hrefs = page
         .querySelectorAll("body > footer a")
         .map((link) => link.getAttribute("href"));
-      expect(hrefs.toSorted()).toEqual(socialTargets.toSorted());
+      expect(hrefs.toSorted()).toEqual([...socialTargets, feedHref].toSorted());
+    });
+
+    it("lets feed readers discover the RSS feed from the head", () => {
+      const alternates = page
+        .querySelectorAll(
+          'head link[rel="alternate"][type="application/rss+xml"]',
+        )
+        .map((link) => link.getAttribute("href"));
+      expect(alternates).toEqual([feedHref]);
+    });
+
+    it("links the RSS feed from the footer with the RSS icon", () => {
+      const feedLink = page.querySelector(
+        'body > footer a[aria-label="RSS feed"]',
+      );
+      expect(feedLink?.getAttribute("href")).toBe(feedHref);
+      expect(resolveToFile(feedHref)).toBe("rss.xml");
+      expect(feedLink?.querySelector("svg")).not.toBeNull();
     });
 
     it("gives every icon-only footer link an accessible name", () => {

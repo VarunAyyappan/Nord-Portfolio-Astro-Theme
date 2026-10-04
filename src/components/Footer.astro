@@ -1,10 +1,13 @@
 ---
+import { feedPath } from "../lib/posts";
+import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
 import BlueskyIcon from "./icons/Bluesky.astro";
 import EmailIcon from "./icons/Email.astro";
 import GitHubIcon from "./icons/GitHub.astro";
 import LinkedInIcon from "./icons/LinkedIn.astro";
 import MastodonIcon from "./icons/Mastodon.astro";
+import RssIcon from "./icons/Rss.astro";
 import XIcon from "./icons/X.astro";
 
 const { github, linkedin, mastodon, bluesky, x, email } = siteConfig.social;
@@ -29,6 +32,11 @@ const socialLinks = [
         </li>
       ))
     }
+    <li>
+      <a href={withBase(feedPath)} aria-label="RSS feed">
+        <RssIcon />
+      </a>
+    </li>
   </ul>
   <p>&copy; {new Date().getFullYear()} {siteConfig.name}</p>
 </footer>

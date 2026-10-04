@@ -81,6 +81,20 @@ test.describe("mobile menu without JavaScript", () => {
   });
 });
 
+test.describe("RSS feed", () => {
+  test("is served at the footer's RSS link", async ({ page }) => {
+    await page.goto("./");
+    const href = await page
+      .getByRole("contentinfo")
+      .getByRole("link", { name: "RSS feed" })
+      .getAttribute("href");
+    const response = await page.request.get(href ?? "");
+    expect(response.ok()).toBe(true);
+    expect(response.headers()["content-type"]).toMatch(/xml/);
+    expect(await response.text()).toContain('<rss version="2.0">');
+  });
+});
+
 for (const colorScheme of colorModes) {
   test.describe(`site chrome in ${colorScheme} mode`, () => {
     test.use({ colorScheme });

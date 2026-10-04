@@ -1,0 +1,47 @@
+---
+import { tagPath } from "../lib/posts";
+import { withBase } from "../lib/url";
+
+interface Props {
+  /** A Post's Tags, each linked to its Tag page. */
+  tags: string[];
+}
+
+const { tags } = Astro.props;
+---
+
+{
+  tags.length > 0 && (
+    <ul class="tags" aria-label="Tags">
+      {tags.map((tag) => (
+        <li>
+          <a href={withBase(tagPath(tag))}>{tag}</a>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+  }
+
+  /* At least 24px tall, the WCAG 2.2 AA minimum for a target. */
+  a {
+    display: inline-block;
+    line-height: 1.5rem;
+  }
+
+  /* Decoration only, so screen readers announce just the Tag's name. */
+  a::before {
+    content: "#" / "";
+    color: var(--color-text-muted);
+  }
+</style>

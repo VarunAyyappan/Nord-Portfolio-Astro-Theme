@@ -1,6 +1,7 @@
 ---
 import { render } from "astro:content";
 import Prose from "../../components/Prose.astro";
+import Tags from "../../components/Tags.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { formatDay } from "../../lib/date";
 import { getPosts, type Post, readingMinutes } from "../../lib/posts";
@@ -40,15 +41,7 @@ const { Content } = await render(post);
         <span>{readingMinutes(post)} min read</span>
         {draft && <span class="draft">Draft</span>}
       </p>
-      {
-        tags.length > 0 && (
-          <ul class="tags" aria-label="Tags">
-            {tags.map((tag) => (
-              <li>{tag}</li>
-            ))}
-          </ul>
-        )
-      }
+      <Tags tags={tags} />
     </header>
     <Prose>
       <Content />
@@ -96,20 +89,5 @@ const { Content } = await render(post);
   .draft {
     font-weight: 700;
     text-transform: uppercase;
-  }
-
-  .tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    font-size: 0.875rem;
-  }
-
-  .tags li::before {
-    content: "#";
-    color: var(--color-text-muted);
   }
 </style>

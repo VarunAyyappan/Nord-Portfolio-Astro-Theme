@@ -53,3 +53,12 @@ export function resolveToFile(urlPath: string): string | undefined {
     return existsSync(full) && statSync(full).isFile();
   });
 }
+
+/**
+ * The main heading of the page a static host would serve for a URL path
+ * under the base path, or `undefined` if there is no such page.
+ */
+export function headingAt(urlPath: string): string | undefined {
+  const file = resolveToFile(urlPath);
+  return file && readPage(file).querySelector("main h1")?.textContent.trim();
+}

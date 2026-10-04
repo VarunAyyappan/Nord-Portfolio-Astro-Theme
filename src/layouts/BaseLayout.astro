@@ -3,6 +3,7 @@ import { Font } from "astro:assets";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import { colorModeSettings, colorModeStorageKey } from "../lib/color-mode";
+import { feedPath } from "../lib/posts";
 import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
 import "../styles/global.css";
@@ -37,6 +38,12 @@ const savedColorModes = colorModeSettings.filter((mode) => mode !== "system");
     <title>{documentTitle}</title>
     <meta name="description" content={siteConfig.tagline} />
     <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={siteConfig.name}
+      href={withBase(feedPath)}
+    />
     <Font cssVariable="--font-sans" preload />
     <Font cssVariable="--font-mono" />
   </head>

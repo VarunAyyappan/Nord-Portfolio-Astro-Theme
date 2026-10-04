@@ -2,6 +2,7 @@
 import { formatDay } from "../lib/date";
 import { type Post, postPath } from "../lib/posts";
 import { withBase } from "../lib/url";
+import Tags from "./Tags.astro";
 
 interface Props {
   posts: Post[];
@@ -28,6 +29,7 @@ const Heading = `h${headingLevel}` as const;
             {post.data.draft && <span class="draft">Draft</span>}
           </p>
           <p class="description">{post.data.description}</p>
+          <Tags tags={post.data.tags} />
         </article>
       </li>
     ))
