@@ -10,6 +10,7 @@ import {
   outDir,
   outputFiles,
   readPage,
+  sectionTitled,
   unchangedCopies,
 } from "./output";
 
@@ -208,10 +209,7 @@ describe("draft Posts", () => {
 });
 
 describe("latest Posts on Home", () => {
-  const section = readPage("index.html")
-    .querySelectorAll("main h2")
-    .find((heading) => heading.textContent.trim() === "Latest Posts")
-    ?.closest("section");
+  const section = sectionTitled(readPage("index.html"), "Latest Posts");
 
   it("shows the 3 newest published Posts, newest first", () => {
     expect(listedTitles(section?.querySelectorAll("article") ?? [])).toEqual(

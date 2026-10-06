@@ -9,6 +9,7 @@ import {
   outDir,
   outputFiles,
   readPage,
+  sectionTitled,
   unchangedCopies,
 } from "./output";
 
@@ -99,10 +100,7 @@ describe.each(publishedProjects())("$title detail page", (project) => {
 
 describe("featured Projects on Home", () => {
   const home = readPage("index.html");
-  const section = home
-    .querySelectorAll("main h2")
-    .find((heading) => heading.textContent.trim() === "Featured Projects")
-    ?.closest("section");
+  const section = sectionTitled(home, "Featured Projects");
   const cards = section?.querySelectorAll("article") ?? [];
   const shown = cards.map((card) =>
     card.querySelector("h3")?.textContent.trim(),

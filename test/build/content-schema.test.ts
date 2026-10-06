@@ -13,6 +13,7 @@ import {
   publishedPosts,
   publishedProjects,
 } from "./content";
+import { sectionTitled } from "./output";
 
 /**
  * Builds a copy of the site with one extra content file in `dir`, named
@@ -140,10 +141,7 @@ function buildWithFeatured({
 /** The titles of the Projects a copy's Home shows as featured, in order. */
 function featuredOnHome(root: string): string[] {
   const home = parse(readFileSync(path.join(root, "dist/index.html"), "utf8"));
-  const section = home
-    .querySelectorAll("main h2")
-    .find((heading) => heading.textContent.trim() === "Featured Projects")
-    ?.closest("section");
+  const section = sectionTitled(home, "Featured Projects");
   return (section?.querySelectorAll("article h3") ?? []).map((heading) =>
     heading.textContent.trim(),
   );
