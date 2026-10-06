@@ -78,7 +78,7 @@ The theme ships with the demo's project site settings, so change both before you
 
 ### GitHub Pages
 
-`.github/workflows/deploy.yml` deploys the site on every push to `main`. To turn it on, set **Settings → Pages → Source** to **GitHub Actions** in your repo. `.github/workflows/ci.yml` checks every pull request with Biome, type checking, both test suites and a build.
+`.github/workflows/deploy.yml` deploys the site on every push to `main`. To turn it on, set **Settings → Pages → Source** to **GitHub Actions** in your repo. `.github/workflows/ci.yml` checks every pull request with Biome, type checking, both test suites and a build. You can also run it on any branch from the **Actions** tab.
 
 For a custom domain, enter it under **Settings → Pages → Custom domain**, follow GitHub's instructions for your DNS records, then turn on **Enforce HTTPS**. You don't need a `CNAME` file, since the site deploys from a workflow.
 
