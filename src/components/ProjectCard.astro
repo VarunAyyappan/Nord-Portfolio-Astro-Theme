@@ -18,6 +18,7 @@ const Heading = `h${headingLevel}` as const;
 
 <article class="project-card">
   {
+    // sizes assumes two cards per row in the 48rem --content-width.
     cover && (
       <Image
         src={cover}

@@ -50,6 +50,11 @@
   --color-availability-selective: var(--nord13);
   --color-availability-not-looking: var(--nord11);
 
+  /* Layout: the readable width that page content, the header and the
+     footer share. The `sizes` hints on Project covers assume it, so change
+     them with it. */
+  --content-width: 48rem;
+
   /* Motion: how long hover and focus transitions take. */
   --motion-duration: 150ms;
   --motion-easing: ease-out;
@@ -116,7 +121,7 @@ main {
 /* A page's centered, readable-width container and its main heading. A page
    that needs something different overrides only that in its own styles. */
 .page {
-  max-width: 48rem;
+  max-width: var(--content-width);
   margin: 0 auto;
   padding: 3rem 1.5rem;
 }
