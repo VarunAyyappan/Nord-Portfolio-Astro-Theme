@@ -46,6 +46,14 @@ const Heading = `h${headingLevel}` as const;
     border: 1px solid var(--color-border);
     border-radius: 0.5rem;
     background-color: var(--color-surface);
+    transition-property: border-color, translate, outline-offset;
+    transition-duration: var(--motion-duration);
+    transition-timing-function: var(--motion-easing);
+  }
+
+  .project-card:hover {
+    border-color: var(--color-accent);
+    translate: 0 -0.125rem;
   }
 
   img {
@@ -72,7 +80,7 @@ const Heading = `h${headingLevel}` as const;
 
   /* The title link covers the whole card, so the card is one click target. */
   .title a {
-    text-decoration-line: none;
+    text-decoration-color: transparent;
   }
 
   .title a::after {
@@ -82,7 +90,7 @@ const Heading = `h${headingLevel}` as const;
   }
 
   .project-card:hover .title a {
-    text-decoration-line: underline;
+    text-decoration-color: var(--color-accent);
   }
 
   .project-card:has(:focus-visible) {

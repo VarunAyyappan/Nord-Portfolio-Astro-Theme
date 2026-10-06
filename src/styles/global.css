@@ -44,6 +44,10 @@
   --color-accent: light-dark(var(--nord10), var(--nord8));
   --color-border: light-dark(var(--nord4), var(--nord3));
 
+  /* Motion: how long hover and focus transitions take. */
+  --motion-duration: 150ms;
+  --motion-easing: ease-out;
+
   color-scheme: light dark;
 }
 
@@ -54,6 +58,27 @@
 
 :root[data-color-mode="light"] {
   color-scheme: light;
+}
+
+/*
+ * Motion: pages cross-fade into each other with native cross-document view
+ * transitions, CSS only, with no client router. Browsers without support
+ * navigate normally. Links, buttons and cards ease between their hover and
+ * focus states over --motion-duration. A link that underlines on hover keeps
+ * its underline and fades it in from transparent, since turning an underline
+ * on can't be eased. None of it runs under prefers-reduced-motion, so any
+ * new transition or animation must take its duration from --motion-duration.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0s;
+  }
 }
 
 *,
@@ -89,6 +114,14 @@ a {
   text-decoration-color: var(--color-accent);
   text-decoration-thickness: 0.125em;
   text-underline-offset: 0.25em;
+}
+
+a,
+button {
+  transition-property:
+    color, background-color, border-color, text-decoration-color, outline-offset;
+  transition-duration: var(--motion-duration);
+  transition-timing-function: var(--motion-easing);
 }
 
 :focus-visible {

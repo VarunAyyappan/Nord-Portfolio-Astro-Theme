@@ -89,13 +89,13 @@ const links = siteConfig.navigation.map(({ label, href }) => {
     display: block;
     padding: 0.5rem 0;
     color: var(--color-text-muted);
-    text-decoration-line: none;
+    text-decoration-color: transparent;
   }
 
   nav a:hover,
   nav a[aria-current] {
     color: var(--color-text);
-    text-decoration-line: underline;
+    text-decoration-color: var(--color-accent);
   }
 
   .menu-button {
@@ -111,6 +111,10 @@ const links = siteConfig.navigation.map(({ label, href }) => {
     color: var(--color-text);
     font-size: 1.5rem;
     cursor: pointer;
+  }
+
+  .menu-button:hover {
+    border-color: var(--color-accent);
   }
 
   /* Phone width with JavaScript: the button toggles the nav open and closed. */
