@@ -23,8 +23,8 @@ const next = page.url.next && withTrailingSlash(page.url.next);
 ---
 
 <BaseLayout title="Blog">
-  <section class="blog" aria-labelledby="blog-heading">
-    <h1 id="blog-heading">Blog</h1>
+  <section class="page" aria-labelledby="blog-heading">
+    <h1 class="page-heading" id="blog-heading">Blog</h1>
     <PostList posts={page.data} />
     {
       (prev || next) && (
@@ -46,12 +46,6 @@ const next = page.url.next && withTrailingSlash(page.url.next);
 </BaseLayout>
 
 <style>
-  .blog {
-    max-width: 48rem;
-    margin: 0 auto;
-    padding: 3rem 1.5rem;
-  }
-
   .pagination {
     display: flex;
     justify-content: space-between;
@@ -68,11 +62,7 @@ const next = page.url.next && withTrailingSlash(page.url.next);
     margin-left: auto;
   }
 
-  h1 {
-    margin: 0 0 2rem;
-    font-size: clamp(2rem, 6vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+  .page-heading {
+    margin-bottom: 2rem;
   }
 </style>

@@ -15,7 +15,7 @@ const { Content } = await render(about);
 ---
 
 <BaseLayout title="About">
-  <article class="about" aria-labelledby="about-heading">
+  <article class="page" aria-labelledby="about-heading">
     <header>
       {
         portrait && (
@@ -28,7 +28,7 @@ const { Content } = await render(about);
           />
         )
       }
-      <h1 id="about-heading">About</h1>
+      <h1 class="page-heading" id="about-heading">About</h1>
     </header>
     <Prose>
       <Content />
@@ -37,12 +37,6 @@ const { Content } = await render(about);
 </BaseLayout>
 
 <style>
-  .about {
-    max-width: 48rem;
-    margin: 0 auto;
-    padding: 3rem 1.5rem;
-  }
-
   header {
     display: flex;
     flex-wrap: wrap;
@@ -58,13 +52,5 @@ const { Content } = await render(about);
     aspect-ratio: 1;
     border-radius: 50%;
     object-fit: cover;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: clamp(2rem, 6vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
   }
 </style>

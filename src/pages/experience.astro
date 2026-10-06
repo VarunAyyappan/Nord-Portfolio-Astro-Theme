@@ -11,8 +11,8 @@ const education = await getEducation();
 ---
 
 <BaseLayout title="Experience">
-  <div class="experience">
-    <h1>Experience</h1>
+  <div class="page">
+    <h1 class="page-heading">Experience</h1>
     {
       siteConfig.resume && (
         <a class="resume" href={withBase(siteConfig.resume)} download>
@@ -71,20 +71,6 @@ const education = await getEducation();
 </BaseLayout>
 
 <style>
-  .experience {
-    max-width: 48rem;
-    margin: 0 auto;
-    padding: 3rem 1.5rem;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: clamp(2rem, 6vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-  }
-
   .resume {
     display: inline-block;
     margin-top: 1rem;

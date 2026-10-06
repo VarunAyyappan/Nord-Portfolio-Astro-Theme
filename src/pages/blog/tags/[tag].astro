@@ -20,24 +20,14 @@ const heading = `Posts tagged ${tag.name}`;
 ---
 
 <BaseLayout title={heading}>
-  <section class="tag" aria-labelledby="tag-heading">
-    <h1 id="tag-heading">{heading}</h1>
+  <section class="page" aria-labelledby="tag-heading">
+    <h1 class="page-heading" id="tag-heading">{heading}</h1>
     <PostList posts={tag.posts} />
   </section>
 </BaseLayout>
 
 <style>
-  .tag {
-    max-width: 48rem;
-    margin: 0 auto;
-    padding: 3rem 1.5rem;
-  }
-
-  h1 {
-    margin: 0 0 2rem;
-    font-size: clamp(2rem, 6vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+  .page-heading {
+    margin-bottom: 2rem;
   }
 </style>

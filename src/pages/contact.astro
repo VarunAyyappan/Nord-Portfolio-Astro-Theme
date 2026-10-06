@@ -16,8 +16,8 @@ const { Content } = await render(contact);
 ---
 
 <BaseLayout title="Contact">
-  <div class="contact">
-    <h1>Contact</h1>
+  <div class="page">
+    <h1 class="page-heading">Contact</h1>
     <Availability />
     <div class="intro">
       <Prose>
@@ -103,20 +103,6 @@ const { Content } = await render(contact);
 </BaseLayout>
 
 <style>
-  .contact {
-    max-width: 48rem;
-    margin: 0 auto;
-    padding: 3rem 1.5rem;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: clamp(2rem, 6vw, 3rem);
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-  }
-
   .intro {
     margin-top: 1.5rem;
   }

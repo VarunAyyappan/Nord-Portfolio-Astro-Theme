@@ -113,6 +113,22 @@ main {
   flex: 1;
 }
 
+/* A page's centered, readable-width container and its main heading. A page
+   that needs something different overrides only that in its own styles. */
+.page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.page-heading {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
 /* Links are text-colored with an accent underline, which keeps them at AA
    contrast in light mode, where the accent itself can't be used for text. */
 a {
