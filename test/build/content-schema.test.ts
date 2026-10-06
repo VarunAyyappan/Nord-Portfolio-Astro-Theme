@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
+import { parse } from "node-html-parser";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildCopy, removeCopy } from "./build-copy";
 import {
@@ -81,14 +82,18 @@ describe("Project frontmatter", () => {
 
 /**
  * Builds a copy of the site where only new Projects are featured: `published`
- * of them, plus `drafts` featured drafts. No filler Project is featured.
+ * of them, plus `drafts` featured drafts, each newer than every published
+ * one. No filler Project is featured. With `keepDrafts`, the build keeps
+ * drafts, as the dev server does.
  */
 function buildWithFeatured({
   published,
   drafts,
+  keepDrafts = false,
 }: {
   published: number;
   drafts: number;
+  keepDrafts?: boolean;
 }) {
   const projects = [
     ...Array.from({ length: published }, (_, i) => ({
@@ -100,7 +105,7 @@ function buildWithFeatured({
       draft: true,
     })),
   ];
-  const build = buildCopy((root) => {
+  const feature = (root: string) => {
     const copiedDir = path.join(
       root,
       path.relative(process.cwd(), projectsDir),
@@ -127,8 +132,21 @@ function buildWithFeatured({
         `---\n${frontmatter.join("\n")}\n---\n\nLorem ipsum.\n`,
       );
     });
-  });
+  };
+  const build = buildCopy(feature, { keepDrafts });
   return { ...build, titles: projects.map(({ title }) => title) };
+}
+
+/** The titles of the Projects a copy's Home shows as featured, in order. */
+function featuredOnHome(root: string): string[] {
+  const home = parse(readFileSync(path.join(root, "dist/index.html"), "utf8"));
+  const section = home
+    .querySelectorAll("main h2")
+    .find((heading) => heading.textContent.trim() === "Featured Projects")
+    ?.closest("section");
+  return (section?.querySelectorAll("article h3") ?? []).map((heading) =>
+    heading.textContent.trim(),
+  );
 }
 
 describe("featured Project limit", () => {
@@ -147,6 +165,36 @@ describe("featured Project limit", () => {
     root = build.root;
     expect(build.output).not.toContain("Up to 3 Projects can be featured");
     expect(build.status).toBe(0);
+  });
+
+  it("shows featured drafts, where drafts are kept, only in room the published ones leave", () => {
+    const build = buildWithFeatured({
+      published: 3,
+      drafts: 1,
+      keepDrafts: true,
+    });
+    root = build.root;
+    expect(build.status).toBe(0);
+    expect(featuredOnHome(build.root)).toEqual([
+      "Featured Project 3",
+      "Featured Project 2",
+      "Featured Project 1",
+    ]);
+  });
+
+  it("fills the room published ones leave with the newest featured drafts, where drafts are kept", () => {
+    const build = buildWithFeatured({
+      published: 1,
+      drafts: 3,
+      keepDrafts: true,
+    });
+    root = build.root;
+    expect(build.status).toBe(0);
+    expect(featuredOnHome(build.root)).toEqual([
+      "Featured Draft 3",
+      "Featured Draft 2",
+      "Featured Project 1",
+    ]);
   });
 });
 

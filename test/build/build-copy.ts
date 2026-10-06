@@ -31,9 +31,13 @@ export interface CopyBuild {
 
 /**
  * Builds a copy of the site after `change` edits it, given the copy's root
- * directory. The real site is never touched.
+ * directory. The real site is never touched. With `keepDrafts`, the build
+ * keeps drafts, as the dev server does.
  */
-export function buildCopy(change: (root: string) => void): CopyBuild {
+export function buildCopy(
+  change: (root: string) => void,
+  { keepDrafts = false }: { keepDrafts?: boolean } = {},
+): CopyBuild {
   const root = mkdtempSync(path.join(tmpdir(), "nord-theme-"));
   cpSync(process.cwd(), root, {
     recursive: true,
@@ -66,7 +70,8 @@ export function buildCopy(change: (root: string) => void): CopyBuild {
   const build = spawnSync(path.resolve("node_modules/.bin/astro"), ["build"], {
     cwd: root,
     encoding: "utf8",
-    env: { ...env, NODE_ENV: "production" },
+    // A non-production build keeps drafts.
+    env: { ...env, NODE_ENV: keepDrafts ? "development" : "production" },
   });
   return { root, status: build.status, output: build.stdout + build.stderr };
 }

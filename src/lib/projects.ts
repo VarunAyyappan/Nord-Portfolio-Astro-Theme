@@ -15,7 +15,7 @@ export function getProjects(): Promise<Project[]> {
 }
 
 /**
- * Every featured Project a Visitor can see, newest first, for Home. More
+ * Up to 3 featured Projects a Visitor can see, newest first, for Home. More
  * than 3 featured Projects that aren't drafts fails the build, naming them,
  * so the Adopter chooses what Home shows.
  */
@@ -36,7 +36,14 @@ export async function getFeaturedProjects(): Promise<Project[]> {
       `Up to ${featuredLimit} Projects can be featured, but ${published.length} are: ${names}. Drafts don't count. Set featured: false on the rest.`,
     );
   }
-  return featured;
+  // Featured drafts fill only the room the published ones leave, newest
+  // first, so Home still shows 3 at most.
+  const previewed = featured
+    .filter((project) => project.data.draft)
+    .slice(0, featuredLimit - published.length);
+  return featured.filter(
+    (project) => !project.data.draft || previewed.includes(project),
+  );
 }
 
 /** The site path of a Project's detail page, before the base path. */

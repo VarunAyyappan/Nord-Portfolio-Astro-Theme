@@ -44,7 +44,8 @@ const projects = defineCollection({
       cover: image().optional(),
       /**
        * Shows the Project on Home, newest first. Feature up to three
-       * Projects: more fails the build. Drafts don't count.
+       * Projects: more fails the build. Drafts don't count, and in the
+       * dev server fill only the room the published ones leave.
        */
       featured: z.boolean().default(false),
       /** Shows the Project in the dev server only, never in a build. */
