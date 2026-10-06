@@ -1,0 +1,70 @@
+---
+import { Image } from "astro:assets";
+import { getEntry, render } from "astro:content";
+import Prose from "../components/Prose.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../site.config";
+
+const about = await getEntry("about", "about");
+if (!about) {
+  throw new Error("The About Section needs src/content/about/about.md");
+}
+const { portrait, portraitAlt = `Portrait of ${siteConfig.name}` } =
+  about.data;
+const { Content } = await render(about);
+---
+
+<BaseLayout title="About">
+  <article class="about" aria-labelledby="about-heading">
+    <header>
+      {
+        portrait && (
+          <Image
+            src={portrait}
+            alt={portraitAlt}
+            widths={[160, 320]}
+            sizes="10rem"
+            loading="eager"
+          />
+        )
+      }
+      <h1 id="about-heading">About</h1>
+    </header>
+    <Prose>
+      <Content />
+    </Prose>
+  </article>
+</BaseLayout>
+
+<style>
+  .about {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  img {
+    display: block;
+    width: 10rem;
+    height: auto;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+</style>

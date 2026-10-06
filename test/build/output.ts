@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
-import { parse } from "node-html-parser";
+import { type HTMLElement, parse } from "node-html-parser";
 import { siteConfig } from "../../src/site.config";
 
 /** The production build output directory. */
@@ -8,6 +8,18 @@ export const outDir = path.resolve("dist");
 
 /** The base path with a trailing slash, e.g. "/Nord-Portfolio-Astro-Theme/". */
 export const basePath = `${siteConfig.base.replace(/\/$/, "")}/`;
+
+/** The hrefs of the social links Site config sets, and only those. */
+export const socialHrefs = Object.entries(siteConfig.social)
+  .filter(([, value]) => value)
+  .map(([network, value]) =>
+    network === "email" ? `mailto:${value}` : String(value),
+  );
+
+/** The URL path of a site path such as "/projects/", under the base path. */
+export function sitePath(path: string): string {
+  return `${basePath}${path.replace(/^\//, "")}`;
+}
 
 /** Every file in the build output, as paths relative to `outDir`. */
 export function outputFiles(dir = outDir): string[] {
@@ -61,4 +73,35 @@ export function resolveToFile(urlPath: string): string | undefined {
 export function headingAt(urlPath: string): string | undefined {
   const file = resolveToFile(urlPath);
   return file && readPage(file).querySelector("main h1")?.textContent.trim();
+}
+
+/** The `<section>` of a page whose `<h2>` heading is `heading`. */
+export function sectionTitled(page: HTMLElement, heading: string) {
+  return page
+    .querySelectorAll("main h2")
+    .find((h2) => h2.textContent.trim() === heading)
+    ?.closest("section");
+}
+
+/** Every image URL the given `<img>` elements can load, from `src` and `srcset`. */
+export function imageUrls(images: HTMLElement[]): string[] {
+  return images.flatMap((image) => [
+    image.getAttribute("src") ?? "",
+    ...(image
+      .getAttribute("srcset")
+      ?.split(",")
+      .map((candidate) => candidate.trim().split(/\s+/)[0]) ?? []),
+  ]);
+}
+
+/**
+ * The output files that are byte-for-byte copies of any of the given source
+ * files, as paths relative to `outDir`.
+ */
+export function unchangedCopies(sources: string[]): string[] {
+  const originals = sources.map((source) => readFileSync(source));
+  return outputFiles().filter((file) => {
+    const output = readFileSync(path.join(outDir, file));
+    return originals.some((original) => original.equals(output));
+  });
 }

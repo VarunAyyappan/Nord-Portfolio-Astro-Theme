@@ -3,7 +3,14 @@ import path from "node:path";
 import type { HTMLElement } from "node-html-parser";
 import { describe, expect, it } from "vitest";
 import { projectSources, publishedProjects } from "./content";
-import { basePath, outDir, outputFiles, readPage } from "./output";
+import {
+  basePath,
+  imageUrls,
+  outDir,
+  outputFiles,
+  readPage,
+  unchangedCopies,
+} from "./output";
 
 /** The `datetime` of every `<time>` in the given elements, as timestamps. */
 function times(elements: HTMLElement[]) {
@@ -142,29 +149,14 @@ describe("Project cover images", () => {
     "main article",
   );
 
-  /** Every image URL an `<img>` can load, from `src` and `srcset`. */
-  const imageUrls = (images: HTMLElement[]) =>
-    images.flatMap((image) => [
-      image.getAttribute("src") ?? "",
-      ...(image
-        .getAttribute("srcset")
-        ?.split(",")
-        .map((candidate) => candidate.trim().split(/\s+/)[0]) ?? []),
-    ]);
-
   it("exist in the filler content", () => {
     expect(withCovers.length).toBeGreaterThan(0);
   });
 
   it("are never copied to the output unchanged", () => {
-    const originals = withCovers.map((project) =>
-      readFileSync(project.cover ?? ""),
-    );
-    const copies = outputFiles().filter((file) => {
-      const output = readFileSync(path.join(outDir, file));
-      return originals.some((original) => original.equals(output));
-    });
-    expect(copies).toEqual([]);
+    expect(
+      unchangedCopies(withCovers.map((project) => project.cover ?? "")),
+    ).toEqual([]);
   });
 
   describe.each(publishedProjects())("$title", (project) => {

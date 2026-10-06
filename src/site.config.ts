@@ -27,6 +27,18 @@ export interface SiteConfig {
    * download link.
    */
   resume?: string;
+  /**
+   * The Adopter's Skills, shown on Home in groups, in this order. Leave the
+   * list empty and Home shows no Skills.
+   */
+  skills: SkillGroup[];
+}
+
+/** Skills listed together on Home under one heading. */
+export interface SkillGroup {
+  /** E.g. "Languages" or "Tools". */
+  heading: string;
+  skills: string[];
 }
 
 /** A link in the header navigation. */
@@ -64,6 +76,8 @@ export const siteConfig: SiteConfig = {
     { label: "Projects", href: "/projects/" },
     { label: "Blog", href: "/blog/" },
     { label: "Experience", href: "/experience/" },
+    { label: "About", href: "/about/" },
+    { label: "Contact", href: "/contact/" },
   ],
   // Placeholders that can never belong to a real account: GitHub and
   // LinkedIn don't allow underscores in usernames, X doesn't allow hyphens,
@@ -78,4 +92,18 @@ export const siteConfig: SiteConfig = {
     email: "ada@example.com",
   },
   resume: "/resume.pdf",
+  skills: [
+    {
+      heading: "Languages",
+      skills: ["English", "French", "Italian", "Note G"],
+    },
+    {
+      heading: "Mathematics",
+      skills: ["Bernoulli numbers", "Calculus", "Probability"],
+    },
+    {
+      heading: "Machines",
+      skills: ["Analytical Engine", "Difference Engine", "Jacquard loom"],
+    },
+  ],
 };

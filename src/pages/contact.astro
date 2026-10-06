@@ -1,0 +1,107 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { emailLink, networkLinks } from "../lib/social";
+---
+
+<BaseLayout title="Contact">
+  <div class="contact">
+    <h1>Contact</h1>
+    {
+      emailLink && (
+        <a class="email" href={emailLink.href}>
+          <emailLink.Icon />
+          {emailLink.email}
+        </a>
+      )
+    }
+    {
+      networkLinks.length > 0 && (
+        <section aria-labelledby="elsewhere-heading">
+          <h2 id="elsewhere-heading">Elsewhere</h2>
+          <ul class="networks">
+            {networkLinks.map(({ label, href, Icon }) => (
+              <li>
+                <a href={href} rel="me">
+                  <Icon />
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .contact {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .email {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2rem;
+    font-size: clamp(1.25rem, 4vw, 1.75rem);
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .email :global(svg) {
+    flex: none;
+    color: var(--color-accent);
+  }
+
+  section {
+    margin-top: 3rem;
+  }
+
+  h2 {
+    margin: 0 0 1.5rem;
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+
+  .networks {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .networks a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background-color: var(--color-surface);
+    font-weight: 600;
+    text-decoration-line: none;
+  }
+
+  .networks a:hover {
+    border-color: var(--color-accent);
+    text-decoration-line: underline;
+  }
+
+  .networks :global(svg) {
+    flex: none;
+    font-size: 1.25rem;
+  }
+</style>

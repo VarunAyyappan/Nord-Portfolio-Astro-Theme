@@ -16,6 +16,16 @@ const latestPosts = await getLatestPosts();
     <h1 id="hero-name">{siteConfig.name}</h1>
     <p class="tagline">{siteConfig.tagline}</p>
     <p class="intro">{siteConfig.intro}</p>
+    <ul class="actions">
+      <li>
+        <a class="button primary" href={withBase("/projects/")}>
+          View Projects
+        </a>
+      </li>
+      <li>
+        <a class="button" href={withBase("/contact/")}>Get in touch</a>
+      </li>
+    </ul>
   </section>
   {
     featuredProjects.length > 0 && (
@@ -39,19 +49,40 @@ const latestPosts = await getLatestPosts();
       </section>
     )
   }
+  {
+    siteConfig.skills.length > 0 && (
+      <section class="skills" aria-labelledby="skills-heading">
+        <h2 id="skills-heading">Skills</h2>
+        <div class="skill-groups">
+          {siteConfig.skills.map(({ heading, skills }) => (
+            <div>
+              <h3>{heading}</h3>
+              <ul>
+                {skills.map((skill) => (
+                  <li>{skill}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
 </BaseLayout>
 
 <style>
   .hero,
   .featured,
-  .latest {
+  .latest,
+  .skills {
     max-width: 48rem;
     margin: 0 auto;
     padding: clamp(3rem, 12vw, 8rem) 1.5rem;
   }
 
   .featured,
-  .latest {
+  .latest,
+  .skills {
     padding-top: 0;
   }
 
@@ -85,6 +116,38 @@ const latestPosts = await getLatestPosts();
     background-color: var(--color-accent);
   }
 
+  .skill-groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 1.5rem;
+  }
+
+  h3 {
+    margin: 0 0 0.75rem;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .skill-groups ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .skill-groups li {
+    padding: 0.25rem 0.75rem;
+    border-left: 0.1875rem solid var(--color-accent);
+    border-radius: 0.25rem;
+    background-color: var(--color-surface);
+    font-size: 0.9375rem;
+  }
+
   .tagline {
     margin: 1.5rem 0 0;
     font-size: clamp(1.25rem, 3vw, 1.5rem);
@@ -95,5 +158,40 @@ const latestPosts = await getLatestPosts();
     margin: 1rem 0 0;
     color: var(--color-text-muted);
     font-size: 1.125rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin: 2rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 0.625rem 1.25rem;
+    border: 0.125rem solid var(--color-accent);
+    border-radius: 0.375rem;
+    font-weight: 600;
+    text-decoration-line: none;
+  }
+
+  .button:hover {
+    background-color: var(--color-surface);
+  }
+
+  /* Text and background colors swapped, which keeps the button at AA
+     contrast in both Color modes. */
+  .button.primary {
+    border-color: var(--color-text);
+    background-color: var(--color-text);
+    color: var(--color-background);
+  }
+
+  .button.primary:hover {
+    border-color: var(--color-text-muted);
+    background-color: var(--color-text-muted);
   }
 </style>

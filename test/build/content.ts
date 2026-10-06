@@ -13,6 +13,9 @@ export const experienceDir = path.resolve("src/content/experience");
 /** Where the Adopter writes Education entries, one YAML file each. */
 export const educationDir = path.resolve("src/content/education");
 
+/** Where the Adopter writes the About Section, as about.md. */
+export const aboutDir = path.resolve("src/content/about");
+
 /** The frontmatter fields the tests read from a Project's Markdown file. */
 export interface ProjectSource {
   /** The file name without `.md`, which is the Project's id in its URL. */
@@ -179,4 +182,22 @@ export function educationSources(): EntrySource[] {
     title: field(source, "qualification") ?? "",
     ...entryDates(source),
   }));
+}
+
+/** What the tests read from the About Section's Markdown file. */
+export interface AboutSource {
+  /** The absolute path of the portrait image file, if there is one. */
+  portrait?: string;
+  /** The first paragraph of the Markdown body, as plain text. */
+  firstParagraph: string;
+}
+
+/** The About Section's Markdown file. */
+export function aboutSource(): AboutSource {
+  const [about] = markdownFiles(aboutDir);
+  const portrait = field(about.frontmatter, "portrait");
+  return {
+    portrait: portrait && path.resolve(aboutDir, portrait),
+    firstParagraph: firstParagraph(about.body),
+  };
 }

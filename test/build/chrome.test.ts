@@ -7,23 +7,18 @@ import {
   outputFiles,
   readPage,
   resolveToFile,
+  sitePath,
+  socialHrefs,
 } from "./output";
 
 /** Where a Site config navigation entry should link under the base path. */
 const navTargets = siteConfig.navigation.map(({ label, href }) => ({
   label,
-  href: `${basePath}${href.replace(/^\//, "")}`,
+  href: sitePath(href),
 }));
 
 /** Where the footer's RSS link should point under the base path. */
-const feedHref = `${basePath}rss.xml`;
-
-/** The footer links Site config asks for: only the social links it sets. */
-const socialTargets = Object.entries(siteConfig.social)
-  .filter(([, value]) => value)
-  .map(([network, value]) =>
-    network === "email" ? `mailto:${value}` : String(value),
-  );
+const feedHref = sitePath("/rss.xml");
 
 describe("site chrome", () => {
   it("builds a 404 page", () => {
@@ -110,7 +105,7 @@ describe("site chrome", () => {
       const hrefs = page
         .querySelectorAll("body > footer a")
         .map((link) => link.getAttribute("href"));
-      expect(hrefs.toSorted()).toEqual([...socialTargets, feedHref].toSorted());
+      expect(hrefs.toSorted()).toEqual([...socialHrefs, feedHref].toSorted());
     });
 
     it("lets feed readers discover the RSS feed from the head", () => {

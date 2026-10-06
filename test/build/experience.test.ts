@@ -9,7 +9,13 @@ import {
   educationSources,
   experienceSources,
 } from "./content";
-import { basePath, outDir, readPage, resolveToFile } from "./output";
+import {
+  outDir,
+  readPage,
+  resolveToFile,
+  sectionTitled,
+  sitePath,
+} from "./output";
 
 /** Current entries first, then by start date, newest first. */
 function inDisplayOrder(entries: EntrySource[]) {
@@ -20,14 +26,6 @@ function inDisplayOrder(entries: EntrySource[]) {
         b.start.valueOf() - a.start.valueOf(),
     )
     .map((entry) => entry.title);
-}
-
-/** The `<section>` of the Experience page whose heading is `heading`. */
-function sectionTitled(page: HTMLElement, heading: string) {
-  return page
-    .querySelectorAll("main h2")
-    .find((h2) => h2.textContent.trim() === heading)
-    ?.closest("section");
 }
 
 /** The titles of the entries in a section, in page order. */
@@ -98,9 +96,7 @@ describe("résumé link, when Site config sets a résumé", () => {
 
   it("appears once on the Experience page", () => {
     expect(links).toHaveLength(1);
-    expect(href).toBe(
-      `${basePath}${siteConfig.resume?.replace(/^\//, "") ?? ""}`,
-    );
+    expect(href).toBe(sitePath(siteConfig.resume ?? ""));
   });
 
   it("resolves to a PDF", () => {

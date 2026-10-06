@@ -111,4 +111,29 @@ const education = defineCollection({
   }),
 });
 
-export const collections = { projects, posts, experience, education };
+/**
+ * The About Section: the single Markdown file src/content/about/about.md,
+ * rendered on the About page. A frontmatter field that doesn't match this
+ * schema fails the build.
+ */
+const about = defineCollection({
+  loader: glob({ pattern: "about.md", base: "./src/content/about" }),
+  schema: ({ image }) =>
+    z.object({
+      /**
+       * An image path relative to the Markdown file. It is resized and
+       * converted at build time. Leave it out and the page shows no portrait.
+       */
+      portrait: image().optional(),
+      /** Describes the portrait. Defaults to "Portrait of <name>". */
+      portraitAlt: z.string().optional(),
+    }),
+});
+
+export const collections = {
+  projects,
+  posts,
+  experience,
+  education,
+  about,
+};

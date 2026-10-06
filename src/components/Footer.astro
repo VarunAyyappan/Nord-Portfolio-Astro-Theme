@@ -1,24 +1,9 @@
 ---
 import { feedPath } from "../lib/posts";
+import { socialLinks } from "../lib/social";
 import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
-import BlueskyIcon from "./icons/Bluesky.astro";
-import EmailIcon from "./icons/Email.astro";
-import GitHubIcon from "./icons/GitHub.astro";
-import LinkedInIcon from "./icons/LinkedIn.astro";
-import MastodonIcon from "./icons/Mastodon.astro";
 import RssIcon from "./icons/Rss.astro";
-import XIcon from "./icons/X.astro";
-
-const { github, linkedin, mastodon, bluesky, x, email } = siteConfig.social;
-const socialLinks = [
-  { label: "GitHub", href: github, Icon: GitHubIcon },
-  { label: "LinkedIn", href: linkedin, Icon: LinkedInIcon },
-  { label: "Mastodon", href: mastodon, Icon: MastodonIcon },
-  { label: "Bluesky", href: bluesky, Icon: BlueskyIcon },
-  { label: "X", href: x, Icon: XIcon },
-  { label: "Email", href: email && `mailto:${email}`, Icon: EmailIcon },
-].filter((link) => link.href);
 ---
 
 <footer class="site-footer">
