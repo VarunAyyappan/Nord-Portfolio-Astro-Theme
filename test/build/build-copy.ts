@@ -1,5 +1,12 @@
 import { spawnSync } from "node:child_process";
-import { cpSync, mkdtempSync, rmSync, symlinkSync } from "node:fs";
+import {
+  cpSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  rmSync,
+  symlinkSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
@@ -32,7 +39,18 @@ export function buildCopy(change: (root: string) => void): CopyBuild {
     recursive: true,
     filter: (source) => !skipped.has(path.basename(source)),
   });
-  symlinkSync(path.resolve("node_modules"), path.join(root, "node_modules"));
+  // Links each package rather than the whole node_modules, leaving out its
+  // dot-directories: Astro and Vite cache there (.astro holds the content
+  // data store, .vite the optimized deps), and copies built at the same time
+  // would read and overwrite each other's caches.
+  mkdirSync(path.join(root, "node_modules"));
+  for (const entry of readdirSync("node_modules")) {
+    if (entry.startsWith(".")) continue;
+    symlinkSync(
+      path.resolve("node_modules", entry),
+      path.join(root, "node_modules", entry),
+    );
+  }
   change(root);
   const build = spawnSync(path.resolve("node_modules/.bin/astro"), ["build"], {
     cwd: root,
