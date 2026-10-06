@@ -1,4 +1,5 @@
-import { type CollectionEntry, getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { getVisible } from "./visible";
 
 export type Project = CollectionEntry<"projects">;
 
@@ -6,17 +7,10 @@ export type Project = CollectionEntry<"projects">;
 const featuredLimit = 3;
 
 /**
- * Every Project a Visitor can see, newest first. Drafts are included in the
- * dev server, so the Adopter can preview them, and left out of a build.
+ * Every Project a Visitor can see, newest first. Drafts show in dev only.
  */
-export async function getProjects(): Promise<Project[]> {
-  const projects = await getCollection(
-    "projects",
-    ({ data }) => !(import.meta.env.PROD && data.draft),
-  );
-  return projects.toSorted(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-  );
+export function getProjects(): Promise<Project[]> {
+  return getVisible("projects");
 }
 
 /** The newest featured Projects, for Home. */

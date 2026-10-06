@@ -1,4 +1,5 @@
-import { type CollectionEntry, getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import { getVisible } from "./visible";
 
 export type Post = CollectionEntry<"posts">;
 
@@ -8,18 +9,9 @@ export const postsPerPage = 10;
 /** How many of the newest Posts Home shows. */
 const latestLimit = 3;
 
-/**
- * Every Post a Visitor can see, newest first. Drafts are included in the dev
- * server, so the Adopter can preview them, and left out of a build.
- */
-export async function getPosts(): Promise<Post[]> {
-  const posts = await getCollection(
-    "posts",
-    ({ data }) => !(import.meta.env.PROD && data.draft),
-  );
-  return posts.toSorted(
-    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
-  );
+/** Every Post a Visitor can see, newest first. Drafts show in dev only. */
+export function getPosts(): Promise<Post[]> {
+  return getVisible("posts");
 }
 
 /** The newest Posts, for Home. */
