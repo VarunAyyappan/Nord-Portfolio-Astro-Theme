@@ -1,4 +1,5 @@
 import type { CollectionEntry } from "astro:content";
+import { sectionPaths } from "./sections";
 import { getVisible } from "./visible";
 
 export type Project = CollectionEntry<"projects">;
@@ -23,5 +24,5 @@ export async function getFeaturedProjects(): Promise<Project[]> {
 
 /** The site path of a Project's detail page, before the base path. */
 export function projectPath(project: Project): string {
-  return `/projects/${project.id}/`;
+  return `${sectionPaths.projects}${project.id}/`;
 }

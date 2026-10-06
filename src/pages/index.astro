@@ -5,6 +5,7 @@ import ProjectGrid from "../components/ProjectGrid.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getLatestPosts } from "../lib/posts";
 import { getFeaturedProjects } from "../lib/projects";
+import { sectionPaths } from "../lib/sections";
 import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
 
@@ -20,12 +21,12 @@ const latestPosts = await getLatestPosts();
     <p class="intro">{siteConfig.intro}</p>
     <ul class="actions">
       <li>
-        <a class="button primary" href={withBase("/projects/")}>
+        <a class="button primary" href={withBase(sectionPaths.projects)}>
           View Projects
         </a>
       </li>
       <li>
-        <a class="button" href={withBase("/contact/")}>Get in touch</a>
+        <a class="button" href={withBase(sectionPaths.contact)}>Get in touch</a>
       </li>
     </ul>
   </section>
@@ -34,7 +35,7 @@ const latestPosts = await getLatestPosts();
       <section class="featured" aria-labelledby="featured-heading">
         <h2 id="featured-heading">Featured Projects</h2>
         <ProjectGrid projects={featuredProjects} headingLevel={3} />
-        <a class="all" href={withBase("/projects/")}>
+        <a class="all" href={withBase(sectionPaths.projects)}>
           All Projects
         </a>
       </section>
@@ -45,7 +46,7 @@ const latestPosts = await getLatestPosts();
       <section class="latest" aria-labelledby="latest-heading">
         <h2 id="latest-heading">Latest Posts</h2>
         <PostList posts={latestPosts} headingLevel={3} />
-        <a class="all" href={withBase("/blog/")}>
+        <a class="all" href={withBase(sectionPaths.blog)}>
           All Posts
         </a>
       </section>

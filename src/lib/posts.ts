@@ -1,4 +1,5 @@
 import type { CollectionEntry } from "astro:content";
+import { sectionPaths } from "./sections";
 import { getVisible } from "./visible";
 
 export type Post = CollectionEntry<"posts">;
@@ -25,7 +26,7 @@ export const feedPath = "/rss.xml";
 
 /** The site path of a Post's page, before the base path. */
 export function postPath(post: Post): string {
-  return `/blog/${post.id}/`;
+  return `${sectionPaths.blog}${post.id}/`;
 }
 
 /** An average adult's silent reading speed. */
@@ -77,5 +78,5 @@ export async function getTags(): Promise<Tag[]> {
 
 /** The site path of a Tag's page, before the base path. */
 export function tagPath(name: string): string {
-  return `/blog/tags/${tagSlug(name)}/`;
+  return `${sectionPaths.blog}tags/${tagSlug(name)}/`;
 }

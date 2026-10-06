@@ -1,3 +1,5 @@
+import { sectionPaths } from "./lib/sections";
+
 /**
  * Site config: the single place where an Adopter sets their identity.
  *
@@ -64,7 +66,10 @@ export interface SkillGroup {
 export interface NavLink {
   /** The text shown for the link. */
   label: string;
-  /** A path on this site, starting with "/". The base path is added for you. */
+  /**
+   * A path on this site, starting with "/", e.g. `sectionPaths.blog` or
+   * "/uses/". The base path is added for you.
+   */
   href: string;
 }
 
@@ -106,13 +111,15 @@ export const siteConfig: SiteConfig = {
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.",
   url: "https://varunayyappan.github.io",
   base: "/Nord-Portfolio-Astro-Theme",
+  // Each Section's path is in src/lib/sections.ts, e.g. sectionPaths.blog is
+  // "/blog/". To link to a page of your own, type its path, e.g. "/uses/".
   navigation: [
-    { label: "Home", href: "/" },
-    { label: "Projects", href: "/projects/" },
-    { label: "Blog", href: "/blog/" },
-    { label: "Experience", href: "/experience/" },
-    { label: "About", href: "/about/" },
-    { label: "Contact", href: "/contact/" },
+    { label: "Home", href: sectionPaths.home },
+    { label: "Projects", href: sectionPaths.projects },
+    { label: "Blog", href: sectionPaths.blog },
+    { label: "Experience", href: sectionPaths.experience },
+    { label: "About", href: sectionPaths.about },
+    { label: "Contact", href: sectionPaths.contact },
   ],
   // Placeholders that can never belong to a real account: GitHub and
   // LinkedIn don't allow underscores in usernames, X doesn't allow hyphens,
