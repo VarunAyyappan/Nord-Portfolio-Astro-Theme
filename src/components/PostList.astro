@@ -1,7 +1,7 @@
 ---
-import { formatDay } from "../lib/date";
 import { type Post, postPath } from "../lib/posts";
 import { withBase } from "../lib/url";
+import PostMeta from "./PostMeta.astro";
 import Tags from "./Tags.astro";
 
 interface Props {
@@ -22,12 +22,7 @@ const Heading = `h${headingLevel}` as const;
           <Heading class="title">
             <a href={withBase(postPath(post))}>{post.data.title}</a>
           </Heading>
-          <p class="meta">
-            <time datetime={post.data.date.toISOString()}>
-              {formatDay(post.data.date)}
-            </time>
-            {post.data.draft && <span class="draft">Draft</span>}
-          </p>
+          <PostMeta post={post} />
           <p class="description">{post.data.description}</p>
           <Tags tags={post.data.tags} />
         </article>
@@ -64,19 +59,6 @@ const Heading = `h${headingLevel}` as const;
 
   .title a:hover {
     text-decoration-color: var(--color-accent);
-  }
-
-  .meta {
-    display: flex;
-    gap: 0.75rem;
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-  }
-
-  .draft {
-    font-weight: 700;
-    text-transform: uppercase;
   }
 
   .description {

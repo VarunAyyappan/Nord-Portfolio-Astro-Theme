@@ -1,0 +1,43 @@
+---
+import { formatDay } from "../lib/date";
+import { type Post, readingMinutes } from "../lib/posts";
+import DraftBadge from "./DraftBadge.astro";
+
+interface Props {
+  post: Post;
+  /** Also shows the updated date and reading time, as the Post page does. */
+  detailed?: boolean;
+}
+
+const { post, detailed = false } = Astro.props;
+const { date, updated, draft } = post.data;
+---
+
+<p class:list={["meta", { detailed }]}>
+  <time datetime={date.toISOString()}>{formatDay(date)}</time>
+  {
+    detailed && updated && (
+      <span>
+        Updated{" "}
+        <time datetime={updated.toISOString()}>{formatDay(updated)}</time>
+      </span>
+    )
+  }
+  {detailed && <span>{readingMinutes(post)} min read</span>}
+  {draft && <DraftBadge />}
+</p>
+
+<style>
+  .meta {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+
+  .meta.detailed {
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+  }
+</style>

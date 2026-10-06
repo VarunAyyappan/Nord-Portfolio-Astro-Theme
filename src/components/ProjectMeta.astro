@@ -1,6 +1,7 @@
 ---
 import { formatMonth } from "../lib/date";
 import type { Project } from "../lib/projects";
+import DraftBadge from "./DraftBadge.astro";
 
 interface Props {
   project: Project;
@@ -11,7 +12,7 @@ const { date, draft } = Astro.props.project.data;
 
 <p class="meta">
   <time datetime={date.toISOString()}>{formatMonth(date)}</time>
-  {draft && <span class="draft">Draft</span>}
+  {draft && <DraftBadge />}
 </p>
 
 <style>
@@ -21,10 +22,5 @@ const { date, draft } = Astro.props.project.data;
     margin: 0;
     color: var(--color-text-muted);
     font-size: 0.875rem;
-  }
-
-  .draft {
-    font-weight: 700;
-    text-transform: uppercase;
   }
 </style>

@@ -1,10 +1,10 @@
 ---
 import { render } from "astro:content";
+import PostMeta from "../../components/PostMeta.astro";
 import Prose from "../../components/Prose.astro";
 import Tags from "../../components/Tags.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { formatDay } from "../../lib/date";
-import { getPosts, type Post, readingMinutes } from "../../lib/posts";
+import { getPosts, type Post } from "../../lib/posts";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -19,7 +19,7 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, date, updated, tags, draft } = post.data;
+const { title, description, tags } = post.data;
 const { Content } = await render(post);
 ---
 
@@ -28,19 +28,7 @@ const { Content } = await render(post);
     <header>
       <h1 id="post-title">{title}</h1>
       <p class="description">{description}</p>
-      <p class="meta">
-        <time datetime={date.toISOString()}>{formatDay(date)}</time>
-        {
-          updated && (
-            <span>
-              Updated{" "}
-              <time datetime={updated.toISOString()}>{formatDay(updated)}</time>
-            </span>
-          )
-        }
-        <span>{readingMinutes(post)} min read</span>
-        {draft && <span class="draft">Draft</span>}
-      </p>
+      <PostMeta post={post} detailed />
       <Tags tags={tags} />
     </header>
     <Prose>
@@ -75,19 +63,5 @@ const { Content } = await render(post);
     margin: 0;
     color: var(--color-text-muted);
     font-size: 1.25rem;
-  }
-
-  .meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.25rem 1.25rem;
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-  }
-
-  .draft {
-    font-weight: 700;
-    text-transform: uppercase;
   }
 </style>

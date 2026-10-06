@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import type { HTMLElement } from "node-html-parser";
 import { describe, expect, it } from "vitest";
+import { formatDay } from "../../src/lib/date";
 import { postSources, publishedPosts } from "./content";
 import { basePath, headingAt, outDir, outputFiles, readPage } from "./output";
 
@@ -25,6 +26,7 @@ describe("Blog index", () => {
   const published = publishedPosts();
   const firstPage =
     readPage("blog/index.html").querySelectorAll("main article");
+  const indexPages = ["blog/index.html", "blog/2/index.html"];
 
   it("has more published Posts than fit on one page", () => {
     expect(published.length).toBeGreaterThan(pageSize);
@@ -44,7 +46,26 @@ describe("Blog index", () => {
     );
   });
 
-  it.each(["blog/index.html", "blog/2/index.html"])(
+  it.each(indexPages)("dates each listed Post on %s", (file) => {
+    const byTitle = new Map(published.map((post) => [post.title, post]));
+    for (const article of readPage(file).querySelectorAll("main article")) {
+      const [title] = listedTitles([article]);
+      const post = byTitle.get(title ?? "");
+      expect(
+        article.querySelectorAll("time").map((time) => ({
+          datetime: time.getAttribute("datetime"),
+          text: time.textContent.trim(),
+        })),
+      ).toEqual([
+        {
+          datetime: post?.date.toISOString(),
+          text: post && formatDay(post.date),
+        },
+      ]);
+    }
+  });
+
+  it.each(indexPages)(
     "links each listed Post's Tags to their pages on %s",
     (file) => {
       const byTitle = new Map(published.map((post) => [post.title, post]));
