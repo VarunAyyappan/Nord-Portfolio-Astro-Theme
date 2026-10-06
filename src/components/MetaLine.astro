@@ -1,0 +1,26 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+/**
+ * The muted line of small text under a title, such as a Post's date or an
+ * entry's dates and location. Pass `class` to override its layout from the
+ * component that uses it: that component's scoped styles reach this line
+ * because Astro passes its scope attribute in with the other attributes.
+ */
+type Props = HTMLAttributes<"p">;
+
+const { class: className, ...attributes } = Astro.props;
+---
+
+<p class:list={["meta", className]} {...attributes}><slot /></p>
+
+<style>
+  /* :where() keeps these below any override the using component passes. */
+  :where(.meta) {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+</style>

@@ -2,6 +2,7 @@
 import { formatMonth } from "../lib/date";
 import type { Project } from "../lib/projects";
 import DraftBadge from "./DraftBadge.astro";
+import MetaLine from "./MetaLine.astro";
 
 interface Props {
   project: Project;
@@ -10,17 +11,7 @@ interface Props {
 const { date, draft } = Astro.props.project.data;
 ---
 
-<p class="meta">
+<MetaLine>
   <time datetime={date.toISOString()}>{formatMonth(date)}</time>
   {draft && <DraftBadge />}
-</p>
-
-<style>
-  .meta {
-    display: flex;
-    gap: 0.75rem;
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-  }
-</style>
+</MetaLine>

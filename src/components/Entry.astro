@@ -1,5 +1,6 @@
 ---
 import { formatMonth } from "../lib/date";
+import MetaLine from "./MetaLine.astro";
 
 /** The line under an entry's subtitle: its dates and location. */
 interface EntryMeta {
@@ -24,14 +25,14 @@ const { start, end, location } = meta;
 <article class="entry">
   <h3 class="title">{title}</h3>
   <p class="subtitle">{subtitle}</p>
-  <p class="meta">
+  <MetaLine class="entry-meta">
     <span>
       <time datetime={start.toISOString()}>{formatMonth(start)}</time>
       –
       {end ? <time datetime={end.toISOString()}>{formatMonth(end)}</time> : "Present"}
     </span>
     {location && <span>{location}</span>}
-  </p>
+  </MetaLine>
   <slot />
 </article>
 
@@ -53,12 +54,8 @@ const { start, end, location } = meta;
     font-weight: 600;
   }
 
-  .meta {
-    display: flex;
+  .entry-meta {
     flex-wrap: wrap;
     gap: 0 0.75rem;
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
   }
 </style>
