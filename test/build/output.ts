@@ -9,6 +9,9 @@ export const outDir = path.resolve("dist");
 /** The base path with a trailing slash, e.g. "/Nord-Portfolio-Astro-Theme/". */
 export const basePath = `${siteConfig.base.replace(/\/$/, "")}/`;
 
+/** The deployed site's origin, e.g. "https://varunayyappan.github.io". */
+export const siteOrigin = new URL(siteConfig.url).origin;
+
 /** The hrefs of the social links Site config sets, and only those. */
 export const socialHrefs = Object.entries(siteConfig.social)
   .filter(([, value]) => value)
@@ -36,9 +39,14 @@ export function htmlFiles(): string[] {
   return outputFiles().filter((file) => file.endsWith(".html"));
 }
 
+/** Reads a built text file, given its path relative to `outDir`. */
+export function readOutput(file: string): string {
+  return readFileSync(path.join(outDir, file), "utf8");
+}
+
 /** Parses a built HTML file, given its path relative to `outDir`. */
 export function readPage(file: string) {
-  return parse(readFileSync(path.join(outDir, file), "utf8"));
+  return parse(readOutput(file));
 }
 
 /** The URL path a built HTML file is served at under the base path. */

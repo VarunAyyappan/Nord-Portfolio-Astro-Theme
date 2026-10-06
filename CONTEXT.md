@@ -33,7 +33,7 @@ A top-level area of a portfolio: Home, Projects, Blog, Experience, About or Cont
 _Avoid_: Page (a section may span several pages), module
 
 **Site config**:
-The single place where an adopter sets their identity: name, tagline, social links, skills, navigation and an optional résumé PDF.
+The single place where an adopter sets their identity: name, tagline, social links, skills, navigation, an optional résumé PDF and the default share image.
 _Avoid_: Settings, profile, metadata
 
 ### Content

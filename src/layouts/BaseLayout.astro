@@ -2,19 +2,18 @@
 import { Font } from "astro:assets";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
+import SeoHead, {
+  type Props as SeoHeadProps,
+} from "../components/SeoHead.astro";
 import { colorModeSettings, colorModeStorageKey } from "../lib/color-mode";
 import { feedPath } from "../lib/posts";
 import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
 import "../styles/global.css";
 
-interface Props {
-  /** The page title, shown before the site name. Omit on Home. */
-  title?: string;
-}
+/** The page's title, description and share image (see SeoHead). */
+type Props = SeoHeadProps;
 
-const { title } = Astro.props;
-const documentTitle = title ? `${title} | ${siteConfig.name}` : siteConfig.name;
 // The settings that are saved; system is the absence of one.
 const savedColorModes = colorModeSettings.filter((mode) => mode !== "system");
 ---
@@ -35,8 +34,7 @@ const savedColorModes = colorModeSettings.filter((mode) => mode !== "system");
         }
       } catch {}
     </script>
-    <title>{documentTitle}</title>
-    <meta name="description" content={siteConfig.tagline} />
+    <SeoHead {...Astro.props} />
     <link rel="icon" type="image/svg+xml" href={withBase("/favicon.svg")} />
     <link
       rel="alternate"

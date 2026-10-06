@@ -28,6 +28,13 @@ export interface SiteConfig {
    */
   resume?: string;
   /**
+   * The image link previews show when a page is shared, as a path on this
+   * site starting with "/". Put the file in public/, e.g. public/share.png is
+   * "/share.png". The base path is added for you. Make it 1200 × 630 pixels,
+   * as a PNG or JPEG. A Project with a cover uses its cover instead.
+   */
+  shareImage: string;
+  /**
    * The Adopter's Skills, shown on Home in groups, in this order. Leave the
    * list empty and Home shows no Skills.
    */
@@ -92,6 +99,7 @@ export const siteConfig: SiteConfig = {
     email: "ada@example.com",
   },
   resume: "/resume.pdf",
+  shareImage: "/share.png",
   skills: [
     {
       heading: "Languages",

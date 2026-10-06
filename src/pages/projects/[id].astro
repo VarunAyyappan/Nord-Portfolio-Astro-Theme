@@ -28,7 +28,7 @@ const links = [
 ].filter((link) => link.href);
 ---
 
-<BaseLayout title={title}>
+<BaseLayout {title} description={summary} image={cover}>
   <article class="project" aria-labelledby="project-title">
     <header>
       <ProjectMeta project={project} />

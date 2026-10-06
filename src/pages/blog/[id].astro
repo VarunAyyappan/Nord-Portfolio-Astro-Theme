@@ -23,7 +23,7 @@ const { title, description, date, updated, tags, draft } = post.data;
 const { Content } = await render(post);
 ---
 
-<BaseLayout title={title}>
+<BaseLayout {title} {description} type="article">
   <article class="post" aria-labelledby="post-title">
     <header>
       <h1 id="post-title">{title}</h1>
