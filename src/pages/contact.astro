@@ -53,7 +53,7 @@ const { Content } = await render(contact);
     {
       openTo.length > 0 && (
         <section aria-labelledby="open-to-heading">
-          <h2 id="open-to-heading">Open to</h2>
+          <h2 class="section-heading" id="open-to-heading">Open to</h2>
           <ul class="open-to">
             {openTo.map((item) => (
               <li>{item}</li>
@@ -65,7 +65,7 @@ const { Content } = await render(contact);
     {
       networkLinks.length > 0 && (
         <section aria-labelledby="elsewhere-heading">
-          <h2 id="elsewhere-heading">Elsewhere</h2>
+          <h2 class="section-heading" id="elsewhere-heading">Elsewhere</h2>
           <ul class="networks">
             {networkLinks.map(({ label, href, handle, Icon }) => (
               <li>
@@ -85,7 +85,7 @@ const { Content } = await render(contact);
     {
       (pgpFingerprint || pgpKey) && (
         <section aria-labelledby="pgp-heading">
-          <h2 id="pgp-heading">PGP key</h2>
+          <h2 class="section-heading" id="pgp-heading">PGP key</h2>
           {pgpFingerprint && (
             <p class="fingerprint">
               Fingerprint: <code>{pgpFingerprint}</code>
@@ -143,12 +143,6 @@ const { Content } = await render(contact);
 
   section {
     margin-top: 3rem;
-  }
-
-  h2 {
-    margin: 0 0 1.5rem;
-    font-size: 1.75rem;
-    line-height: 1.2;
   }
 
   .open-to {

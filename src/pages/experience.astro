@@ -23,7 +23,7 @@ const education = await getEducation();
     {
       experience.length > 0 && (
         <section aria-labelledby="roles-heading">
-          <h2 id="roles-heading">Roles</h2>
+          <h2 class="section-heading" id="roles-heading">Roles</h2>
           <ol class="entries">
             {experience.map(({ data }) => (
               <li>
@@ -48,7 +48,7 @@ const education = await getEducation();
     {
       education.length > 0 && (
         <section aria-labelledby="education-heading">
-          <h2 id="education-heading">Education</h2>
+          <h2 class="section-heading" id="education-heading">Education</h2>
           <ol class="entries">
             {education.map(({ data }) => (
               <li>
@@ -75,12 +75,6 @@ const education = await getEducation();
 
   section {
     margin-top: 3rem;
-  }
-
-  h2 {
-    margin: 0 0 1.5rem;
-    font-size: 1.75rem;
-    line-height: 1.2;
   }
 
   /* A timeline: a rule down the left, with an accent dot at each entry. */

@@ -33,7 +33,7 @@ const latestPosts = await getLatestPosts();
   {
     featuredProjects.length > 0 && (
       <section class="featured" aria-labelledby="featured-heading">
-        <h2 id="featured-heading">Featured Projects</h2>
+        <h2 class="section-heading" id="featured-heading">Featured Projects</h2>
         <ProjectGrid projects={featuredProjects} headingLevel={3} />
         <a class="all" href={withBase(sectionPaths.projects)}>
           All Projects
@@ -44,7 +44,7 @@ const latestPosts = await getLatestPosts();
   {
     latestPosts.length > 0 && (
       <section class="latest" aria-labelledby="latest-heading">
-        <h2 id="latest-heading">Latest Posts</h2>
+        <h2 class="section-heading" id="latest-heading">Latest Posts</h2>
         <PostList posts={latestPosts} headingLevel={3} />
         <a class="all" href={withBase(sectionPaths.blog)}>
           All Posts
@@ -55,7 +55,7 @@ const latestPosts = await getLatestPosts();
   {
     siteConfig.skills.length > 0 && (
       <section class="skills" aria-labelledby="skills-heading">
-        <h2 id="skills-heading">Skills</h2>
+        <h2 class="section-heading" id="skills-heading">Skills</h2>
         <div class="skill-groups">
           {siteConfig.skills.map(({ heading, skills }) => (
             <div>
@@ -87,12 +87,6 @@ const latestPosts = await getLatestPosts();
   .latest,
   .skills {
     padding-top: 0;
-  }
-
-  h2 {
-    margin: 0 0 1.5rem;
-    font-size: 1.75rem;
-    line-height: 1.2;
   }
 
   .all {
