@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildCopy, removeCopy } from "./build-copy";
@@ -77,6 +77,77 @@ describe("Project frontmatter", () => {
       expectSchemaError(build, field);
     },
   );
+});
+
+/**
+ * Builds a copy of the site where only new Projects are featured: `published`
+ * of them, plus `drafts` featured drafts. No filler Project is featured.
+ */
+function buildWithFeatured({
+  published,
+  drafts,
+}: {
+  published: number;
+  drafts: number;
+}) {
+  const projects = [
+    ...Array.from({ length: published }, (_, i) => ({
+      title: `Featured Project ${i + 1}`,
+      draft: false,
+    })),
+    ...Array.from({ length: drafts }, (_, i) => ({
+      title: `Featured Draft ${i + 1}`,
+      draft: true,
+    })),
+  ];
+  const build = buildCopy((root) => {
+    const copiedDir = path.join(
+      root,
+      path.relative(process.cwd(), projectsDir),
+    );
+    for (const file of readdirSync(copiedDir)) {
+      if (!file.endsWith(".md")) continue;
+      const source = readFileSync(path.join(copiedDir, file), "utf8");
+      writeFileSync(
+        path.join(copiedDir, file),
+        source.replace(/^featured:.*\n/m, ""),
+      );
+    }
+    projects.forEach(({ title, draft }, i) => {
+      const frontmatter = [
+        `title: ${title}`,
+        "summary: A featured Project.",
+        `date: 2026-01-${String(i + 1).padStart(2, "0")}`,
+        "stack: [Astro]",
+        "featured: true",
+        `draft: ${draft}`,
+      ];
+      writeFileSync(
+        path.join(copiedDir, `featured-${i + 1}.md`),
+        `---\n${frontmatter.join("\n")}\n---\n\nLorem ipsum.\n`,
+      );
+    });
+  });
+  return { ...build, titles: projects.map(({ title }) => title) };
+}
+
+describe("featured Project limit", () => {
+  it("fails the build, naming each featured Project, when more than 3 are published", () => {
+    const build = buildWithFeatured({ published: 4, drafts: 0 });
+    root = build.root;
+    expect(build.status).not.toBe(0);
+    expect(build.output).toContain("Up to 3 Projects can be featured");
+    for (const title of build.titles) {
+      expect(build.output).toContain(title);
+    }
+  });
+
+  it("doesn't count featured drafts", () => {
+    const build = buildWithFeatured({ published: 3, drafts: 1 });
+    root = build.root;
+    expect(build.output).not.toContain("Up to 3 Projects can be featured");
+    expect(build.status).toBe(0);
+  });
 });
 
 describe("Post frontmatter", () => {

@@ -109,29 +109,20 @@ describe("featured Projects on Home", () => {
   );
   const featured = publishedProjects().filter((project) => project.featured);
 
-  it("shows up to 3 featured Projects", () => {
+  it("exist in the filler content, up to 3, beside one that isn't featured", () => {
     expect(featured.length).toBeGreaterThan(0);
-    expect(shown).toHaveLength(Math.min(featured.length, 3));
+    expect(featured.length).toBeLessThanOrEqual(3);
+    expect(publishedProjects().some((project) => !project.featured)).toBe(true);
   });
 
-  it("shows only published featured Projects", () => {
-    const featuredTitles = featured.map((project) => project.title);
-    expect(
-      shown.filter((title) => !featuredTitles.includes(title ?? "")),
-    ).toEqual([]);
+  it("shows every published featured Project, and no other", () => {
+    expect(shown.toSorted()).toEqual(
+      featured.map((project) => project.title).toSorted(),
+    );
   });
 
   it("shows them newest first", () => {
     expectNewestFirst(cards);
-  });
-
-  it("leaves out only featured Projects older than the ones it shows", () => {
-    const oldestShown = Math.min(...times(cards));
-    const newerLeftOut = featured.filter(
-      (project) =>
-        !shown.includes(project.title) && project.date.valueOf() > oldestShown,
-    );
-    expect(newerLeftOut).toEqual([]);
   });
 
   it("links to every Project", () => {

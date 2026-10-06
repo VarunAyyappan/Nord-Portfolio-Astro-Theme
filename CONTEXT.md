@@ -43,7 +43,7 @@ _Avoid_: Status, open to work, hiring status
 ### Content
 
 **Project**:
-A piece of work the adopter showcases, with its own detail page. A project can be **featured** on the Home section.
+A piece of work the adopter showcases, with its own detail page. Up to three projects can be **featured** on the Home section. Drafts don't count.
 _Avoid_: Work, portfolio item, case study
 
 **Stack**:

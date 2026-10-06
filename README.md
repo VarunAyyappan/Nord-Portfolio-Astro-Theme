@@ -41,6 +41,8 @@ aube run dev
 
 Every field is documented where it's defined: content fields in [`src/content.config.ts`](src/content.config.ts) and Site config fields in [`src/site.config.ts`](src/site.config.ts). Each field shows whether it's optional and its default, with a comment on any field whose name doesn't explain itself. A field that doesn't match fails the build with an error naming the file, so the easiest way to add an entry is to copy a filler file and edit it.
 
+Set `featured: true` on up to three Projects to show them on Home, newest first. Featuring more fails the build with an error naming them, and drafts don't count.
+
 A Project or Post's file name is its URL, e.g. `notes-on-note-g.md` is served at `/blog/notes-on-note-g/`. Images go beside the Markdown file and are linked relatively, e.g. `./covers/my-project.png`, so they're optimized at build time. Posts and Projects are plain Markdown, not MDX, and code blocks are highlighted in Nord colors with no setup.
 
 In Site config, `resume` is optional: leave it out and Experience shows no download link. `shareImage` is the image link previews show, 1200 × 630 pixels. A Post or Project can set its own share image with `cover` in its frontmatter, cropped to that size. A Project's cover also shows on its page, but for now a Post's cover shows only in link previews. `availability` is optional too: leave it out and neither Contact nor Home shows it.
