@@ -9,6 +9,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { stripVTControlCharacters } from "node:util";
 
 /** What the build is copied without: dependencies and generated files. */
 const skipped = new Set([
@@ -25,7 +26,7 @@ export interface CopyBuild {
   root: string;
   /** The build's exit status. */
   status: number | null;
-  /** Everything the build printed. */
+  /** Everything the build printed, as plain text without terminal colors. */
   output: string;
 }
 
@@ -73,7 +74,10 @@ export function buildCopy(
     // A non-production build keeps drafts.
     env: { ...env, NODE_ENV: keepDrafts ? "development" : "production" },
   });
-  return { root, status: build.status, output: build.stdout + build.stderr };
+  // Astro colors its output when a CI variable is set, which puts escape
+  // codes inside the text that tests match against.
+  const output = stripVTControlCharacters(build.stdout + build.stderr);
+  return { root, status: build.status, output };
 }
 
 /** Deletes a copy made by `buildCopy`. */
