@@ -19,11 +19,11 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, tags } = post.data;
+const { title, description, tags, cover } = post.data;
 const { Content } = await render(post);
 ---
 
-<BaseLayout {title} {description} type="article">
+<BaseLayout {title} {description} image={cover} type="article">
   <article class="page" aria-labelledby="post-title">
     <header>
       <h1 class="page-heading" id="post-title">{title}</h1>

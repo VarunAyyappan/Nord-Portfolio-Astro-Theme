@@ -11,15 +11,15 @@ export interface Props {
   /** What the page is about. Defaults to the tagline in Site config. */
   description?: string;
   /**
-   * The image link previews show, e.g. a Project's cover. Defaults to the
-   * share image in Site config.
+   * The image link previews show, e.g. a Post or Project's cover. Defaults
+   * to the share image in Site config.
    */
   image?: ImageMetadata;
   /** "article" for a Post, "website" for everything else. */
   type?: "website" | "article";
 }
 
-/** The size link previews show images at, and crop Project covers to. */
+/** The size link previews show images at, and crop covers to. */
 const shareImageSize = { width: 1200, height: 630 };
 
 const {

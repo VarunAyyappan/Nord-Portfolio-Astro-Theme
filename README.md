@@ -43,7 +43,7 @@ Every field is documented where it's defined: content fields in [`src/content.co
 
 A Project or Post's file name is its URL, e.g. `notes-on-note-g.md` is served at `/blog/notes-on-note-g/`. Images go beside the Markdown file and are linked relatively, e.g. `./covers/my-project.png`, so they're optimized at build time. Posts and Projects are plain Markdown, not MDX, and code blocks are highlighted in Nord colors with no setup.
 
-In Site config, `resume` is optional: leave it out and Experience shows no download link. `shareImage` is the image link previews show, 1200 × 630 pixels; a Project with a cover uses its cover instead. `availability` is optional too: leave it out and neither Contact nor Home shows it.
+In Site config, `resume` is optional: leave it out and Experience shows no download link. `shareImage` is the image link previews show, 1200 × 630 pixels. A Post or Project can set its own share image with `cover` in its frontmatter, cropped to that size. A Project's cover also shows on its page, but for now a Post's cover shows only in link previews. `availability` is optional too: leave it out and neither Contact nor Home shows it.
 
 The filler PGP fingerprint on Contact is a placeholder. Replace it with your own, or remove it. To offer your public key for download, put it in `public/` and set `pgpKey` to its path, e.g. `/pgp-key.asc`.
 
@@ -59,7 +59,7 @@ Set `draft: true` on a Post or Project to work on it privately. Drafts show in t
 4. Rewrite this README for your own portfolio.
 5. Delete `AGENTS.md`, `CLAUDE.md` and `docs/agents/`. They set up coding agents for developing the theme itself, so replace them with your own if you use an agent to help fill in your site.
 
-The test suites use the filler content as their fixture, and some tests check for things your content may not have, such as a draft Post and Project, more Posts than fit on one Blog page, or a Project with a cover. Update or delete those tests as your content replaces the filler.
+The test suites use the filler content as their fixture, and some tests check for things your content may not have, such as a draft Post and Project, more Posts than fit on one Blog page, or a Post and Project with a cover. Update or delete those tests as your content replaces the filler.
 
 ## Deploying
 

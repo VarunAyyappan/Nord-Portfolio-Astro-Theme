@@ -4,7 +4,14 @@ import type { HTMLElement } from "node-html-parser";
 import { describe, expect, it } from "vitest";
 import { formatDay } from "../../src/lib/date";
 import { postSources, publishedPosts } from "./content";
-import { basePath, headingAt, outDir, outputFiles, readPage } from "./output";
+import {
+  basePath,
+  headingAt,
+  outDir,
+  outputFiles,
+  readPage,
+  unchangedCopies,
+} from "./output";
 
 /** How many Posts each Blog index page lists. */
 const pageSize = 10;
@@ -143,6 +150,27 @@ describe.each(publishedPosts())("$title Post page", (post) => {
     const links = header?.querySelectorAll('[aria-label="Tags"] a') ?? [];
     expect(links.map(linkedTagPage)).toEqual(
       post.tags.map((tag) => ({ text: tag, heading: `Posts tagged ${tag}` })),
+    );
+  });
+
+  it(`shows only the images in its Markdown body${post.cover ? ", not its cover" : ""}`, () => {
+    const markdownImages = post.body.match(/!\[[^\]]*\]\(/g) ?? [];
+    expect(page.querySelectorAll("main img")).toHaveLength(
+      markdownImages.length,
+    );
+  });
+});
+
+describe("Post covers", () => {
+  const withCovers = publishedPosts().filter((post) => post.cover);
+
+  it("exist in the filler content", () => {
+    expect(withCovers.length).toBeGreaterThan(0);
+  });
+
+  it("are never copied to the output unchanged", () => {
+    expect(unchangedCopies(withCovers.map((post) => post.cover ?? ""))).toEqual(
+      [],
     );
   });
 });

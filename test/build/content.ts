@@ -108,6 +108,8 @@ export interface PostSource {
   updated?: Date;
   tags: string[];
   draft: boolean;
+  /** The absolute path of the cover image file, if there is one. */
+  cover?: string;
   /** The Markdown body, as written. */
   body: string;
   /** The first paragraph of the Markdown body, as plain text. */
@@ -118,6 +120,7 @@ export interface PostSource {
 export function postSources(): PostSource[] {
   return markdownFiles(postsDir).map(({ id, frontmatter, body }) => {
     const updated = field(frontmatter, "updated");
+    const cover = field(frontmatter, "cover");
     return {
       id,
       title: field(frontmatter, "title") ?? "",
@@ -126,6 +129,7 @@ export function postSources(): PostSource[] {
       updated: updated ? new Date(updated) : undefined,
       tags: listField(frontmatter, "tags"),
       draft: field(frontmatter, "draft") === "true",
+      cover: cover && path.resolve(postsDir, cover),
       body,
       firstParagraph: firstParagraph(body),
     };

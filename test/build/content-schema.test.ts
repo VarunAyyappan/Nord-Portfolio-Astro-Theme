@@ -94,6 +94,21 @@ describe("Post frontmatter", () => {
       expectSchemaError(build, field);
     },
   );
+
+  // Astro's error names the image but not the Post.
+  it("fails the build, naming the image, when cover can't be read", () => {
+    const [post] = publishedPosts();
+    const build = buildWithBrokenFile(
+      postsDir,
+      `${post.id}.md`,
+      "cover",
+      "cover: ./covers/missing.png",
+    );
+    root = build.root;
+    expect(build.status).not.toBe(0);
+    expect(build.output).toContain("ImageNotFound");
+    expect(build.output).toContain("./covers/missing.png");
+  });
 });
 
 describe("Experience entry data", () => {

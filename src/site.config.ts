@@ -42,7 +42,7 @@ export interface SiteConfig {
    * The image link previews show when a page is shared, as a path on this
    * site starting with "/". Put the file in public/, e.g. public/share.png is
    * "/share.png". The base path is added for you. Make it 1200 × 630 pixels,
-   * as a PNG or JPEG. A Project with a cover uses its cover instead.
+   * as a PNG or JPEG. A Post or Project with a cover uses its cover instead.
    */
   shareImage: string;
   /**

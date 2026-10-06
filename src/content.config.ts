@@ -56,19 +56,26 @@ const projects = defineCollection({
  */
 const posts = defineCollection({
   loader: glob({ pattern: "*.md", base: "./src/content/posts" }),
-  schema: z.object({
-    title: z.string(),
-    /** One or two sentences, shown in Post lists and under the title. */
-    description: z.string(),
-    /** The publish date. Orders Posts, newest first. */
-    date: z.coerce.date(dateError),
-    /** When the Post last changed meaningfully, if after `date`. */
-    updated: z.coerce.date(dateError).optional(),
-    /** The Post's Tags. Each Tag gets a page listing the Posts that carry it. */
-    tags: z.array(z.string()).default([]),
-    /** Shows the Post in the dev server only, never in a build. */
-    draft: z.boolean().default(false),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      /** One or two sentences, shown in Post lists and under the title. */
+      description: z.string(),
+      /** The publish date. Orders Posts, newest first. */
+      date: z.coerce.date(dateError),
+      /** When the Post last changed meaningfully, if after `date`. */
+      updated: z.coerce.date(dateError).optional(),
+      /** The Post's Tags. Each Tag gets a page listing the Posts that carry it. */
+      tags: z.array(z.string()).default([]),
+      /**
+       * An image path relative to the Markdown file. It is resized and
+       * converted at build time. For now only link previews show it, not
+       * the Post page.
+       */
+      cover: image().optional(),
+      /** Shows the Post in the dev server only, never in a build. */
+      draft: z.boolean().default(false),
+    }),
 });
 
 /**

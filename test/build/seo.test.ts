@@ -1,6 +1,7 @@
 import path from "node:path";
 import { XMLParser } from "fast-xml-parser";
 import type { HTMLElement } from "node-html-parser";
+import sharp from "sharp";
 import { describe, expect, it } from "vitest";
 import { siteConfig } from "../../src/site.config";
 import {
@@ -12,6 +13,7 @@ import {
 import {
   basePath,
   htmlFiles,
+  outDir,
   pageUrl,
   readOutput,
   readPage,
@@ -129,27 +131,35 @@ describe.each(publishedPosts())("$title Post page head tags", (post) => {
   });
 });
 
-describe.each(publishedProjects().filter((project) => project.cover))(
-  "$title Project page head tags",
-  (project) => {
-    const head = headTags(readPage(`projects/${project.id}/index.html`));
-    const cover = path.parse(project.cover ?? "").name;
+/** Each published Post and Project with a cover, and the file of its page. */
+const withCovers = [
+  ...publishedPosts().map((post) => ({
+    ...post,
+    file: `blog/${post.id}/index.html`,
+  })),
+  ...publishedProjects().map((project) => ({
+    ...project,
+    file: `projects/${project.id}/index.html`,
+  })),
+].filter((entry) => entry.cover);
 
-    it("use an optimized copy of the cover as the share image", () => {
-      expect(head.ogImage).toMatch(
-        new RegExp(`^${siteHome}_astro/${cover}\\.[^/]+\\.jpg$`),
-      );
-    });
-  },
-);
+describe.each(withCovers)("$title page head tags", (entry) => {
+  const head = headTags(readPage(entry.file));
+  const cover = path.parse(entry.cover ?? "").name;
+
+  it("use a copy of the cover, cropped to preview size, as the share image", async () => {
+    expect(head.ogImage).toMatch(
+      new RegExp(`^${siteHome}_astro/${cover}\\.[^/]+\\.jpg$`),
+    );
+    const file = path.join(outDir, fileAt(head.ogImage ?? "") ?? "");
+    const { width, height } = await sharp(file).metadata();
+    expect({ width, height }).toEqual({ width: 1200, height: 630 });
+  });
+});
 
 describe("the default share image", () => {
-  it("is used by every page but Projects with a cover", () => {
-    const withCover = new Set(
-      publishedProjects()
-        .filter((project) => project.cover)
-        .map((project) => `projects/${project.id}/index.html`),
-    );
+  it("is used by every page but Posts and Projects with a cover", () => {
+    const withCover = new Set(withCovers.map((entry) => entry.file));
     const others = htmlFiles().filter((file) => !withCover.has(file));
     expect(others.length).toBeGreaterThan(withCover.size);
     expect(
