@@ -1,0 +1,49 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 770 >>
+stream
+BT /F2 24 Tf 72 720 Td (Ada Lovelace) Tj ET
+BT /F1 13 Tf 72 698 Td (R\351sum\351 (filler content: replace public/resume.pdf with your own)) Tj ET
+BT /F2 14 Tf 72 660 Td (Experience) Tj ET
+BT /F1 11 Tf 72 640 Td (Lead Analyst, Babbage & Co.  2022 - Present) Tj ET
+BT /F1 11 Tf 72 624 Td (Technical Translator (contract), Taylor's Scientific Memoirs  2023) Tj ET
+BT /F1 11 Tf 72 608 Td (Software Engineer, Difference Engine Works  2018 - 2021) Tj ET
+BT /F2 14 Tf 72 572 Td (Education) Tj ET
+BT /F1 11 Tf 72 552 Td (BSc Mathematics, University of London  2014 - 2018) Tj ET
+BT /F1 11 Tf 72 536 Td (Certificate in Symbolic Logic, De Morgan Tutorials  2017) Tj ET
+BT /F1 11 Tf 72 500 Td (Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+7 0 obj
+<< /Title (Ada Lovelace - R\351sum\351) /Author (Ada Lovelace) >>
+endobj
+xref
+0 8
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000001071 00000 n 
+0000001168 00000 n 
+0000001270 00000 n 
+trailer
+<< /Size 8 /Root 1 0 R /Info 7 0 R >>
+startxref
+1351
+%%EOF

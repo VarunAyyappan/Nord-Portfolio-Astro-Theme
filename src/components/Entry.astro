@@ -1,0 +1,58 @@
+---
+import { formatMonth } from "../lib/date";
+
+interface Props {
+  /** The role, or the qualification. */
+  title: string;
+  /** The organization, or the institution for an Education entry. */
+  organization: string;
+  start: Date;
+  /** Leave out for an entry that is still ongoing. */
+  end?: Date;
+  location?: string;
+}
+
+const { title, organization, start, end, location } = Astro.props;
+---
+
+<article class="entry">
+  <h3 class="title">{title}</h3>
+  <p class="organization">{organization}</p>
+  <p class="meta">
+    <span>
+      <time datetime={start.toISOString()}>{formatMonth(start)}</time>
+      –
+      {end ? <time datetime={end.toISOString()}>{formatMonth(end)}</time> : "Present"}
+    </span>
+    {location && <span>{location}</span>}
+  </p>
+  <slot />
+</article>
+
+<style>
+  .entry {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .title {
+    margin: 0;
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .organization {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 0.75rem;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+</style>

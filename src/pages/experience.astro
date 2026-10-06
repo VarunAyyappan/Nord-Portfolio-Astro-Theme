@@ -1,0 +1,135 @@
+---
+import Entry from "../components/Entry.astro";
+import Stack from "../components/Stack.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getEducation, getExperience } from "../lib/experience";
+import { withBase } from "../lib/url";
+import { siteConfig } from "../site.config";
+
+const experience = await getExperience();
+const education = await getEducation();
+---
+
+<BaseLayout title="Experience">
+  <div class="experience">
+    <h1>Experience</h1>
+    {
+      siteConfig.resume && (
+        <a class="resume" href={withBase(siteConfig.resume)} download>
+          Download résumé (PDF)
+        </a>
+      )
+    }
+    {
+      experience.length > 0 && (
+        <section aria-labelledby="roles-heading">
+          <h2 id="roles-heading">Roles</h2>
+          <ol class="entries">
+            {experience.map(({ data }) => (
+              <li>
+                <Entry
+                  title={data.role}
+                  organization={data.organization}
+                  start={data.start}
+                  end={data.end}
+                  location={data.location}
+                >
+                  <ul class="highlights">
+                    {data.highlights.map((highlight) => (
+                      <li>{highlight}</li>
+                    ))}
+                  </ul>
+                  <Stack items={data.stack} />
+                </Entry>
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+    {
+      education.length > 0 && (
+        <section aria-labelledby="education-heading">
+          <h2 id="education-heading">Education</h2>
+          <ol class="entries">
+            {education.map(({ data }) => (
+              <li>
+                <Entry
+                  title={data.qualification}
+                  organization={data.institution}
+                  start={data.start}
+                  end={data.end}
+                  location={data.location}
+                />
+              </li>
+            ))}
+          </ol>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .experience {
+    max-width: 48rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .resume {
+    display: inline-block;
+    margin-top: 1rem;
+    font-weight: 600;
+  }
+
+  section {
+    margin-top: 3rem;
+  }
+
+  h2 {
+    margin: 0 0 1.5rem;
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+
+  /* A timeline: a rule down the left, with an accent dot at each entry. */
+  .entries {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin: 0;
+    padding: 0 0 0 1.5rem;
+    border-left: 0.125rem solid var(--color-border);
+    list-style: none;
+  }
+
+  .entries > li {
+    position: relative;
+  }
+
+  .entries > li::before {
+    content: "";
+    position: absolute;
+    top: 0.5rem;
+    left: calc(-1.5rem - 0.375rem - 0.0625rem);
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    background-color: var(--color-accent);
+  }
+
+  .highlights {
+    margin: 0.5rem 0;
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+</style>

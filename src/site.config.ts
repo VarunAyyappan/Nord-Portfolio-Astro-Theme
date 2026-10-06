@@ -20,6 +20,13 @@ export interface SiteConfig {
   navigation: NavLink[];
   /** Links to the Adopter elsewhere. */
   social: SocialLinks;
+  /**
+   * The Adopter's résumé PDF, as a path on this site starting with "/". Put
+   * the file in public/, e.g. public/resume.pdf is "/resume.pdf". The base
+   * path is added for you. Leave it out and the Experience Section shows no
+   * download link.
+   */
+  resume?: string;
 }
 
 /** A link in the header navigation. */
@@ -56,6 +63,7 @@ export const siteConfig: SiteConfig = {
     { label: "Home", href: "/" },
     { label: "Projects", href: "/projects/" },
     { label: "Blog", href: "/blog/" },
+    { label: "Experience", href: "/experience/" },
   ],
   // Placeholders that can never belong to a real account: GitHub and
   // LinkedIn don't allow underscores in usernames, X doesn't allow hyphens,
@@ -69,4 +77,5 @@ export const siteConfig: SiteConfig = {
     // x: "https://x.com/your-username",
     email: "ada@example.com",
   },
+  resume: "/resume.pdf",
 };

@@ -7,6 +7,12 @@ export const projectsDir = path.resolve("src/content/projects");
 /** Where the Adopter writes Posts, one Markdown file each. */
 export const postsDir = path.resolve("src/content/posts");
 
+/** Where the Adopter writes Experience entries, one YAML file each. */
+export const experienceDir = path.resolve("src/content/experience");
+
+/** Where the Adopter writes Education entries, one YAML file each. */
+export const educationDir = path.resolve("src/content/education");
+
 /** The frontmatter fields the tests read from a Project's Markdown file. */
 export interface ProjectSource {
   /** The file name without `.md`, which is the Project's id in its URL. */
@@ -24,11 +30,11 @@ export interface ProjectSource {
 }
 
 /**
- * Reads one top-level `key: value` line from YAML frontmatter. The filler
- * content keeps its frontmatter flat, so this is all the tests need.
+ * Reads one top-level `key: value` line from YAML: Markdown frontmatter or a
+ * whole data file. The tests only read flat fields, so this is all they need.
  */
-function field(frontmatter: string, key: string): string | undefined {
-  const match = frontmatter.match(new RegExp(`^${key}:\\s*(.+)$`, "m"));
+function field(yaml: string, key: string): string | undefined {
+  const match = yaml.match(new RegExp(`^${key}:\\s*(.+)$`, "m"));
   return match?.[1].trim().replace(/^(["'])(.*)\1$/, "$2");
 }
 
@@ -125,4 +131,52 @@ export function publishedPosts(): PostSource[] {
   return postSources()
     .filter((post) => !post.draft)
     .toSorted((a, b) => b.date.valueOf() - a.date.valueOf());
+}
+
+/** Each YAML file in `dir`, as its id and its text. */
+function yamlFiles(dir: string) {
+  return readdirSync(dir)
+    .filter((file) => file.endsWith(".yaml"))
+    .map((file) => ({
+      id: file.replace(/\.yaml$/, ""),
+      source: readFileSync(path.join(dir, file), "utf8"),
+    }));
+}
+
+/** The fields the tests read from an Experience or Education entry. */
+export interface EntrySource {
+  /** The file name without `.yaml`. */
+  id: string;
+  /** The role, or the qualification for an Education entry. */
+  title: string;
+  start: Date;
+  /** Left out for a current role or a course still in progress. */
+  end?: Date;
+}
+
+/** Reads the dates of an Experience or Education entry. */
+function entryDates(source: string) {
+  const end = field(source, "end");
+  return {
+    start: new Date(field(source, "start") ?? ""),
+    end: end ? new Date(end) : undefined,
+  };
+}
+
+/** Every Experience entry in the content folder. */
+export function experienceSources(): EntrySource[] {
+  return yamlFiles(experienceDir).map(({ id, source }) => ({
+    id,
+    title: field(source, "role") ?? "",
+    ...entryDates(source),
+  }));
+}
+
+/** Every Education entry in the content folder. */
+export function educationSources(): EntrySource[] {
+  return yamlFiles(educationDir).map(({ id, source }) => ({
+    id,
+    title: field(source, "qualification") ?? "",
+    ...entryDates(source),
+  }));
 }

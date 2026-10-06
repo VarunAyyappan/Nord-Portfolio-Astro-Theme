@@ -5,6 +5,17 @@ import { z } from "astro/zod";
 /** What a frontmatter date that can't be read fails the build with. */
 const dateError = { error: "Expected a date like 2026-06-12" };
 
+/** What a data file month that can't be read fails the build with. */
+const monthError = { error: "Expected a month like 2026-06" };
+
+/**
+ * A month in a data file, e.g. 2026-06, as the first day of that month. A
+ * full date also works. A bare year fails, since YAML reads it as a number.
+ */
+const month = z
+  .union([z.string(), z.date()], monthError)
+  .pipe(z.coerce.date(monthError));
+
 /**
  * Projects: one Markdown file each in src/content/projects. The file name is
  * the Project's URL, e.g. bernoulli-number-generator.md is served at
@@ -60,4 +71,44 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { projects, posts };
+/**
+ * Experience entries: one YAML file each in src/content/experience, e.g.
+ * babbage-and-co.yaml. Dates are a month, e.g. 2024-03. An entry with no
+ * `end` is a current role. A field that doesn't match this schema fails the
+ * build.
+ */
+const experience = defineCollection({
+  loader: glob({ pattern: "*.yaml", base: "./src/content/experience" }),
+  schema: z.object({
+    role: z.string(),
+    organization: z.string(),
+    start: month,
+    /** Leave out for a current role, which is listed first. */
+    end: month.optional(),
+    location: z.string().optional(),
+    /** What the Adopter did in the role, one sentence each. */
+    highlights: z.array(z.string()),
+    /** The technologies the Adopter worked with in the role. */
+    stack: z.array(z.string()).default([]),
+  }),
+});
+
+/**
+ * Education entries: one YAML file each in src/content/education, listed
+ * after the Experience entries. Dates are a month, e.g. 2024-03. A field
+ * that doesn't match this schema fails the build.
+ */
+const education = defineCollection({
+  loader: glob({ pattern: "*.yaml", base: "./src/content/education" }),
+  schema: z.object({
+    /** E.g. "BSc Mathematics". */
+    qualification: z.string(),
+    institution: z.string(),
+    start: month,
+    /** Leave out for a course still in progress. */
+    end: month.optional(),
+    location: z.string().optional(),
+  }),
+});
+
+export const collections = { projects, posts, experience, education };
