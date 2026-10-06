@@ -29,10 +29,8 @@ const education = await getEducation();
               <li>
                 <Entry
                   title={data.role}
-                  organization={data.organization}
-                  start={data.start}
-                  end={data.end}
-                  location={data.location}
+                  subtitle={data.organization}
+                  meta={{ start: data.start, end: data.end, location: data.location }}
                 >
                   <ul class="highlights">
                     {data.highlights.map((highlight) => (
@@ -56,10 +54,8 @@ const education = await getEducation();
               <li>
                 <Entry
                   title={data.qualification}
-                  organization={data.institution}
-                  start={data.start}
-                  end={data.end}
-                  location={data.location}
+                  subtitle={data.institution}
+                  meta={{ start: data.start, end: data.end, location: data.location }}
                 />
               </li>
             ))}

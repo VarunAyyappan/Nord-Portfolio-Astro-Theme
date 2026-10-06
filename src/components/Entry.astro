@@ -1,23 +1,29 @@
 ---
 import { formatMonth } from "../lib/date";
 
-interface Props {
-  /** The role, or the qualification. */
-  title: string;
-  /** The organization, or the institution for an Education entry. */
-  organization: string;
+/** The line under an entry's subtitle: its dates and location. */
+interface EntryMeta {
   start: Date;
   /** Leave out for an entry that is still ongoing. */
   end?: Date;
   location?: string;
 }
 
-const { title, organization, start, end, location } = Astro.props;
+interface Props {
+  /** The role, or the qualification. */
+  title: string;
+  /** Who the entry was with: the organization, or the institution. */
+  subtitle: string;
+  meta: EntryMeta;
+}
+
+const { title, subtitle, meta } = Astro.props;
+const { start, end, location } = meta;
 ---
 
 <article class="entry">
   <h3 class="title">{title}</h3>
-  <p class="organization">{organization}</p>
+  <p class="subtitle">{subtitle}</p>
   <p class="meta">
     <span>
       <time datetime={start.toISOString()}>{formatMonth(start)}</time>
@@ -42,7 +48,7 @@ const { title, organization, start, end, location } = Astro.props;
     line-height: 1.3;
   }
 
-  .organization {
+  .subtitle {
     margin: 0;
     font-weight: 600;
   }

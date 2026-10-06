@@ -19,13 +19,16 @@ import {
 
 /** Current entries first, then by start date, newest first. */
 function inDisplayOrder(entries: EntrySource[]) {
-  return entries
-    .toSorted(
-      (a, b) =>
-        Number(Boolean(a.end)) - Number(Boolean(b.end)) ||
-        b.start.valueOf() - a.start.valueOf(),
-    )
-    .map((entry) => entry.title);
+  return entries.toSorted(
+    (a, b) =>
+      Number(Boolean(a.end)) - Number(Boolean(b.end)) ||
+      b.start.valueOf() - a.start.valueOf(),
+  );
+}
+
+/** The titles of entries, in display order. */
+function titlesInDisplayOrder(entries: EntrySource[]) {
+  return inDisplayOrder(entries).map((entry) => entry.title);
 }
 
 /** The titles of the entries in a section, in page order. */
@@ -35,6 +38,27 @@ function entryTitles(section: HTMLElement | null | undefined) {
       ?.querySelectorAll("article")
       .map((article) => article.querySelector("h3")?.textContent.trim()) ?? []
   );
+}
+
+/**
+ * What each entry in a section shows under its title, in page order: the
+ * organization or institution, and the location if it has one.
+ */
+function entrySubtitlesAndLocations(section: HTMLElement | null | undefined) {
+  return (
+    section?.querySelectorAll("article").map((article) => ({
+      subtitle: article.querySelector("h3 + p")?.textContent.trim(),
+      location: article.querySelectorAll("p > span").at(1)?.textContent.trim(),
+    })) ?? []
+  );
+}
+
+/** What each entry should show under its title, in display order. */
+function expectedSubtitlesAndLocations(entries: EntrySource[]) {
+  return inDisplayOrder(entries).map(({ subtitle, location }) => ({
+    subtitle,
+    location,
+  }));
 }
 
 /** The links in main whose text mentions the résumé. */
@@ -62,7 +86,9 @@ describe("Experience Section", () => {
   });
 
   it("lists every Experience entry, current roles first, then newest start first", () => {
-    expect(entryTitles(roles)).toEqual(inDisplayOrder(experienceSources()));
+    expect(entryTitles(roles)).toEqual(
+      titlesInDisplayOrder(experienceSources()),
+    );
   });
 
   it("shows the current role as running to the present", () => {
@@ -73,7 +99,21 @@ describe("Experience Section", () => {
 
   it("lists every Education entry", () => {
     expect(educationSources().length).toBeGreaterThan(0);
-    expect(entryTitles(education)).toEqual(inDisplayOrder(educationSources()));
+    expect(entryTitles(education)).toEqual(
+      titlesInDisplayOrder(educationSources()),
+    );
+  });
+
+  it("shows each role's organization and location", () => {
+    expect(entrySubtitlesAndLocations(roles)).toEqual(
+      expectedSubtitlesAndLocations(experienceSources()),
+    );
+  });
+
+  it("shows each Education entry's institution and location", () => {
+    expect(entrySubtitlesAndLocations(education)).toEqual(
+      expectedSubtitlesAndLocations(educationSources()),
+    );
   });
 
   it("lists Education after the roles", () => {

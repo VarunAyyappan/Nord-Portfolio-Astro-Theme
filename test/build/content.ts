@@ -155,17 +155,21 @@ export interface EntrySource {
   id: string;
   /** The role, or the qualification for an Education entry. */
   title: string;
+  /** The organization, or the institution for an Education entry. */
+  subtitle: string;
   start: Date;
   /** Left out for a current role or a course still in progress. */
   end?: Date;
+  location?: string;
 }
 
-/** Reads the dates of an Experience or Education entry. */
-function entryDates(source: string) {
+/** Reads the dates and location of an Experience or Education entry. */
+function entryMeta(source: string) {
   const end = field(source, "end");
   return {
     start: new Date(field(source, "start") ?? ""),
     end: end ? new Date(end) : undefined,
+    location: field(source, "location"),
   };
 }
 
@@ -174,7 +178,8 @@ export function experienceSources(): EntrySource[] {
   return yamlFiles(experienceDir).map(({ id, source }) => ({
     id,
     title: field(source, "role") ?? "",
-    ...entryDates(source),
+    subtitle: field(source, "organization") ?? "",
+    ...entryMeta(source),
   }));
 }
 
@@ -183,7 +188,8 @@ export function educationSources(): EntrySource[] {
   return yamlFiles(educationDir).map(({ id, source }) => ({
     id,
     title: field(source, "qualification") ?? "",
-    ...entryDates(source),
+    subtitle: field(source, "institution") ?? "",
+    ...entryMeta(source),
   }));
 }
 
