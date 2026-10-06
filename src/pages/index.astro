@@ -14,7 +14,7 @@ const latestPosts = await getLatestPosts();
 ---
 
 <BaseLayout>
-  <section class="hero" aria-labelledby="hero-name">
+  <section class="page" aria-labelledby="hero-name">
     <h1 id="hero-name">{siteConfig.name}</h1>
     <p class="tagline">{siteConfig.tagline}</p>
     <Availability />
@@ -32,7 +32,7 @@ const latestPosts = await getLatestPosts();
   </section>
   {
     featuredProjects.length > 0 && (
-      <section class="featured" aria-labelledby="featured-heading">
+      <section class="page featured" aria-labelledby="featured-heading">
         <h2 class="section-heading" id="featured-heading">Featured Projects</h2>
         <ProjectGrid projects={featuredProjects} headingLevel={3} />
         <a class="all" href={withBase(sectionPaths.projects)}>
@@ -43,7 +43,7 @@ const latestPosts = await getLatestPosts();
   }
   {
     latestPosts.length > 0 && (
-      <section class="latest" aria-labelledby="latest-heading">
+      <section class="page latest" aria-labelledby="latest-heading">
         <h2 class="section-heading" id="latest-heading">Latest Posts</h2>
         <PostList posts={latestPosts} headingLevel={3} />
         <a class="all" href={withBase(sectionPaths.blog)}>
@@ -54,7 +54,7 @@ const latestPosts = await getLatestPosts();
   }
   {
     siteConfig.skills.length > 0 && (
-      <section class="skills" aria-labelledby="skills-heading">
+      <section class="page skills" aria-labelledby="skills-heading">
         <h2 class="section-heading" id="skills-heading">Skills</h2>
         <div class="skill-groups">
           {siteConfig.skills.map(({ heading, skills }) => (
@@ -74,13 +74,8 @@ const latestPosts = await getLatestPosts();
 </BaseLayout>
 
 <style>
-  .hero,
-  .featured,
-  .latest,
-  .skills {
-    max-width: var(--content-width);
-    margin: 0 auto;
-    padding: clamp(3rem, 12vw, 8rem) 1.5rem;
+  .page {
+    padding-block: var(--space-landing);
   }
 
   .featured,
