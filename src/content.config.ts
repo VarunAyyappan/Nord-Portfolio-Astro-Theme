@@ -130,10 +130,46 @@ const about = defineCollection({
     }),
 });
 
+/**
+ * The Contact Section: the single Markdown file src/content/contact/contact.md,
+ * rendered on the Contact page. The Markdown body is a short intro, one or two
+ * sentences saying what kind of message is welcome. Keep it short: About and
+ * Experience already tell the rest. A frontmatter field that doesn't match
+ * this schema fails the build.
+ */
+const contact = defineCollection({
+  loader: glob({ pattern: "contact.md", base: "./src/content/contact" }),
+  schema: z.object({
+    /**
+     * The kinds of work the Adopter is open to, e.g. "Freelance work" or
+     * "Speaking", listed under their own heading. Leave it out or empty and
+     * the heading is hidden.
+     */
+    openTo: z.array(z.string()).default([]),
+    /** E.g. "Usually replies within 2 working days". */
+    responseTime: z.string().optional(),
+    /** E.g. "London (UTC+0)". Shown as written, with no live clock. */
+    timezone: z.string().optional(),
+    /** The fingerprint of the Adopter's PGP key, shown as written. */
+    pgpFingerprint: z.string().optional(),
+    /**
+     * The Adopter's public PGP key file, as a path on this site starting
+     * with "/". Put the file in public/, e.g. public/pgp-key.asc is
+     * "/pgp-key.asc". The base path is added for you. Leave it out and
+     * Contact shows no key link.
+     */
+    pgpKey: z
+      .string()
+      .startsWith("/", { error: 'Expected a path starting with "/"' })
+      .optional(),
+  }),
+});
+
 export const collections = {
   projects,
   posts,
   experience,
   education,
   about,
+  contact,
 };

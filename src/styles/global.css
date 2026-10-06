@@ -4,7 +4,8 @@
  * Only the 16 official Nord hex values appear here. Components use the color
  * roles, never the palette directly, so the look can be changed in one place.
  *
- * Each role is defined once with light-dark(), and `color-scheme` decides
+ * Each role is defined once with light-dark(), except the Availability dot
+ * colors, which are the same in both modes, and `color-scheme` decides
  * which half applies: the OS preference, unless the Visitor's Color mode
  * setting overrides it. Pairing rules that keep text at WCAG AA contrast:
  *   - nord3 is never used for text (it is 1.7:1 on nord0).
@@ -43,6 +44,11 @@
   /* Accent is for non-text elements in light mode. */
   --color-accent: light-dark(var(--nord10), var(--nord8));
   --color-border: light-dark(var(--nord4), var(--nord3));
+  /* Availability dots, one per setting: decoration beside a text label,
+     never text, so the same Aurora color works in both Color modes. */
+  --color-availability-open: var(--nord14);
+  --color-availability-selective: var(--nord13);
+  --color-availability-not-looking: var(--nord11);
 
   /* Motion: how long hover and focus transitions take. */
   --motion-duration: 150ms;

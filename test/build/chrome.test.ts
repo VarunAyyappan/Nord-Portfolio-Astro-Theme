@@ -37,6 +37,10 @@ describe("site chrome", () => {
     expect(current.map((link) => link.textContent.trim())).toEqual(["Home"]);
   });
 
+  it("sets an email subject in the filler Site config that needs URL-encoding", () => {
+    expect(siteConfig.social.email?.subject).toMatch(/\s/);
+  });
+
   it("leaves out the social link the filler Site config omits", () => {
     const hrefs = readPage("index.html")
       .querySelectorAll("body > footer a")
@@ -106,6 +110,20 @@ describe("site chrome", () => {
         .querySelectorAll("body > footer a")
         .map((link) => link.getAttribute("href"));
       expect(hrefs.toSorted()).toEqual([...socialHrefs, feedHref].toSorted());
+    });
+
+    it("carries the URL-encoded email subject from Site config on every mailto: link", () => {
+      const { address, subject } = siteConfig.social.email ?? {};
+      const mailto = page
+        .querySelectorAll('a[href^="mailto:"]')
+        .map((link) => link.getAttribute("href") ?? "");
+      expect(mailto.length).toBeGreaterThan(0);
+      for (const href of mailto) {
+        expect(href).not.toMatch(/\s/);
+        const url = new URL(href);
+        expect(url.pathname).toBe(address);
+        expect(url.searchParams.get("subject")).toBe(subject);
+      }
     });
 
     it("lets feed readers discover the RSS feed from the head", () => {

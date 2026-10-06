@@ -21,6 +21,15 @@ export interface SiteConfig {
   /** Links to the Adopter elsewhere. */
   social: SocialLinks;
   /**
+   * Whether the Adopter is looking for work, shown on Contact and under the
+   * tagline on Home as a fixed label with a colored dot:
+   *   - "open": Open to new opportunities (green)
+   *   - "selective": Open to select projects (yellow)
+   *   - "not-looking": Not looking right now (red)
+   * Leave it out and neither shows it.
+   */
+  availability?: Availability;
+  /**
    * The Adopter's résumé PDF, as a path on this site starting with "/". Put
    * the file in public/, e.g. public/resume.pdf is "/resume.pdf". The base
    * path is added for you. Leave it out and the Experience Section shows no
@@ -41,6 +50,9 @@ export interface SiteConfig {
   skills: SkillGroup[];
 }
 
+/** Whether the Adopter is looking for work. See `SiteConfig.availability`. */
+export type Availability = "open" | "selective" | "not-looking";
+
 /** Skills listed together on Home under one heading. */
 export interface SkillGroup {
   /** E.g. "Languages" or "Tools". */
@@ -57,18 +69,34 @@ export interface NavLink {
 }
 
 /**
- * Links to the Adopter elsewhere, shown as icons in the footer. Leave one out
- * and its icon disappears.
+ * Links to the Adopter elsewhere, shown as icons in the footer and listed on
+ * the Contact Section. Leave one out and it disappears from both.
  */
 export interface SocialLinks {
-  /** Profile URLs. */
-  github?: string;
-  linkedin?: string;
-  mastodon?: string;
-  bluesky?: string;
-  x?: string;
-  /** An email address, linked with mailto:. */
-  email?: string;
+  github?: SocialLink;
+  linkedin?: SocialLink;
+  mastodon?: SocialLink;
+  bluesky?: SocialLink;
+  x?: SocialLink;
+  email?: EmailLink;
+}
+
+/** A profile on a social network. */
+export interface SocialLink {
+  /** The profile URL. */
+  url: string;
+  /**
+   * The Adopter's name on the network, e.g. "@your_username", shown next to
+   * the network's name on Contact. The footer shows icons only.
+   */
+  handle?: string;
+}
+
+/** An email address, linked with mailto: on Contact and in the footer. */
+export interface EmailLink {
+  address: string;
+  /** A subject the Visitor's email app fills in, e.g. "Hello". */
+  subject?: string;
 }
 
 export const siteConfig: SiteConfig = {
@@ -91,13 +119,26 @@ export const siteConfig: SiteConfig = {
   // and .example domains are reserved (RFC 2606), so no Mastodon server or
   // Bluesky handle can use one.
   social: {
-    github: "https://github.com/your_username",
-    linkedin: "https://www.linkedin.com/in/your_username",
-    mastodon: "https://mastodon.example/@your_username",
-    bluesky: "https://bsky.app/profile/your-username.example",
-    // x: "https://x.com/your-username",
-    email: "ada@example.com",
+    github: {
+      url: "https://github.com/your_username",
+      handle: "@your_username",
+    },
+    linkedin: {
+      url: "https://www.linkedin.com/in/your_username",
+      handle: "your_username",
+    },
+    mastodon: {
+      url: "https://mastodon.example/@your_username",
+      handle: "@your_username@mastodon.example",
+    },
+    bluesky: {
+      url: "https://bsky.app/profile/your-username.example",
+      handle: "@your-username.example",
+    },
+    // x: { url: "https://x.com/your-username", handle: "@your-username" },
+    email: { address: "ada@example.com", subject: "Hello from your portfolio" },
   },
+  availability: "open",
   resume: "/resume.pdf",
   shareImage: "/share.png",
   skills: [

@@ -35,14 +35,17 @@ aube run dev
 | Experience entries | `src/content/experience/*.yaml` |
 | Education entries | `src/content/education/*.yaml` |
 | About | `src/content/about/about.md` |
-| Name, tagline, intro, Skills, social links and navigation | `src/site.config.ts` |
+| Contact intro, "Open to" list, response time, timezone and PGP key | `src/content/contact/contact.md` |
+| Name, tagline, intro, Availability, Skills, social links and navigation | `src/site.config.ts` |
 | Résumé, share image and favicon | `public/resume.pdf`, `public/share.png`, `public/favicon.svg` |
 
 Every field is documented where it's defined: content fields in [`src/content.config.ts`](src/content.config.ts) and Site config fields in [`src/site.config.ts`](src/site.config.ts). Each field shows whether it's optional and its default, with a comment on any field whose name doesn't explain itself. A field that doesn't match fails the build with an error naming the file, so the easiest way to add an entry is to copy a filler file and edit it.
 
 A Project or Post's file name is its URL, e.g. `notes-on-note-g.md` is served at `/blog/notes-on-note-g/`. Images go beside the Markdown file and are linked relatively, e.g. `./covers/my-project.png`, so they're optimized at build time. Posts and Projects are plain Markdown, not MDX, and code blocks are highlighted in Nord colors with no setup.
 
-In Site config, `resume` is optional: leave it out and Experience shows no download link. `shareImage` is the image link previews show, 1200 × 630 pixels; a Project with a cover uses its cover instead.
+In Site config, `resume` is optional: leave it out and Experience shows no download link. `shareImage` is the image link previews show, 1200 × 630 pixels; a Project with a cover uses its cover instead. `availability` is optional too: leave it out and neither Contact nor Home shows it.
+
+The filler PGP fingerprint on Contact is a placeholder. Replace it with your own, or remove it. To offer your public key for download, put it in `public/` and set `pgpKey` to its path, e.g. `/pgp-key.asc`.
 
 ### Drafts
 

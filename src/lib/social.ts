@@ -10,16 +10,28 @@ const { github, linkedin, mastodon, bluesky, x, email } = siteConfig.social;
 
 /** The social network links Site config sets, in display order. */
 export const networkLinks = [
-  { label: "GitHub", href: github, Icon: GitHubIcon },
-  { label: "LinkedIn", href: linkedin, Icon: LinkedInIcon },
-  { label: "Mastodon", href: mastodon, Icon: MastodonIcon },
-  { label: "Bluesky", href: bluesky, Icon: BlueskyIcon },
-  { label: "X", href: x, Icon: XIcon },
-].filter((link): link is typeof link & { href: string } => Boolean(link.href));
+  { label: "GitHub", link: github, Icon: GitHubIcon },
+  { label: "LinkedIn", link: linkedin, Icon: LinkedInIcon },
+  { label: "Mastodon", link: mastodon, Icon: MastodonIcon },
+  { label: "Bluesky", link: bluesky, Icon: BlueskyIcon },
+  { label: "X", link: x, Icon: XIcon },
+].flatMap(({ link, ...network }) =>
+  link ? [{ ...network, href: link.url, handle: link.handle }] : [],
+);
 
-/** The email link Site config sets, if any. */
+/**
+ * The email link Site config sets, if any. The subject is URL-encoded into
+ * the mailto: link.
+ */
 export const emailLink = email
-  ? { label: "Email", href: `mailto:${email}`, Icon: EmailIcon, email }
+  ? {
+      label: "Email",
+      href: email.subject
+        ? `mailto:${email.address}?subject=${encodeURIComponent(email.subject)}`
+        : `mailto:${email.address}`,
+      Icon: EmailIcon,
+      address: email.address,
+    }
   : undefined;
 
 /** Every social link Site config sets, email last. */

@@ -16,6 +16,9 @@ export const educationDir = path.resolve("src/content/education");
 /** Where the Adopter writes the About Section, as about.md. */
 export const aboutDir = path.resolve("src/content/about");
 
+/** Where the Adopter writes the Contact Section, as contact.md. */
+export const contactDir = path.resolve("src/content/contact");
+
 /** The frontmatter fields the tests read from a Project's Markdown file. */
 export interface ProjectSource {
   /** The file name without `.md`, which is the Project's id in its URL. */
@@ -199,5 +202,31 @@ export function aboutSource(): AboutSource {
   return {
     portrait: portrait && path.resolve(aboutDir, portrait),
     firstParagraph: firstParagraph(about.body),
+  };
+}
+
+/** What the tests read from the Contact Section's Markdown file. */
+export interface ContactSource {
+  /** The kinds of work the Adopter is open to. */
+  openTo: string[];
+  responseTime?: string;
+  timezone?: string;
+  pgpFingerprint?: string;
+  /** The public key file's path on the site, e.g. "/pgp-key.asc". */
+  pgpKey?: string;
+  /** The first paragraph of the Markdown body, as plain text. */
+  firstParagraph: string;
+}
+
+/** The Contact Section's Markdown file. */
+export function contactSource(): ContactSource {
+  const [contact] = markdownFiles(contactDir);
+  return {
+    openTo: listField(contact.frontmatter, "openTo"),
+    responseTime: field(contact.frontmatter, "responseTime"),
+    timezone: field(contact.frontmatter, "timezone"),
+    pgpFingerprint: field(contact.frontmatter, "pgpFingerprint"),
+    pgpKey: field(contact.frontmatter, "pgpKey"),
+    firstParagraph: firstParagraph(contact.body),
   };
 }

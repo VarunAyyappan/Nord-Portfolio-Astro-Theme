@@ -1,17 +1,65 @@
 ---
+import { getEntry, render } from "astro:content";
+import Availability from "../components/Availability.astro";
+import Prose from "../components/Prose.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { emailLink, networkLinks } from "../lib/social";
+import { withBase } from "../lib/url";
+
+const contact = await getEntry("contact", "contact");
+if (!contact) {
+  throw new Error("The Contact Section needs src/content/contact/contact.md");
+}
+const { openTo, responseTime, timezone, pgpFingerprint, pgpKey } =
+  contact.data;
+const { Content } = await render(contact);
 ---
 
 <BaseLayout title="Contact">
   <div class="contact">
     <h1>Contact</h1>
+    <Availability />
+    <div class="intro">
+      <Prose>
+        <Content />
+      </Prose>
+    </div>
     {
       emailLink && (
         <a class="email" href={emailLink.href}>
           <emailLink.Icon />
-          {emailLink.email}
+          {emailLink.address}
         </a>
+      )
+    }
+    {
+      (responseTime || timezone) && (
+        <dl class="details">
+          {responseTime && (
+            <div>
+              <dt>Response time</dt>
+              <dd>{responseTime}</dd>
+            </div>
+          )}
+          {timezone && (
+            <div>
+              <dt>Timezone</dt>
+              <dd>{timezone}</dd>
+            </div>
+          )}
+        </dl>
+      )
+    }
+    {
+      openTo.length > 0 && (
+        <section aria-labelledby="open-to-heading">
+          <h2 id="open-to-heading">Open to</h2>
+          <ul class="open-to">
+            {openTo.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </section>
       )
     }
     {
@@ -19,15 +67,35 @@ import { emailLink, networkLinks } from "../lib/social";
         <section aria-labelledby="elsewhere-heading">
           <h2 id="elsewhere-heading">Elsewhere</h2>
           <ul class="networks">
-            {networkLinks.map(({ label, href, Icon }) => (
+            {networkLinks.map(({ label, href, handle, Icon }) => (
               <li>
                 <a href={href} rel="me">
                   <Icon />
-                  {label}
+                  <span>
+                    {label}
+                    {handle && <span class="handle">{handle}</span>}
+                  </span>
                 </a>
               </li>
             ))}
           </ul>
+        </section>
+      )
+    }
+    {
+      (pgpFingerprint || pgpKey) && (
+        <section aria-labelledby="pgp-heading">
+          <h2 id="pgp-heading">PGP key</h2>
+          {pgpFingerprint && (
+            <p class="fingerprint">
+              Fingerprint: <code>{pgpFingerprint}</code>
+            </p>
+          )}
+          {pgpKey && (
+            <a class="key" href={withBase(pgpKey)}>
+              Download the public key
+            </a>
+          )}
         </section>
       )
     }
@@ -49,6 +117,10 @@ import { emailLink, networkLinks } from "../lib/social";
     letter-spacing: -0.02em;
   }
 
+  .intro {
+    margin-top: 1.5rem;
+  }
+
   .email {
     display: inline-flex;
     align-items: center;
@@ -64,6 +136,25 @@ import { emailLink, networkLinks } from "../lib/social";
     color: var(--color-accent);
   }
 
+  .details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2.5rem;
+    margin: 2rem 0 0;
+  }
+
+  dt {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0.25rem 0 0;
+  }
+
   section {
     margin-top: 3rem;
   }
@@ -74,9 +165,26 @@ import { emailLink, networkLinks } from "../lib/social";
     line-height: 1.2;
   }
 
+  .open-to {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .open-to li {
+    padding: 0.25rem 0.75rem;
+    border-left: 0.1875rem solid var(--color-accent);
+    border-radius: 0.25rem;
+    background-color: var(--color-surface);
+    font-size: 0.9375rem;
+  }
+
   .networks {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
     gap: 0.75rem;
     margin: 0;
     padding: 0;
@@ -98,6 +206,28 @@ import { emailLink, networkLinks } from "../lib/social";
   .networks a:hover {
     border-color: var(--color-accent);
     text-decoration-color: var(--color-accent);
+  }
+
+  .handle {
+    display: block;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-weight: 400;
+    overflow-wrap: anywhere;
+  }
+
+  .fingerprint {
+    margin: 0;
+  }
+
+  .fingerprint code {
+    overflow-wrap: anywhere;
+  }
+
+  .key {
+    display: inline-block;
+    margin-top: 1rem;
+    font-weight: 600;
   }
 
   .networks :global(svg) {

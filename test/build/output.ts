@@ -12,12 +12,21 @@ export const basePath = `${siteConfig.base.replace(/\/$/, "")}/`;
 /** The deployed site's origin, e.g. "https://varunayyappan.github.io". */
 export const siteOrigin = new URL(siteConfig.url).origin;
 
+const { email, ...networks } = siteConfig.social;
+
+/**
+ * The mailto: link to the email address Site config sets, with its subject
+ * URL-encoded, if there is an address.
+ */
+export const mailtoHref =
+  email &&
+  `mailto:${email.address}${email.subject ? `?subject=${encodeURIComponent(email.subject)}` : ""}`;
+
 /** The hrefs of the social links Site config sets, and only those. */
-export const socialHrefs = Object.entries(siteConfig.social)
-  .filter(([, value]) => value)
-  .map(([network, value]) =>
-    network === "email" ? `mailto:${value}` : String(value),
-  );
+export const socialHrefs = [
+  ...Object.values(networks).map((link) => link?.url),
+  mailtoHref,
+].filter((href): href is string => Boolean(href));
 
 /** The URL path of a site path such as "/projects/", under the base path. */
 export function sitePath(path: string): string {

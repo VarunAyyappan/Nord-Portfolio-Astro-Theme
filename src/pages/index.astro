@@ -1,4 +1,5 @@
 ---
+import Availability from "../components/Availability.astro";
 import PostList from "../components/PostList.astro";
 import ProjectGrid from "../components/ProjectGrid.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
@@ -15,6 +16,7 @@ const latestPosts = await getLatestPosts();
   <section class="hero" aria-labelledby="hero-name">
     <h1 id="hero-name">{siteConfig.name}</h1>
     <p class="tagline">{siteConfig.tagline}</p>
+    <Availability />
     <p class="intro">{siteConfig.intro}</p>
     <ul class="actions">
       <li>

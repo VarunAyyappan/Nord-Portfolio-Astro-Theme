@@ -33,8 +33,12 @@ A top-level area of a portfolio: Home, Projects, Blog, Experience, About or Cont
 _Avoid_: Page (a section may span several pages), module
 
 **Site config**:
-The single place where an adopter sets their identity: name, tagline, social links, skills, navigation, an optional résumé PDF and the default share image.
+The single place where an adopter sets their identity: name, tagline, social links and their handles, an email subject, Availability, skills, navigation, an optional résumé PDF and the default share image.
 _Avoid_: Settings, profile, metadata
+
+**Availability**:
+Whether the adopter is looking for work, set once in Site config as one of three settings: open to new opportunities, open to select projects, or not looking. Each shows as a fixed label beside an Aurora dot (green, yellow or red) on Contact and in the Home hero. Left unset, it shows nowhere.
+_Avoid_: Status, open to work, hiring status
 
 ### Content
 

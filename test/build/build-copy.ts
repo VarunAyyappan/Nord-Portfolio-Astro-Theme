@@ -52,10 +52,21 @@ export function buildCopy(change: (root: string) => void): CopyBuild {
     );
   }
   change(root);
+  // Vitest sets Vite's import.meta.env values in process.env, which the
+  // build would read in place of its own: BASE_URL "/" drops the base path,
+  // and PROD "" keeps drafts.
+  const {
+    BASE_URL: _baseUrl,
+    MODE: _mode,
+    DEV: _dev,
+    PROD: _prod,
+    SSR: _ssr,
+    ...env
+  } = process.env;
   const build = spawnSync(path.resolve("node_modules/.bin/astro"), ["build"], {
     cwd: root,
     encoding: "utf8",
-    env: { ...process.env, NODE_ENV: "production" },
+    env: { ...env, NODE_ENV: "production" },
   });
   return { root, status: build.status, output: build.stdout + build.stderr };
 }
