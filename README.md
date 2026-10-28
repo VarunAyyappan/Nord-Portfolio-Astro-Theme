@@ -45,7 +45,7 @@ Set `featured: true` on any number of Projects to show them on Home, newest firs
 
 A Project or Post's file name is its URL, e.g. `notes-on-note-g.md` is served at `/blog/notes-on-note-g/`. Images go beside the Markdown file and are linked relatively, e.g. `./covers/my-project.png`, so they're optimized at build time. Posts and Projects are plain Markdown, not MDX, and code blocks are highlighted in Nord colors with no setup.
 
-In Site config, `resume` is optional: leave it out and Experience shows no download link. `shareImage` is the image link previews show, 1200 × 630 pixels. A Post or Project can set its own share image with `cover` in its frontmatter, cropped to that size. A Post without a cover gets a share image generated at build time instead: its title and your `name` in Schibsted Grotesk on a Nord background, so link previews of different Posts look different. The cover itself, uncropped, also leads the text at the top of the Post's or Project's page, and shows on a Project's tile. `availability` is optional too: leave it out and neither Contact nor Home shows it.
+In Site config, `resume` is optional: leave it out and Experience shows no download link. `shareImage` is the image link previews show, 1200 × 630 pixels. A Post or Project can set its own share image with `cover` in its frontmatter, cropped to that size. A Post without a cover gets a share image generated at build time instead: its title and your `name` in Schibsted Grotesk on a Nord background, so link previews of different Posts look different. The cover also leads the text at the top of the Post's or Project's page, uncropped there, and shows on a Project's tile, cropped to the same 1200 × 630 proportions. `availability` is optional too: leave it out and neither Contact nor Home shows it.
 
 `resume`, `shareImage` and each `navigation` `href` are paths on your site, starting with "/", and the base path is added for you. A file in `public/` is served from the site's root, e.g. `public/share.png` is `/share.png`. `resume` can also be a full `https://` URL, such as a Drive link, which is used as given. Links to other sites go in `social`, not `navigation`. A value that breaks these rules fails the type check, both in your editor and in Deploy.
 
@@ -108,7 +108,7 @@ CI installs with `aube ci`, which fails if `pnpm-lock.yaml` doesn't match `packa
 
 ### Colors
 
-The Nord colors and the color roles built from them (background, surface, text, muted text, accent and border) are defined once at the top of [`src/styles/global.css`](src/styles/global.css). Components only use the roles, so you change the look there. Each role is `light-dark(<light mode>, <dark mode>)`, and the Visitor's Color mode setting picks which half applies.
+The Nord colors and the color roles built from them (background, surface, text, muted text, accent, border, and plate, the fill a Project without a cover shows its title on) are defined once at the top of [`src/styles/global.css`](src/styles/global.css). Components only use the roles, so you change the look there. Each role is `light-dark(<light mode>, <dark mode>)`, and the Visitor's Color mode setting picks which half applies.
 
 The roles follow pairing rules that keep all text at WCAG AA contrast:
 
