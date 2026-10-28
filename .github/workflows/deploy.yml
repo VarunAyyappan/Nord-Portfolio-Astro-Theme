@@ -25,6 +25,12 @@ jobs:
       - name: Install dependencies
         run: aube ci
 
+      - name: Type check
+        run: aube run check
+
+      - name: Lint
+        run: aube run lint
+
       - name: Build
         run: aube run build
 
