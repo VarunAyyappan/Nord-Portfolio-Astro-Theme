@@ -37,13 +37,13 @@ const { Content } = await render(contact);
         <dl class="details">
           {responseTime && (
             <div>
-              <dt>Response time</dt>
+              <dt class="label-text">Response time</dt>
               <dd>{responseTime}</dd>
             </div>
           )}
           {timezone && (
             <div>
-              <dt>Timezone</dt>
+              <dt class="label-text">Timezone</dt>
               <dd>{timezone}</dd>
             </div>
           )}
@@ -127,14 +127,6 @@ const { Content } = await render(contact);
     flex-wrap: wrap;
     gap: 1rem 2.5rem;
     margin: 2rem 0 0;
-  }
-
-  dt {
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
   }
 
   dd {

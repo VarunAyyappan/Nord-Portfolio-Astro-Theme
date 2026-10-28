@@ -29,7 +29,7 @@ const Heading = `h${headingLevel}` as const;
     )
   }
   <div class="body">
-    <Heading class="title">
+    <Heading class="item-title">
       <a href={withBase(projectPath(project))}>{title}</a>
     </Heading>
     <ProjectMeta project={project} />
@@ -73,24 +73,14 @@ const Heading = `h${headingLevel}` as const;
     padding: 1.25rem;
   }
 
-  .title {
-    margin: 0;
-    font-size: 1.25rem;
-    line-height: 1.3;
-  }
-
   /* The title link covers the whole card, so the card is one click target. */
-  .title a {
-    text-decoration-color: transparent;
-  }
-
-  .title a::after {
+  .item-title a::after {
     content: "";
     position: absolute;
     inset: 0;
   }
 
-  .project-card:hover .title a {
+  .project-card:hover .item-title a {
     text-decoration-color: var(--color-accent);
   }
 
@@ -99,7 +89,7 @@ const Heading = `h${headingLevel}` as const;
     outline-offset: 0.1875rem;
   }
 
-  .title a:focus-visible {
+  .item-title a:focus-visible {
     outline: none;
   }
 

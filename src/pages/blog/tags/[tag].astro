@@ -21,13 +21,7 @@ const heading = `Posts tagged ${tag.name}`;
 
 <BaseLayout title={heading}>
   <section class="page" aria-labelledby="tag-heading">
-    <h1 class="page-heading" id="tag-heading">{heading}</h1>
+    <h1 class="page-heading list-heading" id="tag-heading">{heading}</h1>
     <PostList posts={tag.posts} />
   </section>
 </BaseLayout>
-
-<style>
-  .page-heading {
-    margin-bottom: 2rem;
-  }
-</style>
