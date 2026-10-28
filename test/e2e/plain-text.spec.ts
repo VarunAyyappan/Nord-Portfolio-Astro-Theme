@@ -48,23 +48,24 @@ const stacks = (page: Page) =>
       return items.map((item, i) => {
         const style = getComputedStyle(item);
         const boxed =
-          ["Top", "Right", "Bottom", "Left"].some(
+          ["top", "right", "bottom", "left"].some(
             (side) =>
-              style.getPropertyValue(`border-${side.toLowerCase()}-style`) !==
-                "none" &&
+              style.getPropertyValue(`border-${side}-style`) !== "none" &&
               Number.parseFloat(
-                style.getPropertyValue(`border-${side.toLowerCase()}-width`),
+                style.getPropertyValue(`border-${side}-width`),
               ) > 0,
           ) ||
           style.backgroundColor !== "rgba(0, 0, 0, 0)" ||
           style.fontFamily !== listFont;
-        const previous = items[i - 1];
+        // Where the item starts, and where the item before it ends.
+        const start = item.getClientRects()[0]?.top;
+        const previousEnd = [...(items[i - 1]?.getClientRects() ?? [])].at(
+          -1,
+        )?.top;
         const inline =
-          previous !== undefined &&
-          Math.abs(
-            item.getClientRects()[0].top -
-              [...previous.getClientRects()].at(-1)!.top,
-          ) < 1;
+          start !== undefined &&
+          previousEnd !== undefined &&
+          Math.abs(start - previousEnd) < 1;
         const separator = inline
           ? getComputedStyle(item, "::before").content
           : undefined;
@@ -87,7 +88,7 @@ test.describe("Stack", () => {
           ({ boxed, separator }) =>
             boxed || (separator !== undefined && separator !== '", "'),
         );
-        if (wrong.length > 0) (found[path] ??= []).push(stack);
+        if (wrong.length > 0) found[path] = [...(found[path] ?? []), stack];
       }
     }
     expect(shown).toBeGreaterThan(0);
