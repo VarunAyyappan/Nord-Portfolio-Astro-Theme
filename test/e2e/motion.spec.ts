@@ -107,7 +107,7 @@ const onHome: Record<string, (page: Page) => Locator> = {
       .getByRole("navigation", { name: "Main" })
       .getByRole("link", { name: "Projects" }),
   "call-to-action link": (page) =>
-    page.getByRole("main").getByRole("link", { name: "View Projects" }),
+    page.getByRole("main").getByRole("link", { name: "Get in touch" }),
   "social link": (page) =>
     page.getByRole("contentinfo").getByRole("link").first(),
   "color mode button": (page) =>

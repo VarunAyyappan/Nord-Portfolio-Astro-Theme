@@ -96,6 +96,32 @@ export async function expectAbove(upper: Locator, lower: Locator) {
   );
 }
 
+/**
+ * How the Project tiles are set in rows: one array per row, top to bottom,
+ * saying of each tile whether it spans the whole list ("both"), or sits in
+ * its left or right column.
+ */
+export async function rows(tiles: Locator) {
+  const list = await box(tiles.first().locator("xpath=ancestor::ul[1]"));
+  const middle = (list.left + list.right) / 2;
+  const near = (a: number, b: number) => Math.abs(a - b) < 1;
+  const found = new Map<number, string[]>();
+  for (const tile of await tiles.all()) {
+    const { left, right, top } = await box(tile);
+    const place =
+      near(left, list.left) && near(right, list.right)
+        ? "both"
+        : near(left, list.left) && right < middle
+          ? "left"
+          : near(right, list.right) && left > middle
+            ? "right"
+            : `elsewhere (${left}–${right})`;
+    const row = Math.round(top);
+    found.set(row, [...(found.get(row) ?? []), place]);
+  }
+  return [...found.entries()].toSorted(([a], [b]) => a - b).map(([, r]) => r);
+}
+
 /** Expects the element's text to fit its box, with nothing running out of it. */
 export async function expectNoOverflow(locator: Locator) {
   const { scrollWidth, clientWidth } = await locator.evaluate((element) => ({

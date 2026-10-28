@@ -4,12 +4,15 @@ import {
   mkdirSync,
   mkdtempSync,
   readdirSync,
+  readFileSync,
   rmSync,
   symlinkSync,
+  writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { stripVTControlCharacters } from "node:util";
+import { projectsDir } from "./content";
 
 /** What the build is copied without: dependencies and generated files. */
 const skipped = new Set([
@@ -83,4 +86,60 @@ export function buildCopy(
 /** Deletes a copy made by `buildCopy`. */
 export function removeCopy(root: string) {
   rmSync(root, { recursive: true, force: true });
+}
+
+/**
+ * Builds a copy of the site where only new Projects are featured: `published`
+ * of them, plus `drafts` featured drafts, each newer than every published
+ * one. No filler Project is featured. With `keepDrafts`, the build keeps
+ * drafts, as the dev server does.
+ */
+export function buildWithFeatured({
+  published,
+  drafts,
+  keepDrafts = false,
+}: {
+  published: number;
+  drafts: number;
+  keepDrafts?: boolean;
+}) {
+  const projects = [
+    ...Array.from({ length: published }, (_, i) => ({
+      title: `Featured Project ${i + 1}`,
+      draft: false,
+    })),
+    ...Array.from({ length: drafts }, (_, i) => ({
+      title: `Featured Draft ${i + 1}`,
+      draft: true,
+    })),
+  ];
+  const feature = (root: string) => {
+    const copiedDir = path.join(
+      root,
+      path.relative(process.cwd(), projectsDir),
+    );
+    for (const file of readdirSync(copiedDir)) {
+      if (!file.endsWith(".md")) continue;
+      const source = readFileSync(path.join(copiedDir, file), "utf8");
+      writeFileSync(
+        path.join(copiedDir, file),
+        source.replace(/^featured:.*\n/m, ""),
+      );
+    }
+    projects.forEach(({ title, draft }, i) => {
+      const frontmatter = [
+        `title: ${title}`,
+        "summary: A featured Project.",
+        `date: 2026-01-${String(i + 1).padStart(2, "0")}`,
+        "stack: [Astro]",
+        "featured: true",
+        `draft: ${draft}`,
+      ];
+      writeFileSync(
+        path.join(copiedDir, `featured-${i + 1}.md`),
+        `---\n${frontmatter.join("\n")}\n---\n\nLorem ipsum.\n`,
+      );
+    });
+  };
+  return buildCopy(feature, { keepDrafts });
 }

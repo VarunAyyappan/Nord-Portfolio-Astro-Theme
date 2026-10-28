@@ -107,6 +107,11 @@ export function sectionTitled(page: HTMLElement, heading: string) {
     ?.closest("section");
 }
 
+/** Home's hero: the section its page heading, the Adopter's name, heads. */
+export function heroOf(home: HTMLElement) {
+  return home.querySelector("main h1")?.closest("section");
+}
+
 /** Every image URL the given `<img>` elements can load, from `src` and `srcset`. */
 export function imageUrls(images: HTMLElement[]): string[] {
   return images.flatMap((image) => [

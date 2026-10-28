@@ -1,6 +1,16 @@
-import { describe, expect, it } from "vitest";
+import path from "node:path";
+import { parse } from "node-html-parser";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { siteConfig } from "../../src/site.config";
-import { headingAt, readPage, sectionTitled, sitePath } from "./output";
+import { buildWithFeatured, type CopyBuild, removeCopy } from "./build-copy";
+import {
+  headingAt,
+  heroOf,
+  readOutput,
+  readPage,
+  sectionTitled,
+  sitePath,
+} from "./output";
 
 describe("Home", () => {
   const home = readPage("index.html");
@@ -20,20 +30,18 @@ describe("Home", () => {
   });
 });
 
-describe("call-to-action links in the Home hero", () => {
-  const hero = readPage("index.html").querySelector("main > section");
+describe("the call-to-action link in the Home hero", () => {
   const hrefs =
-    hero?.querySelectorAll("a").map((link) => link.getAttribute("href")) ?? [];
+    heroOf(readPage("index.html"))
+      ?.querySelectorAll("a")
+      .map((link) => link.getAttribute("href")) ?? [];
 
-  it("lead to Projects and Contact under the base path", () => {
-    expect(hrefs).toEqual([sitePath("/projects/"), sitePath("/contact/")]);
+  it("is the hero's only link, and leads to Contact under the base path", () => {
+    expect(hrefs).toEqual([sitePath("/contact/")]);
   });
 
-  it("resolve to the Projects and Contact pages", () => {
-    expect(hrefs.map((href) => headingAt(href ?? ""))).toEqual([
-      "Projects",
-      "Contact",
-    ]);
+  it("resolves to the Contact page", () => {
+    expect(hrefs.map((href) => headingAt(href ?? ""))).toEqual(["Contact"]);
   });
 });
 
@@ -56,10 +64,40 @@ describe("Skills on Home", () => {
     expect(shown).toEqual(siteConfig.skills);
   });
 
-  it("comes after the Latest Posts", () => {
-    const sections = readPage("index.html").querySelectorAll("main > section");
-    expect(sections.at(-1)?.querySelector("h2")?.textContent.trim()).toBe(
-      "Skills",
+  it("comes last, after the featured Projects and the Latest Posts", () => {
+    const headings = readPage("index.html")
+      .querySelectorAll("main h2")
+      .map((heading) => heading.textContent.trim());
+    expect(headings).toEqual(["Featured Projects", "Latest Posts", "Skills"]);
+  });
+});
+
+describe("Home with no featured Projects", () => {
+  let build: CopyBuild | undefined;
+
+  beforeAll(() => {
+    build = buildWithFeatured({ published: 0, drafts: 0 });
+  });
+
+  afterAll(() => {
+    if (build) removeCopy(build.root);
+  });
+
+  it("leaves out the featured Projects and All Projects, and keeps the rest", () => {
+    expect(build?.status).toBe(0);
+    const home = parse(
+      readOutput("index.html", path.join(build?.root ?? "", "dist")),
     );
+    expect(
+      home
+        .querySelectorAll("main h2")
+        .map((heading) => heading.textContent.trim()),
+    ).toEqual(["Latest Posts", "Skills"]);
+    expect(
+      home
+        .querySelectorAll("main a")
+        .filter((link) => link.textContent.trim() === "All Projects"),
+    ).toEqual([]);
+    expect(heroOf(home)?.textContent).toContain(siteConfig.intro);
   });
 });
