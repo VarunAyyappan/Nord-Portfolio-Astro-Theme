@@ -1,0 +1,57 @@
+---
+/**
+ * A list of Project tiles, as Home and the Projects index show them: two to
+ * a row, with the first across both columns only when there's an odd
+ * number, so the rows always come out even. On a phone, they stack.
+ */
+import type { Project } from "../lib/projects";
+import ProjectTile from "./ProjectTile.astro";
+
+interface Props {
+  projects: Project[];
+  /** The heading level of each tile's title, to fit the page outline. */
+  headingLevel?: 2 | 3;
+}
+
+const { projects, headingLevel } = Astro.props;
+/** Whether the tile at `index` spans both columns. */
+const isWide = (index: number) => index === 0 && projects.length % 2 === 1;
+---
+
+<ul class="project-tiles">
+  {
+    projects.map((project, index) => (
+      <li class:list={{ wide: isWide(index) }}>
+        <ProjectTile
+          project={project}
+          headingLevel={headingLevel}
+          wide={isWide(index)}
+        />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .project-tiles {
+    display: grid;
+    gap: 3rem var(--grid-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+  }
+
+  @media (width >= 60em) {
+    .project-tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

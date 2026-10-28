@@ -94,13 +94,13 @@ const elementsInMotion = (page: Page) =>
     );
   });
 
-const featuredProjectCard = (page: Page) =>
+const featuredProjectTile = (page: Page) =>
   page.getByRole("main").getByRole("article").first();
 
 const latestPost = (page: Page) =>
   page.getByRole("main").getByRole("article").last();
 
-/** The links, buttons and cards on Home, found as a Visitor would. */
+/** The links and buttons on Home, found as a Visitor would. */
 const onHome: Record<string, (page: Page) => Locator> = {
   "nav link": (page) =>
     page
@@ -112,9 +112,8 @@ const onHome: Record<string, (page: Page) => Locator> = {
     page.getByRole("contentinfo").getByRole("link").first(),
   "color mode button": (page) =>
     page.getByRole("banner").getByRole("button", { name: /^Color mode/ }),
-  "Project card": featuredProjectCard,
-  "Project card title": (page) =>
-    featuredProjectCard(page).getByRole("heading").getByRole("link"),
+  "Project tile title": (page) =>
+    featuredProjectTile(page).getByRole("heading").getByRole("link"),
   "Post title": (page) =>
     latestPost(page).getByRole("heading").getByRole("link"),
 };
