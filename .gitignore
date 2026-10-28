@@ -22,3 +22,11 @@ mise.local.toml
 
 # macOS
 .DS_Store
+
+# Claude Code: local files only. Its shared files (settings.json, skills/,
+# agents/, rules/ and so on) are meant to be committed. Per Claude Code's
+# docs and github/gitignore's Global/Agents.gitignore.
+.claude/worktrees/
+.claude/*.local.*
+.claude/**/*.log
+CLAUDE.local.md
