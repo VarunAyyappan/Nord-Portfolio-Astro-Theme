@@ -116,10 +116,10 @@ function readingMinutes(page: HTMLElement): number {
 
 describe.each(publishedPosts())("$title Post page", (post) => {
   const page = readPage(`blog/${post.id}/index.html`);
-  const header = page.querySelector("main article header");
-  /** The `datetime` of each `<time>` in the header, as a date string. */
-  const headerDates = () =>
-    header
+  const article = page.querySelector("main article");
+  /** The `datetime` of each `<time>` in the Post, as a date string. */
+  const articleDates = () =>
+    article
       ?.querySelectorAll("time")
       .map((time) =>
         new Date(time.getAttribute("datetime") ?? "").toISOString(),
@@ -136,7 +136,7 @@ describe.each(publishedPosts())("$title Post page", (post) => {
   });
 
   it(`shows the publish date${post.updated ? " and updated date" : ""}`, () => {
-    expect(headerDates()).toEqual(
+    expect(articleDates()).toEqual(
       [post.date, post.updated]
         .filter((date) => date !== undefined)
         .map((date) => date.toISOString()),
@@ -148,7 +148,7 @@ describe.each(publishedPosts())("$title Post page", (post) => {
   });
 
   it("links each of its Tags to that Tag's page", () => {
-    const links = header?.querySelectorAll('[aria-label="Tags"] a') ?? [];
+    const links = article?.querySelectorAll('[aria-label="Tags"] a') ?? [];
     expect(links.map(linkedTagPage)).toEqual(
       post.tags.map((tag) => ({ text: tag, heading: `Posts tagged ${tag}` })),
     );
