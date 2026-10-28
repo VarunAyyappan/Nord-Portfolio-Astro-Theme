@@ -59,9 +59,6 @@
   --grid-width: 78rem;
   --grid-gutter: 1.5rem;
   --grid-gap: 1.5rem;
-  /* The readable width of page content. The `sizes` hints on Project
-     covers assume it, so change them with it. */
-  --content-width: 48rem;
   /* The roomier top and bottom padding of the 404 page, which
      grows with the viewport. */
   --space-landing: clamp(3rem, 12vw, 8rem);
@@ -158,16 +155,10 @@ button {
 }
 
 /* The styles that pages and components share, each defined once and named
-   for its role: a page's centered, readable-width container, its main
-   heading, the headings of its sections, item titles and labels. A page or
-   component that needs something different overrides only that in its own
-   styles. They come after the link styles above, which they refine. */
-.page {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-}
-
+   for its role: the page grid, a page's main heading, the headings of its
+   sections, item titles and labels. A page or component that needs
+   something different overrides only that in its own styles. They come
+   after the link styles above, which they refine. */
 /*
  * The page grid: 12 columns, as wide as the header and footer and lined up
  * with their content. The PageGrid component lays a page out on it, with the
