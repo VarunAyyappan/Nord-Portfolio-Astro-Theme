@@ -7,6 +7,7 @@ import { postSources, publishedPosts } from "./content";
 import {
   basePath,
   headingAt,
+  imageUrls,
   outDir,
   outputFiles,
   readPage,
@@ -154,11 +155,20 @@ describe.each(publishedPosts())("$title Post page", (post) => {
     );
   });
 
-  it(`shows only the images in its Markdown body${post.cover ? ", not its cover" : ""}`, () => {
+  it(`shows ${post.cover ? "its cover, optimized and with an empty alt, ahead of" : "only"} the images in its Markdown body`, () => {
     const markdownImages = post.body.match(/!\[[^\]]*\]\(/g) ?? [];
-    expect(page.querySelectorAll("main img")).toHaveLength(
-      markdownImages.length,
-    );
+    const images = page.querySelectorAll("main img");
+    expect(images).toHaveLength(markdownImages.length + (post.cover ? 1 : 0));
+    if (post.cover) {
+      const [cover] = images;
+      expect(cover.getAttribute("alt")).toBe("");
+      const name = path.parse(post.cover).name;
+      for (const url of imageUrls([cover])) {
+        expect(url).toMatch(
+          new RegExp(`^${basePath}_astro/${name}\\.[^/]+\\.webp$`),
+        );
+      }
+    }
   });
 });
 
