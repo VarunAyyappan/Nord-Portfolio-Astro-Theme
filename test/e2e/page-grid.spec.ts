@@ -79,3 +79,18 @@ for (const { name, path, content } of headingPages) {
     });
   });
 }
+
+test.describe("404 page on the page grid", () => {
+  for (const viewport of viewports) {
+    test(`sets the heading across all 12 columns at ${viewport.name} width`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await page.goto("./no-such-page/");
+      const grid = await pageGrid(page);
+      await expectSpans(pageHeading(page), grid, 1, 12);
+      await expectNoOverflow(pageHeading(page));
+      await expectNoHorizontalScroll(page);
+    });
+  }
+});
