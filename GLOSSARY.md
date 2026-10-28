@@ -17,7 +17,7 @@ _Avoid_: User, reader, guest
 ### The theme
 
 **Theme**:
-This repository: a starter template that an adopter copies once and then owns. There is no upgrade path from the theme to an adopter's copy.
+This repository: a starter template that an adopter copies once and then owns. There is no automatic upgrade path from the theme to an adopter's copy, but an adopter can apply a release's changes to their copy by hand.
 _Avoid_: Package, integration, template (alone)
 
 **Filler content**:
