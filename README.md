@@ -12,7 +12,7 @@ It ships with filler content written as Ada Lovelace. You replace it by editing 
 npm create astro@latest -- --template VarunAyyappan/Nord-Portfolio-Astro-Theme
 ```
 
-You need Node 22.12 or later. The theme uses [aube](https://github.com/jdx/aube) as its package manager, and pins Node 24 and aube for [mise](https://mise.jdx.dev) in `mise.toml`, which is how CI installs them too. aube keeps the lockfile in pnpm's format, `pnpm-lock.yaml`, so GitHub's Dependabot alerts can check every dependency in it, and pnpm can use it as it is.
+You need Node 22.12 or later. The theme uses [aube](https://aube.sh) as its package manager, and pins Node 24 and aube for [mise](https://mise.jdx.dev) in `mise.toml`, which is how CI installs them too. aube keeps the lockfile in pnpm's format, `pnpm-lock.yaml`, so GitHub's Dependabot alerts can check every dependency in it, and pnpm can use it as it is.
 
 **With mise and aube**, scaffold with `--no-install` instead, since `create astro` installs with npm even when run through aube, which writes an npm lockfile:
 
@@ -90,7 +90,7 @@ On Netlify, Vercel, Cloudflare Pages and similar hosts, use `npm run build` (or 
 
 CI installs with `aube ci`, which fails if `pnpm-lock.yaml` doesn't match `package.json`. To use npm, pnpm, Yarn or Bun instead, change three places:
 
-1. **The lockfile:** with pnpm, keep `pnpm-lock.yaml` as it is. For npm, Yarn or Bun, delete it, install with your package manager, and commit the lockfile it writes.
+1. **The lockfile:** with pnpm, keep `pnpm-lock.yaml` as it is, since [aube reads and writes it in place](https://aube.sh/pnpm-users). For npm, Yarn or Bun, delete it, install with your package manager, and commit the lockfile it writes.
 2. **The mise config:** remove the `aube` line from `mise.toml`. npm comes with Node; for another package manager, add it in its place (e.g. `pnpm = "10"`).
 3. **The CI install step:** in `.github/workflows/ci.yml` and `deploy.yml`, replace `aube ci`, and also every other `aube` command:
 
