@@ -8,13 +8,7 @@ const projects = await getProjects();
 
 <BaseLayout title="Projects">
   <section class="page" aria-labelledby="projects-heading">
-    <h1 class="page-heading" id="projects-heading">Projects</h1>
+    <h1 class="page-heading list-heading" id="projects-heading">Projects</h1>
     <ProjectGrid projects={projects} />
   </section>
 </BaseLayout>
-
-<style>
-  .page-heading {
-    margin-bottom: 2rem;
-  }
-</style>

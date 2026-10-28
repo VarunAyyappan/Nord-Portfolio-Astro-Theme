@@ -121,29 +121,6 @@ main {
   flex: 1;
 }
 
-/* A page's centered, readable-width container, its main heading and the
-   headings of its sections. A page that needs something different
-   overrides only that in its own styles. */
-.page {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-}
-
-.page-heading {
-  margin: 0;
-  font-size: clamp(2rem, 6vw, 3rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.section-heading {
-  margin: 0 0 1.5rem;
-  font-size: 1.75rem;
-  line-height: 1.2;
-}
-
 /* Links are text-colored with an accent underline, which keeps them at AA
    contrast in light mode, where the accent itself can't be used for text. */
 a {
@@ -165,6 +142,62 @@ button {
   outline: 0.1875rem solid var(--color-accent);
   outline-offset: 0.1875rem;
   border-radius: 0.125rem;
+}
+
+/* The styles that pages and components share, each defined once and named
+   for its role: a page's centered, readable-width container, its main
+   heading, the headings of its sections, item titles and labels. A page or
+   component that needs something different overrides only that in its own
+   styles. They come after the link styles above, which they refine. */
+.page {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+}
+
+.page-heading {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.section-heading {
+  margin: 0 0 1.5rem;
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+/* A List page's main heading, which is spaced from the list below it. */
+.list-heading {
+  margin-bottom: 2rem;
+}
+
+/* The title of one item among several: a Post in a list, a Project card or
+   an Experience entry. */
+.item-title {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+
+/* A list of item titles that are all links would be a stack of underlines,
+   so an item title's link hides its underline until hover. Each component
+   decides what the hover is on, and fades the underline back in to
+   --color-accent. */
+.item-title a {
+  text-decoration-color: transparent;
+}
+
+/* A small muted label that names a group or a value, such as a Skill group
+   on Home or a detail on Contact. */
+.label-text {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }
 
 code,
