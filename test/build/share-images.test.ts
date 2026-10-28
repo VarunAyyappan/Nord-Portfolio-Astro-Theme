@@ -166,8 +166,10 @@ describe.each(publishedPosts().filter((post) => !post.cover))(
       const { name, logo } = await expectNameAndLogo(file());
       const height = (run: { top: number; bottom: number }) =>
         run.bottom - run.top + 1;
-      // As tall as the name's letters, on its one line.
-      expect(Math.abs(height(logo) - height(name))).toBeLessThanOrEqual(2);
+      // Larger than the name's letters, so it reads as a mark, not a letter.
+      expect(height(logo)).toBeGreaterThanOrEqual(38);
+      expect(height(logo)).toBeLessThanOrEqual(41);
+      expect(height(logo)).toBeGreaterThan(1.3 * height(name));
     });
   },
 );

@@ -66,8 +66,12 @@ const nameGap = 40;
 /** The widest a line of text can be before it wraps, in pixels. */
 const maxTextWidth = size.width - 2 * margin;
 
-/** How tall the logo is, in pixels: as tall as the site name's letters. */
-const logoHeight = 28;
+/**
+ * How tall the logo is, in pixels: larger than the site name's letters, so
+ * it reads as a mark rather than another letter, but not so large that it
+ * competes with the name.
+ */
+const logoHeight = 40;
 
 /** The least space between the site name and the logo, in pixels. */
 const logoGap = 40;
