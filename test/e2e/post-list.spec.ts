@@ -13,24 +13,43 @@ import { colorModes, viewports } from "./matrix";
 
 const [phone, desktop] = viewports;
 
-/** The List pages that show the Post list in the page grid's right 8 columns. */
-const listPages = [
-  { name: "Blog index", path: "./blog/" },
-  { name: "Tag page", path: "./blog/tags/engines/" },
+/** Every Post a page's main content lists. */
+const listedPosts = (page: Page) => page.getByRole("main").getByRole("article");
+
+/**
+ * The pages that show the Post list in the page grid's right 8 columns, and
+ * the Posts in it.
+ */
+const listPages: {
+  name: string;
+  path: string;
+  posts: (page: Page) => Locator;
+}[] = [
+  { name: "the Blog index", path: "./blog/", posts: listedPosts },
+  { name: "a Tag page", path: "./blog/tags/engines/", posts: listedPosts },
+  {
+    name: "Home",
+    path: "./",
+    posts: (page) =>
+      page
+        .getByRole("main")
+        .getByRole("region", { name: "Latest Posts" })
+        .getByRole("article"),
+  },
 ];
 
-const posts = (page: Page) => page.getByRole("main").getByRole("article");
 const date = (post: Locator) => post.locator("time").first();
 const title = (post: Locator) => post.getByRole("heading");
 
-for (const { name, path } of listPages) {
-  test.describe(`Post list on the ${name}`, () => {
+for (const { name, path, posts } of listPages) {
+  test.describe(`Post list on ${name}`, () => {
     test("gives each date the first 2 of the list's 8 columns, with the title beside it, at desktop width", async ({
       page,
     }) => {
       await page.setViewportSize(desktop);
       await page.goto(path);
       const grid = await pageGrid(page);
+      await expect(posts(page).first()).toBeVisible();
       for (const post of await posts(page).all()) {
         await expectWithin(date(post), grid, 5, 6);
         await expectSpans(title(post), grid, 7, 12);

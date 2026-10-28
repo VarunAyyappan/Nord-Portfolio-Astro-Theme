@@ -62,7 +62,7 @@
   /* The readable width of page content. The `sizes` hints on Project
      covers assume it, so change them with it. */
   --content-width: 48rem;
-  /* The roomier top and bottom padding of Home and the 404 page, which
+  /* The roomier top and bottom padding of the 404 page, which
      grows with the viewport. */
   --space-landing: clamp(3rem, 12vw, 8rem);
 
