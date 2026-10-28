@@ -43,6 +43,17 @@ for (const colorScheme of colorModes) {
         await openNewestPost(page);
         await expectNoAxeViolations(page);
       });
+
+      test(`Post with a cover has no axe violations at ${viewport.name} width`, async ({
+        page,
+      }) => {
+        await page.setViewportSize(viewport);
+        await page.goto("./blog/notes-on-note-g/");
+        await expect(
+          page.getByRole("main").getByRole("article").locator("img").first(),
+        ).toBeVisible();
+        await expectNoAxeViolations(page);
+      });
     }
 
     test("keeps code blocks dark", async ({ page }) => {

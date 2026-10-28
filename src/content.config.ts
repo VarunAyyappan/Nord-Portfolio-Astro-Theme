@@ -73,8 +73,8 @@ const posts = defineCollection({
       tags: z.array(z.string()).default([]),
       /**
        * An image path relative to the Markdown file. It is resized and
-       * converted at build time. For now only link previews show it, not
-       * the Post page.
+       * converted at build time, and treated as decoration. It leads the
+       * Post's page and is its share image in link previews.
        */
       cover: image().optional(),
       /** Shows the Post in the dev server only, never in a build. */
