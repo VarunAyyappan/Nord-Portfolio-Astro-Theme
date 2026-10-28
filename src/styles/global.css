@@ -190,14 +190,13 @@ button {
   text-decoration-color: transparent;
 }
 
-/* A small muted label that names a group or a value, such as a Skill group
-   on Home or a detail on Contact. */
+/* A short bold label that names a group or a value, such as a Skill group
+   on Home or a detail on Contact. Labels are in sentence case, as written:
+   nothing on the site is set in all caps. */
 .label-text {
-  color: var(--color-text-muted);
-  font-size: 0.875rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 code,
