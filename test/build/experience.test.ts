@@ -172,3 +172,31 @@ describe("résumé link, when Site config sets no résumé", () => {
     expect(page.querySelectorAll('main a[href$=".pdf"]')).toEqual([]);
   });
 });
+
+describe("résumé link, when Site config sets a full URL", () => {
+  const url = "https://drive.example/ada-lovelace-resume.pdf";
+  let build: CopyBuild;
+  beforeAll(() => {
+    build = buildCopy((root) => {
+      const configFile = path.join(root, "src/site.config.ts");
+      const config = readFileSync(configFile, "utf8");
+      const withUrl = config.replace(
+        /^(\s*)resume:.*$/m,
+        `$1resume: "${url}",`,
+      );
+      expect(withUrl).not.toBe(config);
+      writeFileSync(configFile, withUrl);
+    });
+  });
+  afterAll(() => removeCopy(build.root));
+
+  it("links to that URL unchanged", () => {
+    expect(build.status).toBe(0);
+    const page = parse(
+      readFileSync(path.join(build.root, "dist/experience/index.html"), "utf8"),
+    );
+    const links = resumeLinks(page);
+    expect(links).toHaveLength(1);
+    expect(links[0]?.getAttribute("href")).toBe(url);
+  });
+});

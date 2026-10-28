@@ -47,6 +47,8 @@ A Project or Post's file name is its URL, e.g. `notes-on-note-g.md` is served at
 
 In Site config, `resume` is optional: leave it out and Experience shows no download link. `shareImage` is the image link previews show, 1200 × 630 pixels. A Post or Project can set its own share image with `cover` in its frontmatter, cropped to that size. A Project's cover also shows on its page, but for now a Post's cover shows only in link previews. `availability` is optional too: leave it out and neither Contact nor Home shows it.
 
+`resume`, `shareImage` and each `navigation` `href` are paths on your site, starting with "/", and the base path is added for you. A file in `public/` is served from the site's root, e.g. `public/share.png` is `/share.png`. `resume` can also be a full `https://` URL, such as a Drive link, which is used as given. Links to other sites go in `social`, not `navigation`. A value that breaks these rules fails the type check, both in your editor and in Deploy.
+
 The filler PGP fingerprint on Contact is a placeholder. Replace it with your own, or remove it. To offer your public key for download, put it in `public/` and set `pgpKey` to its path, e.g. `/pgp-key.asc`.
 
 ### Drafts
