@@ -37,6 +37,16 @@ const headingPages: {
     path: "./contact/",
     content: (main) => main.getByRole("paragraph").first(),
   },
+  {
+    name: "Blog index",
+    path: "./blog/",
+    content: (main) => main.getByRole("list").first(),
+  },
+  {
+    name: "Tag page",
+    path: "./blog/tags/engines/",
+    content: (main) => main.getByRole("list").first(),
+  },
 ];
 
 const main = (page: Page) => page.getByRole("main");
