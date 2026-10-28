@@ -59,7 +59,7 @@ Set `draft: true` on a Post or Project to work on it privately. Drafts show in t
 
 1. Fill in `src/site.config.ts`.
 2. Replace the files in each `src/content/` folder, including the filler images.
-3. Replace the files in `public/`, or remove `resume` from Site config.
+3. Replace the files in `public/`, or remove `resume` from Site config. Give your `favicon.svg` a `<title>`, since lint requires one and Deploy runs lint.
 4. Rewrite this README for your own portfolio.
 5. Delete `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/agents/` and `docs/adr/`. They set up coding agents for developing the theme itself and record its design decisions, so replace them with your own if you use an agent to help fill in your site.
 
@@ -163,7 +163,7 @@ The steps below update from v1.0.0 to v2.0.0, so change both versions to yours.
 
    `src/site.config.ts` is in the diff, because it holds the Site config's types and doc comments as well as your values. A release changes the types and comments and you change the values, so they usually merge without a conflict. If one appears, keep your values and the release's types and comments.
 
-   If git says a file "does not exist in index", you deleted it, often along with the rest of the test suites. Nothing was applied, so add it to the list, e.g. `':!test'`, and run the command again.
+   If git says a file "does not exist in index", you deleted it, often along with the rest of the test suites. Nothing was applied, so add it to the list, e.g. `':!test'`, and run the `git diff … | git apply --3way` command again, without `git switch -c`, since you're already on the branch.
 
 3. **Resolve the conflicts.** `git status` lists them, and you resolve them as in any merge. To keep your own version of a file you replaced, run `git checkout --ours -- <file>`. Then `git add` each file you resolved.
 
