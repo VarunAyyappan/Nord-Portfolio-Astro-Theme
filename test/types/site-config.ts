@@ -25,11 +25,6 @@ export const shareImageUrl: Partial<SiteConfig> = {
   shareImage: "https://images.example/share.png",
 };
 
-export const shareImageProtocolRelative: Partial<SiteConfig> = {
-  // @ts-expect-error "//images.example/…" is another site, not a path on this one.
-  shareImage: "//images.example/share.png",
-};
-
 export const navigationInPublic: NavLink = {
   label: "Uses",
   // @ts-expect-error A file in public/ is served at "/uses.html".

@@ -175,7 +175,7 @@ const contact = defineCollection({
     pgpKey: z
       .custom<SitePath>(
         (value) => typeof value === "string" && isSitePath(value),
-        { error: 'Expected a path on this site, starting with a single "/"' },
+        { error: 'Expected a path on this site, starting with "/"' },
       )
       .optional(),
   }),
