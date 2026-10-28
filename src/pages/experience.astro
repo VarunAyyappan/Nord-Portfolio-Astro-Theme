@@ -1,5 +1,6 @@
 ---
 import Entry from "../components/Entry.astro";
+import PageGrid from "../components/PageGrid.astro";
 import Stack from "../components/Stack.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getEducation, getExperience } from "../lib/experience";
@@ -20,8 +21,8 @@ const resumeLink = !resume
 ---
 
 <BaseLayout title="Experience">
-  <div class="page">
-    <h1 class="page-heading">Experience</h1>
+  <PageGrid>
+    <h1 class="page-heading" slot="heading">Experience</h1>
     {
       resumeLink && (
         <a class="resume" {...resumeLink}>
@@ -72,18 +73,13 @@ const resumeLink = !resume
         </section>
       )
     }
-  </div>
+  </PageGrid>
 </BaseLayout>
 
 <style>
   .resume {
     display: inline-block;
-    margin-top: 1rem;
     font-weight: 600;
-  }
-
-  section {
-    margin-top: 3rem;
   }
 
   /* A timeline: a rule down the left, with an accent dot at each entry. */

@@ -51,14 +51,22 @@
   --color-availability-not-looking: var(--nord11);
 
   /* Layout: the widest the page grid gets, which the header and footer
-     span too. */
+     span too, the gutter that insets their content from its edges, and the
+     gap between the grid's 12 columns. */
   --grid-width: 78rem;
+  --grid-gutter: 1.5rem;
+  --grid-gap: 1.5rem;
   /* The readable width of page content. The `sizes` hints on Project
      covers assume it, so change them with it. */
   --content-width: 48rem;
   /* The roomier top and bottom padding of Home and the 404 page, which
      grows with the viewport. */
   --space-landing: clamp(3rem, 12vw, 8rem);
+
+  /* The rules that divide a page: a thick one between its sections, and a
+     thin one between the items in a list. */
+  --rule-thick: 0.25rem solid var(--color-text);
+  --rule-thin: 1px solid var(--color-border);
 
   /* Motion: how long hover and focus transitions take. */
   --motion-duration: 150ms;
@@ -157,6 +165,66 @@ button {
   padding: 3rem 1.5rem;
 }
 
+/*
+ * The page grid: 12 columns, as wide as the header and footer and lined up
+ * with their content. The PageGrid component lays a page out on it, with the
+ * page heading in the left 4 columns, staying in view as the page scrolls,
+ * and the content in the right 8; without a heading column, the content
+ * spans all 12. A page with its own layout can use .page-grid directly
+ * and place its children on the columns from 60em up.
+ *
+ * Below 60em, every child spans all 12 columns, so the page stacks in one
+ * column in source order. Use the same 60em for any page's own layout.
+ */
+.page-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  width: min(
+    100% -
+    2 *
+    var(--grid-gutter),
+    var(--grid-width) -
+    2 *
+    var(--grid-gutter)
+  );
+  margin-inline: auto;
+  padding-block: clamp(2rem, 6vw, 4rem);
+}
+
+.page-grid > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.page-grid-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (width >= 60em) {
+  .page-grid-heading {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+    grid-column: 1 / span 4;
+    margin-bottom: 0;
+  }
+
+  .page-grid-heading + .page-grid-content {
+    grid-column: 5 / -1;
+  }
+}
+
+/* The sections of a page's content are divided by a thick rule. */
+.page-grid-content > * + section {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: var(--rule-thick);
+}
+
 /* Headings are heavy and tightly set, and the type carries the design: the
    bigger the heading, the tighter its letter-spacing and line-height. */
 .page-heading {
@@ -165,6 +233,11 @@ button {
   font-weight: 800;
   line-height: 0.95;
   letter-spacing: -0.035em;
+}
+
+/* A page heading in the page grid's heading column is set larger. */
+.page-grid-heading .page-heading {
+  font-size: clamp(2.75rem, 5.5vw, 4.25rem);
 }
 
 .section-heading {
