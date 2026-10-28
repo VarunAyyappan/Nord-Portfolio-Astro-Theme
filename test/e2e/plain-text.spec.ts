@@ -1,4 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
+import { availability } from "../../src/lib/availability";
 
 /** The `<loc>` URLs in a sitemap or sitemap index, as URL paths. */
 async function sitemapPaths(page: Page, url: string): Promise<string[]> {
@@ -92,6 +93,50 @@ test.describe("Stack", () => {
     expect(shown).toBeGreaterThan(0);
     expect(found).toEqual({});
   });
+});
+
+test.describe("Availability", () => {
+  for (const [place, path] of [
+    ["Home", "./"],
+    ["Contact", "./contact/"],
+  ]) {
+    test(`is a colored dot and its label, with no pill, on ${place}`, async ({
+      page,
+    }) => {
+      if (!availability) throw new Error("Availability isn't set");
+      await page.goto(path);
+      const shown = page
+        .getByRole("main")
+        .getByText(availability.label, { exact: true });
+      await expect(shown).toBeVisible();
+      const look = await shown.evaluate((element) => {
+        const style = getComputedStyle(element);
+        const dot = element.querySelector('[aria-hidden="true"]');
+        const dotStyle = dot && getComputedStyle(dot);
+        const dotWidth = dot?.getBoundingClientRect().width ?? 0;
+        const radius = Number.parseFloat(dotStyle?.borderRadius ?? "");
+        return {
+          border: style.borderStyle,
+          background: style.backgroundColor,
+          padding: style.padding,
+          dot: dotStyle && {
+            colored: dotStyle.backgroundColor !== "rgba(0, 0, 0, 0)",
+            round:
+              dotWidth > 0 &&
+              (dotStyle.borderRadius.endsWith("%")
+                ? radius >= 50
+                : radius >= dotWidth / 2),
+          },
+        };
+      });
+      expect(look).toEqual({
+        border: "none",
+        background: "rgba(0, 0, 0, 0)",
+        padding: "0px",
+        dot: { colored: true, round: true },
+      });
+    });
+  }
 });
 
 test.describe("labels", () => {
