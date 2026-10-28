@@ -4,7 +4,7 @@ A starter template for a software developer's portfolio, built with [Astro](http
 
 **[See the live demo](https://varunayyappan.github.io/Nord-Portfolio-Astro-Theme/)**
 
-It ships with filler content written as Ada Lovelace. You replace it by editing one Site config file and a folder of Markdown and YAML files, without touching component code. You own your copy outright: there is no upgrade path, so change anything you like.
+It ships with filler content written as Ada Lovelace. You replace it by editing one Site config file and a folder of Markdown and YAML files, without touching component code. You own your copy outright: there's no automatic upgrade path, so change anything you like, and [apply a later release's changes](#updating-from-the-theme) with git when you want them.
 
 ## Getting started
 
@@ -46,6 +46,8 @@ Set `featured: true` on any number of Projects to show them on Home, newest firs
 A Project or Post's file name is its URL, e.g. `notes-on-note-g.md` is served at `/blog/notes-on-note-g/`. Images go beside the Markdown file and are linked relatively, e.g. `./covers/my-project.png`, so they're optimized at build time. Posts and Projects are plain Markdown, not MDX, and code blocks are highlighted in Nord colors with no setup.
 
 In Site config, `resume` is optional: leave it out and Experience shows no download link. `shareImage` is the image link previews show, 1200 × 630 pixels. A Post or Project can set its own share image with `cover` in its frontmatter, cropped to that size. A Project's cover also shows on its page, but for now a Post's cover shows only in link previews. `availability` is optional too: leave it out and neither Contact nor Home shows it.
+
+`resume`, `shareImage` and each `navigation` `href` are paths on your site, starting with "/", and the base path is added for you. A file in `public/` is served from the site's root, e.g. `public/share.png` is `/share.png`. `resume` can also be a full `https://` URL, such as a Drive link, which is used as given. Links to other sites go in `social`, not `navigation`. A value that breaks these rules fails the type check, both in your editor and in Deploy.
 
 The filler PGP fingerprint on Contact is a placeholder. Replace it with your own, or remove it. To offer your public key for download, put it in `public/` and set `pgpKey` to its path, e.g. `/pgp-key.asc`.
 
@@ -123,6 +125,53 @@ The `fonts` list in `astro.config.ts` sets Schibsted Grotesk for text and headin
 ### Icons
 
 Icons are plain inline SVG components in `src/components/icons/`. To add one, copy an existing icon, such as `GitHub.astro`, and paste in your SVG's `viewBox` and paths. Keep `width="1em"`, `height="1em"` and `fill="currentColor"` so it sizes and colors itself like the surrounding text. A link holding only an icon needs an `aria-label`.
+
+## Updating from the Theme
+
+`create astro` copies the Theme's files without their history, so `git merge` can't bring a later release into your copy. Instead, you apply the changes between the release you scaffolded from and the new one. The `version` in your `package.json` says which release you started from.
+
+Each release's [notes](https://github.com/VarunAyyappan/Nord-Portfolio-Astro-Theme/releases) list what changed and what you must do by hand, so read them first. For a release that rewrites most of the styles, as v2.0.0 does, scaffolding it fresh and copying your content, Site config and `public/` files across can be easier, especially if you've restyled your copy.
+
+The steps below update from v1.0.0 to v2.0.0, so change both versions to yours.
+
+1. **Fetch the Theme's releases.** Add the Theme as a remote that fetches only its release tags, under a `theme/` prefix, so its `theme/v2.0.0` can't clash with a `v2.0.0` tag of your own:
+
+   ```sh
+   git remote add --no-tags theme https://github.com/VarunAyyappan/Nord-Portfolio-Astro-Theme.git
+   git config remote.theme.fetch 'refs/tags/v*:refs/tags/theme/v*'
+   git fetch theme
+   ```
+
+   Next time, `git fetch theme` alone gets the new release.
+
+2. **Apply the changes.** Commit your work first, since `git apply --3way` needs a clean working tree, then apply the changes on a new branch:
+
+   ```sh
+   git switch -c theme-v2.0.0
+   git diff --binary theme/v1.0.0 theme/v2.0.0 -- . \
+     ':!src/content' ':!public' ':!src/site.config.ts' \
+     ':!aube-lock.yaml' ':!pnpm-lock.yaml' \
+     ':!README.md' ':!AGENTS.md' ':!CLAUDE.md' ':!CONTEXT.md' ':!GLOSSARY.md' ':!docs' \
+     | git apply --3way
+   ```
+
+   The diff leaves out your content, `public/` files and Site config, so the filler content never comes back. It also leaves out the lockfile (see step 4) and the files you [rewrite or delete](#replacing-the-filler-content) when you replace the filler content. The fetch gave git the Theme's files, so `--3way` merges each change into your version of the file, and a conflict appears only where you changed the same lines of the Theme's code.
+
+   If git says a file "does not exist in index", you deleted it, often along with the rest of the test suites. Nothing was applied, so add it to the list, e.g. `':!test'`, and run the command again.
+
+3. **Resolve the conflicts.** `git status` lists them, and you resolve them as in any merge. To keep your own version of a file you replaced, run `git checkout --ours -- <file>`. Then `git add` each file you resolved.
+
+4. **Update the lockfile.** With aube or pnpm, take the new release's lockfile and install, which adds any dependencies of your own:
+
+   ```sh
+   git rm -q --ignore-unmatch aube-lock.yaml
+   git checkout theme/v2.0.0 -- pnpm-lock.yaml
+   aube install
+   ```
+
+   v1.0.0's lockfile is `aube-lock.yaml`, and later releases' is `pnpm-lock.yaml`, so the first command removes v1.0.0's. With another package manager, run its install. If the type check then fails on two versions of one package, delete your lockfile and install again.
+
+5. **Check it.** Run `aube run check`, `aube run lint` and `aube run build`. Site config was left out, so if the release changed one of its fields, the type check names it, and the release notes say what to set. Then commit, and merge the branch.
 
 ## Commands
 
