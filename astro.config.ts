@@ -17,9 +17,9 @@ export default defineConfig({
   fonts: [
     {
       provider: fontProviders.fontsource(),
-      name: "Inter",
+      name: "Schibsted Grotesk",
       cssVariable: "--font-sans",
-      weights: ["100 900"],
+      weights: ["400 900"],
       styles: ["normal", "italic"],
       subsets: ["latin"],
       fallbacks: ["sans-serif"],

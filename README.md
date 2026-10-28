@@ -118,7 +118,7 @@ The browser tests scan every page for contrast in both Color modes, so `aube run
 
 ### Fonts
 
-The `fonts` list in `astro.config.ts` sets Inter for text and JetBrains Mono for code. They're downloaded from [Fontsource](https://fontsource.org) at build time and served from your own site. To swap one, change its `name` to any Fontsource family and adjust `weights` and `styles`. Keep `cssVariable` as it is.
+The `fonts` list in `astro.config.ts` sets Schibsted Grotesk for text and headings and JetBrains Mono for code. They're downloaded from [Fontsource](https://fontsource.org) at build time and served from your own site. To swap one, change its `name` to any Fontsource family and adjust `weights` and `styles`. Keep `cssVariable` as it is.
 
 ### Icons
 
