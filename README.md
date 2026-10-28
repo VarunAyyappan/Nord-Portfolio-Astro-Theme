@@ -78,7 +78,9 @@ The theme ships with the demo's project site settings, so change both before you
 
 ### GitHub Pages
 
-`.github/workflows/deploy.yml` deploys the site on every push to `main`. To turn it on, set **Settings → Pages → Source** to **GitHub Actions** in your repo. `.github/workflows/ci.yml` checks every pull request with Biome, type checking, both test suites and a build. You can also run it on any branch from the **Actions** tab.
+`.github/workflows/deploy.yml` deploys the site on every push to `main`. To turn it on, set **Settings → Pages → Source** to **GitHub Actions** in your repo. Before it builds, Deploy type checks the site and content (`aube run check`) and lints with Biome (`aube run lint`), and it doesn't deploy if either fails. Neither depends on the filler content, so your pushes deploy without your editing any tests.
+
+`.github/workflows/ci.yml` runs Biome's lint and format checks, the type check, both test suites and a build. It runs only on pull requests, or when you start it on any branch from the **Actions** tab, so if you push straight to `main`, the test suites don't run on your changes.
 
 For a custom domain, enter it under **Settings → Pages → Custom domain**, follow GitHub's instructions for your DNS records, then turn on **Enforce HTTPS**. You don't need a `CNAME` file, since the site deploys from a workflow.
 
