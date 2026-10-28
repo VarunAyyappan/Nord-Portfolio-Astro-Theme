@@ -97,12 +97,23 @@ export async function expectAbove(upper: Locator, lower: Locator) {
 }
 
 /**
- * How the Project tiles are set in rows: one array per row, top to bottom,
- * saying of each tile whether it spans the whole list ("both"), or sits in
- * its left or right column.
+ * The outermost element inside `within` that holds `item` but not `apart`:
+ * one column or block of a layout, found by what it holds rather than by
+ * its tag, class or place in the markup. `item` and `apart` are looked up
+ * inside each candidate, so they can start from the page.
  */
-export async function rows(tiles: Locator) {
-  const list = await box(tiles.first().locator("xpath=ancestor::ul[1]"));
+export function blockHolding(within: Locator, item: Locator, apart: Locator) {
+  return within.locator("*").filter({ has: item, hasNot: apart }).first();
+}
+
+/**
+ * How the Project tiles in `tileList` are set in rows: one array per row, top
+ * to bottom, saying of each tile whether it spans the whole list ("both"),
+ * or sits in its left or right column.
+ */
+export async function rows(tileList: Locator) {
+  const tiles = tileList.getByRole("article");
+  const list = await box(tileList);
   const middle = (list.left + list.right) / 2;
   const near = (a: number, b: number) => Math.abs(a - b) < 1;
   const found = new Map<number, string[]>();

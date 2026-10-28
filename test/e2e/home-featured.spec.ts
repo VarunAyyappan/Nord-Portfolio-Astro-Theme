@@ -92,7 +92,7 @@ for (const { count, inRows } of counts) {
       const grid = await pageGrid(page);
       await expectWithin(hero(page), grid, 1, 4);
       await expectSpans(featuredList(page), grid, 5, 12);
-      expect(await rows(tiles(page))).toEqual(inRows);
+      expect(await rows(featuredList(page))).toEqual(inRows);
       const allProjects = featured(page).getByRole("link", {
         name: "All Projects",
       });
@@ -111,7 +111,7 @@ for (const { count, inRows } of counts) {
       const grid = await pageGrid(page);
       await expectSpans(featuredList(page), grid, 1, 12);
       await expectAbove(hero(page), featuredList(page));
-      expect(await rows(tiles(page))).toEqual(
+      expect(await rows(featuredList(page))).toEqual(
         Array.from({ length: count }, () => ["both"]),
       );
       await expectNoHorizontalScroll(page);

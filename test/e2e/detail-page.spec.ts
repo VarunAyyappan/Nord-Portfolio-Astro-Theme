@@ -1,5 +1,6 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
 import {
+  blockHolding,
   box,
   expectAbove,
   expectNoBoxes,
@@ -57,22 +58,20 @@ const detailPages = [
 /** The parts of a Post or Project page that the layout places. */
 function parts(page: Page, { summary, text }: (typeof detailPages)[number]) {
   const article = page.getByRole("main").getByRole("article");
-  /**
-   * The child of the article that holds what `item` finds: one column of
-   * the layout. `item` is looked up inside each child, so it starts from
-   * the page.
-   */
-  const columnOf = (item: Locator) =>
-    article.locator(":scope > *").filter({ has: item });
   const date = page.locator("time");
   const firstParagraph = page.getByText(text);
+  // The details column holds the date and the text column the text, and
+  // neither holds the other's.
+  const details = blockHolding(article, date, firstParagraph);
   return {
     title: article.getByRole("heading", { level: 1 }),
     summary: article.getByText(summary, { exact: true }),
     cover: article.locator("img"),
-    details: columnOf(date),
+    details,
     firstParagraph: article.getByText(text),
-    text: columnOf(firstParagraph),
+    text: blockHolding(article, firstParagraph, date),
+    /** The block under the details' thin rule, which holds their links. */
+    links: blockHolding(details, page.getByRole("link"), date),
   };
 }
 
@@ -161,7 +160,7 @@ test.describe("A Project's details", () => {
   }) => {
     await page.setViewportSize(desktop);
     await page.goto("./projects/analytical-engine-notes/");
-    const { details } = parts(page, detailPages[0]);
+    const { details, links: linksBlock } = parts(page, detailPages[0]);
     const stack = details.getByRole("list", { name: "Stack" });
     const links = details.getByRole("link");
 
@@ -184,10 +183,7 @@ test.describe("A Project's details", () => {
       );
     expect(separators).toEqual(["none", "none", "none"]);
     await expectAbove(stack, links.first());
-    await expectRuleAbove(
-      details.locator(":scope > *").filter({ has: page.getByRole("link") }),
-      "thin",
-    );
+    await expectRuleAbove(linksBlock, "thin");
     await expectNoBoxes(details);
   });
 });
@@ -198,7 +194,7 @@ test.describe("A Post's details", () => {
   }) => {
     await page.setViewportSize(desktop);
     await page.goto("./blog/notes-on-note-g/");
-    const { details } = parts(page, detailPages[2]);
+    const { details, links } = parts(page, detailPages[2]);
 
     const lines = await renderedLines(details);
     expect(lines.slice(0, 2)).toEqual([
@@ -207,10 +203,7 @@ test.describe("A Post's details", () => {
     ]);
     expect(lines[2]).toMatch(/^\d+ min read$/);
     expect(lines.slice(3)).toEqual(["Algorithms", "Mathematics"]);
-    await expectRuleAbove(
-      details.locator(":scope > *").filter({ has: page.getByRole("link") }),
-      "thin",
-    );
+    await expectRuleAbove(links, "thin");
     await expectNoBoxes(details);
   });
 });
