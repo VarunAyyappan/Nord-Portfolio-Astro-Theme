@@ -5,15 +5,14 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { availabilityLabels } from "../../src/lib/availability";
 import { siteConfig } from "../../src/site.config";
 import { buildCopy, type CopyBuild, removeCopy } from "./build-copy";
-import { readOutput } from "./output";
+import { heroOf, readOutput } from "./output";
 
 /** The text of Contact's main content and of the Home hero, in a build. */
 function shownIn(readFile: (file: string) => string) {
   return {
     contact: parse(readFile("contact/index.html")).querySelector("main")
       ?.textContent,
-    hero: parse(readFile("index.html")).querySelector("main > section")
-      ?.textContent,
+    hero: heroOf(parse(readFile("index.html")))?.textContent,
   };
 }
 

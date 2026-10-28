@@ -13,6 +13,10 @@
  *     accents.
  *   - Light mode: Snow Storm backgrounds, Polar Night text. Frost and Aurora
  *     only on non-text elements, since all of them fail AA on nord6.
+ *
+ * The share images generated for Posts without a cover can't read these:
+ * src/share-image/render.ts keeps its own copies of the dark mode's
+ * background, text and accent, so change them there too.
  */
 :root {
   /* Polar Night */
@@ -44,19 +48,31 @@
   /* Accent is for non-text elements in light mode. */
   --color-accent: light-dark(var(--nord10), var(--nord8));
   --color-border: light-dark(var(--nord4), var(--nord3));
+  /* The plate a Project without a cover shows its title on: a surface
+     that stands out from the background more than --color-surface does. */
+  --color-plate: light-dark(var(--nord4), var(--nord1));
   /* Availability dots, one per setting: decoration beside a text label,
      never text, so the same Aurora color works in both Color modes. */
   --color-availability-open: var(--nord14);
   --color-availability-selective: var(--nord13);
   --color-availability-not-looking: var(--nord11);
 
-  /* Layout: the readable width that page content, the header and the
-     footer share. The `sizes` hints on Project covers assume it, so change
-     them with it. */
-  --content-width: 48rem;
-  /* The roomier top and bottom padding of Home and the 404 page, which
+  /* Layout: the widest the page grid gets, which the header and footer
+     span too, the gutter that insets their content from its edges, and the
+     gap between the grid's 12 columns. The `sizes` hints on covers in
+     DetailPage.astro and ProjectTile.astro are worked out from all three,
+     so change them with these. */
+  --grid-width: 78rem;
+  --grid-gutter: 1.5rem;
+  --grid-gap: 1.5rem;
+  /* The roomier top and bottom padding of the 404 page, which
      grows with the viewport. */
   --space-landing: clamp(3rem, 12vw, 8rem);
+
+  /* The rules that divide a page: a thick one between its sections, and a
+     thin one between the items in a list. */
+  --rule-thick: 0.25rem solid var(--color-text);
+  --rule-thin: 1px solid var(--color-border);
 
   /* Motion: how long hover and focus transitions take. */
   --motion-duration: 150ms;
@@ -77,7 +93,7 @@
 /*
  * Motion: pages cross-fade into each other with native cross-document view
  * transitions, CSS only, with no client router. Browsers without support
- * navigate normally. Links, buttons and cards ease between their hover and
+ * navigate normally. Links, buttons and tiles ease between their hover and
  * focus states over --motion-duration. A link that underlines on hover keeps
  * its underline and fades it in from transparent, since turning an underline
  * on can't be eased. None of it runs under prefers-reduced-motion, so any
@@ -103,7 +119,7 @@
 
 html {
   font-family: var(--font-sans);
-  line-height: 1.6;
+  line-height: 1.55;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -119,29 +135,6 @@ body {
 
 main {
   flex: 1;
-}
-
-/* A page's centered, readable-width container, its main heading and the
-   headings of its sections. A page that needs something different
-   overrides only that in its own styles. */
-.page {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 3rem 1.5rem;
-}
-
-.page-heading {
-  margin: 0;
-  font-size: clamp(2rem, 6vw, 3rem);
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
-
-.section-heading {
-  margin: 0 0 1.5rem;
-  font-size: 1.75rem;
-  line-height: 1.2;
 }
 
 /* Links are text-colored with an accent underline, which keeps them at AA
@@ -165,6 +158,126 @@ button {
   outline: 0.1875rem solid var(--color-accent);
   outline-offset: 0.1875rem;
   border-radius: 0.125rem;
+}
+
+/* The styles that pages and components share, each defined once and named
+   for its role: the page grid, a page's main heading, the headings of its
+   sections, item titles and labels. A page or component that needs
+   something different overrides only that in its own styles. They come
+   after the link styles above, which they refine. */
+/*
+ * The page grid: 12 columns, as wide as the header and footer and lined up
+ * with their content. The PageGrid component lays a page out on it, with the
+ * page heading in the left 4 columns, staying in view as the page scrolls,
+ * and the content in the right 8; without a heading column, the content
+ * spans all 12. A page with its own layout can use .page-grid directly
+ * and place its children on the columns from 60em up.
+ *
+ * Below 60em, every child spans all 12 columns, so the page stacks in one
+ * column in source order. Use the same 60em for any page's own layout.
+ */
+.page-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--grid-gap);
+  width: min(
+    100% -
+    2 *
+    var(--grid-gutter),
+    var(--grid-width) -
+    2 *
+    var(--grid-gutter)
+  );
+  margin-inline: auto;
+  padding-block: clamp(2rem, 6vw, 4rem);
+}
+
+.page-grid > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+.page-grid-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+@media (width >= 60em) {
+  .page-grid-heading {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+    grid-column: 1 / span 4;
+    margin-bottom: 0;
+  }
+
+  .page-grid-heading + .page-grid-content {
+    grid-column: 5 / -1;
+  }
+}
+
+/* The content starts level with the heading beside it. */
+.page-grid-content > :first-child {
+  margin-top: 0;
+}
+
+/* The sections of a page's content are divided by a thick rule. */
+.page-grid-content > * + section {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: var(--rule-thick);
+}
+
+/* Headings are heavy and tightly set, and the type carries the design: the
+   bigger the heading, the tighter its letter-spacing and line-height. */
+.page-heading {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+}
+
+/* A page heading in the page grid's heading column is set larger. */
+.page-grid-heading .page-heading {
+  font-size: clamp(2.75rem, 5.5vw, 4.25rem);
+}
+
+.section-heading {
+  margin: 0 0 1.5rem;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+/* The title of one item among several: a Post in a list, a Project tile or
+   an Experience entry. */
+.item-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+/* A list of item titles that are all links would be a stack of underlines,
+   so an item title's link hides its underline until hover. Each component
+   decides what the hover is on, and fades the underline back in to
+   --color-accent. */
+.item-title a {
+  text-decoration-color: transparent;
+}
+
+/* A short bold label that names a group or a value, such as a Skill group
+   on Home or a detail on Contact. Labels are in sentence case, as written:
+   nothing on the site is set in all caps. */
+.label-text {
+  color: var(--color-text);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 code,

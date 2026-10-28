@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { isSitePath, type SitePath } from "./lib/site-path";
 
 /** What a frontmatter date that can't be read fails the build with. */
 const dateError = { error: "Expected a date like 2026-06-12" };
@@ -27,7 +28,7 @@ const projects = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      /** One line, shown on the Project's card and under its title. */
+      /** One line, shown on the Project's tile and under its title. */
       summary: z.string(),
       /** Orders Projects, newest first. */
       date: z.coerce.date(dateError),
@@ -43,9 +44,9 @@ const projects = defineCollection({
        */
       cover: image().optional(),
       /**
-       * Shows the Project on Home, newest first. Feature up to three
-       * Projects: more fails the build. Drafts don't count, and in the
-       * dev server fill only the room the published ones leave.
+       * Shows the Project on Home, newest first. Feature as many Projects
+       * as you like. A featured draft shows in the dev server only, like
+       * any other draft.
        */
       featured: z.boolean().default(false),
       /** Shows the Project in the dev server only, never in a build. */
@@ -73,8 +74,8 @@ const posts = defineCollection({
       tags: z.array(z.string()).default([]),
       /**
        * An image path relative to the Markdown file. It is resized and
-       * converted at build time. For now only link previews show it, not
-       * the Post page.
+       * converted at build time, and treated as decoration. It leads the
+       * Post's page and is its share image in link previews.
        */
       cover: image().optional(),
       /** Shows the Post in the dev server only, never in a build. */
@@ -152,9 +153,11 @@ const contact = defineCollection({
   loader: glob({ pattern: "contact.md", base: "./src/content/contact" }),
   schema: z.object({
     /**
-     * The kinds of work the Adopter is open to, e.g. "Freelance work" or
-     * "Speaking", listed under their own heading. Leave it out or empty and
-     * the heading is hidden.
+     * The kinds of work the Adopter is open to, written as they read in a
+     * sentence, e.g. ["Freelance work", "speaking"]. They are joined into
+     * one sentence under their own heading, "Freelance work and speaking.",
+     * and shown as written, so capitalize only the first and any proper
+     * nouns. Leave it out or empty and the heading is hidden.
      */
     openTo: z.array(z.string()).default([]),
     /** E.g. "Usually replies within 2 working days". */
@@ -170,8 +173,10 @@ const contact = defineCollection({
      * Contact shows no key link.
      */
     pgpKey: z
-      .string()
-      .startsWith("/", { error: 'Expected a path starting with "/"' })
+      .custom<SitePath>(
+        (value) => typeof value === "string" && isSitePath(value),
+        { error: 'Expected a path on this site, starting with "/"' },
+      )
       .optional(),
   }),
 });

@@ -7,6 +7,7 @@ import { postSources, publishedPosts } from "./content";
 import {
   basePath,
   headingAt,
+  imageUrls,
   outDir,
   outputFiles,
   readPage,
@@ -116,10 +117,10 @@ function readingMinutes(page: HTMLElement): number {
 
 describe.each(publishedPosts())("$title Post page", (post) => {
   const page = readPage(`blog/${post.id}/index.html`);
-  const header = page.querySelector("main article header");
-  /** The `datetime` of each `<time>` in the header, as a date string. */
-  const headerDates = () =>
-    header
+  const article = page.querySelector("main article");
+  /** The `datetime` of each `<time>` in the Post, as a date string. */
+  const articleDates = () =>
+    article
       ?.querySelectorAll("time")
       .map((time) =>
         new Date(time.getAttribute("datetime") ?? "").toISOString(),
@@ -136,7 +137,7 @@ describe.each(publishedPosts())("$title Post page", (post) => {
   });
 
   it(`shows the publish date${post.updated ? " and updated date" : ""}`, () => {
-    expect(headerDates()).toEqual(
+    expect(articleDates()).toEqual(
       [post.date, post.updated]
         .filter((date) => date !== undefined)
         .map((date) => date.toISOString()),
@@ -148,17 +149,26 @@ describe.each(publishedPosts())("$title Post page", (post) => {
   });
 
   it("links each of its Tags to that Tag's page", () => {
-    const links = header?.querySelectorAll('[aria-label="Tags"] a') ?? [];
+    const links = article?.querySelectorAll('[aria-label="Tags"] a') ?? [];
     expect(links.map(linkedTagPage)).toEqual(
       post.tags.map((tag) => ({ text: tag, heading: `Posts tagged ${tag}` })),
     );
   });
 
-  it(`shows only the images in its Markdown body${post.cover ? ", not its cover" : ""}`, () => {
+  it(`shows ${post.cover ? "its cover, optimized and with an empty alt, ahead of" : "only"} the images in its Markdown body`, () => {
     const markdownImages = post.body.match(/!\[[^\]]*\]\(/g) ?? [];
-    expect(page.querySelectorAll("main img")).toHaveLength(
-      markdownImages.length,
-    );
+    const images = page.querySelectorAll("main img");
+    expect(images).toHaveLength(markdownImages.length + (post.cover ? 1 : 0));
+    if (post.cover) {
+      const [cover] = images;
+      expect(cover.getAttribute("alt")).toBe("");
+      const name = path.parse(post.cover).name;
+      for (const url of imageUrls([cover])) {
+        expect(url).toMatch(
+          new RegExp(`^${basePath}_astro/${name}\\.[^/]+\\.webp$`),
+        );
+      }
+    }
   });
 });
 
@@ -216,6 +226,18 @@ describe("latest Posts on Home", () => {
       publishedPosts()
         .slice(0, 3)
         .map((post) => post.title),
+    );
+  });
+
+  it("dates each Post", () => {
+    expect(
+      section
+        ?.querySelectorAll("article time")
+        .map((time) => time.textContent.trim()),
+    ).toEqual(
+      publishedPosts()
+        .slice(0, 3)
+        .map((post) => formatDay(post.date)),
     );
   });
 

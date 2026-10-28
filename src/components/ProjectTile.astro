@@ -1,0 +1,129 @@
+---
+/**
+ * One Project as Home and the Projects index show it: its cover with the
+ * title under it or, for a Project without a cover, the title set as a
+ * plate in the cover's place, then the summary, then a muted line with the
+ * month, any ", draft" marker and the Stack. The whole tile is one link.
+ */
+import { Image } from "astro:assets";
+import { type Project, projectPath } from "../lib/projects";
+import { withBase } from "../lib/url";
+import ProjectMeta from "./ProjectMeta.astro";
+import Stack from "./Stack.astro";
+
+interface Props {
+  project: Project;
+  /** The heading level of the title, so the tile fits the page outline. */
+  headingLevel?: 2 | 3;
+  /** Whether the tile spans both columns of its list, for the cover's size. */
+  wide?: boolean;
+}
+
+const { project, headingLevel = 2, wide = false } = Astro.props;
+const { title, summary, stack, cover } = project.data;
+const Heading = `h${headingLevel}` as const;
+// Below 60em the tiles stack, as wide as the page grid. Above it, the list
+// fills the page grid's right 8 columns, at most 49.5rem, and a tile takes
+// all of that or one of its two columns. These are worked out from
+// --grid-width, --grid-gutter and --grid-gap in global.css, so change them
+// with those.
+const sizes = `(width < 60em) calc(100vw - 3rem), ${wide ? "49.5rem" : "24rem"}`;
+---
+
+<article class="project-tile">
+  {
+    cover && (
+      <Image src={cover} alt="" widths={[400, 800, 1200, 1600]} {sizes} />
+    )
+  }
+  <Heading class:list={["item-title", { plate: !cover }]}>
+    <a href={withBase(projectPath(project))}>{title}</a>
+  </Heading>
+  <p class="summary">{summary}</p>
+  <div class="details">
+    <ProjectMeta project={project} />
+    <Stack items={stack} />
+  </div>
+</article>
+
+<style>
+  .project-tile {
+    position: relative;
+    border-radius: 0.125rem;
+    transition: outline-offset var(--motion-duration) var(--motion-easing);
+  }
+
+  /* A cover and a plate take the same box, at a share image's proportions. */
+  img,
+  .plate {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1200 / 630;
+  }
+
+  img {
+    height: auto;
+    object-fit: cover;
+  }
+
+  .item-title {
+    margin-top: 1rem;
+  }
+
+  /* The title of a Project without a cover, set large in the cover's place. */
+  .plate {
+    display: flex;
+    align-items: end;
+    margin: 0;
+    padding: 1.5rem;
+    background-color: var(--color-plate);
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  /* The title link covers the whole tile, so the tile is one link. */
+  .item-title a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+  }
+
+  .project-tile:hover .item-title a {
+    text-decoration-color: var(--color-accent);
+  }
+
+  .project-tile:has(:focus-visible) {
+    outline: 0.1875rem solid var(--color-accent);
+    outline-offset: 0.5rem;
+  }
+
+  .item-title a:focus-visible {
+    outline: none;
+  }
+
+  .summary {
+    margin: 0.375rem 0 0;
+  }
+
+  .plate + .summary {
+    margin-top: 1rem;
+  }
+
+  /* The month and the Stack run on as one line of text, comma-separated. */
+  .details {
+    margin-top: 0.375rem;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+
+  .details > :global(*) {
+    display: inline;
+  }
+
+  .details > :global(:not(:first-child))::before {
+    content: ", ";
+  }
+</style>

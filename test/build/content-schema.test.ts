@@ -1,8 +1,8 @@
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { parse } from "node-html-parser";
 import { afterEach, describe, expect, it } from "vitest";
-import { buildCopy, removeCopy } from "./build-copy";
+import { buildCopy, buildWithFeatured, removeCopy } from "./build-copy";
 import {
   educationDir,
   educationSources,
@@ -81,63 +81,6 @@ describe("Project frontmatter", () => {
   );
 });
 
-/**
- * Builds a copy of the site where only new Projects are featured: `published`
- * of them, plus `drafts` featured drafts, each newer than every published
- * one. No filler Project is featured. With `keepDrafts`, the build keeps
- * drafts, as the dev server does.
- */
-function buildWithFeatured({
-  published,
-  drafts,
-  keepDrafts = false,
-}: {
-  published: number;
-  drafts: number;
-  keepDrafts?: boolean;
-}) {
-  const projects = [
-    ...Array.from({ length: published }, (_, i) => ({
-      title: `Featured Project ${i + 1}`,
-      draft: false,
-    })),
-    ...Array.from({ length: drafts }, (_, i) => ({
-      title: `Featured Draft ${i + 1}`,
-      draft: true,
-    })),
-  ];
-  const feature = (root: string) => {
-    const copiedDir = path.join(
-      root,
-      path.relative(process.cwd(), projectsDir),
-    );
-    for (const file of readdirSync(copiedDir)) {
-      if (!file.endsWith(".md")) continue;
-      const source = readFileSync(path.join(copiedDir, file), "utf8");
-      writeFileSync(
-        path.join(copiedDir, file),
-        source.replace(/^featured:.*\n/m, ""),
-      );
-    }
-    projects.forEach(({ title, draft }, i) => {
-      const frontmatter = [
-        `title: ${title}`,
-        "summary: A featured Project.",
-        `date: 2026-01-${String(i + 1).padStart(2, "0")}`,
-        "stack: [Astro]",
-        "featured: true",
-        `draft: ${draft}`,
-      ];
-      writeFileSync(
-        path.join(copiedDir, `featured-${i + 1}.md`),
-        `---\n${frontmatter.join("\n")}\n---\n\nLorem ipsum.\n`,
-      );
-    });
-  };
-  const build = buildCopy(feature, { keepDrafts });
-  return { ...build, titles: projects.map(({ title }) => title) };
-}
-
 /** The titles of the Projects a copy's Home shows as featured, in order. */
 function featuredOnHome(root: string): string[] {
   const home = parse(readFileSync(path.join(root, "dist/index.html"), "utf8"));
@@ -147,50 +90,32 @@ function featuredOnHome(root: string): string[] {
   );
 }
 
-describe("featured Project limit", () => {
-  it("fails the build, naming each featured Project, when more than 3 are published", () => {
+describe("featured Projects", () => {
+  it("build without error, all shown on Home newest first, when more than 3 are featured", () => {
     const build = buildWithFeatured({ published: 4, drafts: 0 });
-    root = build.root;
-    expect(build.status).not.toBe(0);
-    expect(build.output).toContain("Up to 3 Projects can be featured");
-    for (const title of build.titles) {
-      expect(build.output).toContain(title);
-    }
-  });
-
-  it("doesn't count featured drafts", () => {
-    const build = buildWithFeatured({ published: 3, drafts: 1 });
-    root = build.root;
-    expect(build.output).not.toContain("Up to 3 Projects can be featured");
-    expect(build.status).toBe(0);
-  });
-
-  it("shows featured drafts, where drafts are kept, only in room the published ones leave", () => {
-    const build = buildWithFeatured({
-      published: 3,
-      drafts: 1,
-      keepDrafts: true,
-    });
     root = build.root;
     expect(build.status).toBe(0);
     expect(featuredOnHome(build.root)).toEqual([
+      "Featured Project 4",
       "Featured Project 3",
       "Featured Project 2",
       "Featured Project 1",
     ]);
   });
 
-  it("fills the room published ones leave with the newest featured drafts, where drafts are kept", () => {
+  it("show featured drafts like any other, newest first, where drafts are kept", () => {
     const build = buildWithFeatured({
-      published: 1,
-      drafts: 3,
+      published: 3,
+      drafts: 2,
       keepDrafts: true,
     });
     root = build.root;
     expect(build.status).toBe(0);
     expect(featuredOnHome(build.root)).toEqual([
-      "Featured Draft 3",
       "Featured Draft 2",
+      "Featured Draft 1",
+      "Featured Project 3",
+      "Featured Project 2",
       "Featured Project 1",
     ]);
   });

@@ -1,21 +1,23 @@
 ---
 import { formatDay } from "../lib/date";
 import { type Post, readingMinutes } from "../lib/posts";
-import DraftBadge from "./DraftBadge.astro";
+import MetaDate from "./MetaDate.astro";
 import MetaLine from "./MetaLine.astro";
 
 interface Props {
   post: Post;
+  /** Overrides the line's layout from the component that uses it. */
+  class?: string;
   /** Also shows the updated date and reading time, as the Post page does. */
   detailed?: boolean;
 }
 
-const { post, detailed = false } = Astro.props;
+const { post, detailed = false, class: className, ...attributes } = Astro.props;
 const { date, updated, draft } = post.data;
 ---
 
-<MetaLine class:list={{ detailed }}>
-  <time datetime={date.toISOString()}>{formatDay(date)}</time>
+<MetaLine class:list={[className, { detailed }]} {...attributes}>
+  <MetaDate date={date} text={formatDay(date)} draft={draft} />
   {
     detailed && updated && (
       <span>
@@ -25,7 +27,6 @@ const { date, updated, draft } = post.data;
     )
   }
   {detailed && <span>{readingMinutes(post)} min read</span>}
-  {draft && <DraftBadge />}
 </MetaLine>
 
 <style>

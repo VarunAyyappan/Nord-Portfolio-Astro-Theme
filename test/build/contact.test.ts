@@ -53,12 +53,13 @@ describe("Contact details from the filler content", () => {
   const { openTo, responseTime, timezone } = contactSource();
   const page = readPage("contact/index.html");
 
-  it("lists what the Adopter is open to under its own heading, in order", () => {
+  it("says what the Adopter is open to as one sentence under its own heading, in order", () => {
     expect(openTo.length).toBeGreaterThan(1);
-    const items = sectionTitled(page, "Open to")
-      ?.querySelectorAll("li")
-      .map((item) => item.textContent.trim());
-    expect(items).toEqual(openTo);
+    const section = sectionTitled(page, "Open to");
+    expect(section?.querySelectorAll("li")).toEqual([]);
+    expect(section?.querySelector("p")?.textContent.trim()).toBe(
+      "Freelance work, full-time roles, speaking, mentoring, and open source.",
+    );
   });
 
   it("shows the response time and timezone", () => {
@@ -147,5 +148,32 @@ describe("PGP key, with a key file", () => {
     expect(
       readFileSync(path.join(build.root, "dist", keyPath), "utf8"),
     ).toContain("PGP PUBLIC KEY");
+  });
+});
+
+describe("PGP key, without its leading slash", () => {
+  // A file in public/ is served at "/pgp-key.asc", not "pgp-key.asc".
+  const keyPath = "pgp-key.asc";
+  let build: CopyBuild;
+  beforeAll(() => {
+    build = buildCopy((root) => {
+      const contactFile = path.join(
+        root,
+        path.relative(process.cwd(), contactDir),
+        "contact.md",
+      );
+      const contact = readFileSync(contactFile, "utf8");
+      writeFileSync(
+        contactFile,
+        contact.replace(/^---\n/, `---\npgpKey: "${keyPath}"\n`),
+      );
+    });
+  });
+  afterAll(() => removeCopy(build.root));
+
+  it("fails the build, naming the field", () => {
+    expect(build.status).not.toBe(0);
+    expect(build.output).toContain("does not match collection schema");
+    expect(build.output).toMatch(/\bpgpKey\b/);
   });
 });

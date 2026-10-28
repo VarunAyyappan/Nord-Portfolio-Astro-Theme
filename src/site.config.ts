@@ -1,4 +1,5 @@
 import { sectionPaths } from "./lib/sections";
+import type { SitePath } from "./lib/site-path";
 
 /**
  * Site config: the single place where an Adopter sets their identity.
@@ -32,19 +33,21 @@ export interface SiteConfig {
    */
   availability?: Availability;
   /**
-   * The Adopter's résumé PDF, as a path on this site starting with "/". Put
-   * the file in public/, e.g. public/resume.pdf is "/resume.pdf". The base
-   * path is added for you. Leave it out and the Experience Section shows no
-   * download link.
+   * The Adopter's résumé PDF, either as a path on this site starting with "/"
+   * or as a full "https://" URL. For a path, put the file in public/, e.g.
+   * public/resume.pdf is "/resume.pdf", and the base path is added for you.
+   * A URL, such as a Drive link, is used as given. Leave it out and the
+   * Experience Section shows no download link.
    */
-  resume?: string;
+  resume?: SitePath | `https://${string}`;
   /**
    * The image link previews show when a page is shared, as a path on this
    * site starting with "/". Put the file in public/, e.g. public/share.png is
-   * "/share.png". The base path is added for you. Make it 1200 × 630 pixels,
-   * as a PNG or JPEG. A Post or Project with a cover uses its cover instead.
+   * "/share.png". The base path is added for you. A full URL isn't allowed.
+   * Make it 1200 × 630 pixels, as a PNG or JPEG. A Post or Project with a
+   * cover uses its cover instead.
    */
-  shareImage: string;
+  shareImage: SitePath;
   /**
    * The Adopter's Skills, shown on Home in groups, in this order. Leave the
    * list empty and Home shows no Skills.
@@ -68,9 +71,10 @@ export interface NavLink {
   label: string;
   /**
    * A path on this site, starting with "/", e.g. `sectionPaths.blog` or
-   * "/uses/". The base path is added for you.
+   * "/uses/". The base path is added for you. A full URL isn't allowed:
+   * links to other sites go in `social`.
    */
-  href: string;
+  href: SitePath;
 }
 
 /**
@@ -113,6 +117,7 @@ export const siteConfig: SiteConfig = {
   base: "/Nord-Portfolio-Astro-Theme",
   // Each Section's path is in src/lib/sections.ts, e.g. sectionPaths.blog is
   // "/blog/". To link to a page of your own, type its path, e.g. "/uses/".
+  // Links to other sites go in social, below.
   navigation: [
     { label: "Home", href: sectionPaths.home },
     { label: "Projects", href: sectionPaths.projects },
