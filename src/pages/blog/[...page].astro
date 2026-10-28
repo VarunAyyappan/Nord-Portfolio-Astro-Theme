@@ -1,5 +1,6 @@
 ---
 import type { GetStaticPaths, Page } from "astro";
+import PageGrid from "../../components/PageGrid.astro";
 import PostList from "../../components/PostList.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getPosts, type Post, postsPerPage } from "../../lib/posts";
@@ -23,8 +24,8 @@ const next = page.url.next && withTrailingSlash(page.url.next);
 ---
 
 <BaseLayout title="Blog">
-  <section class="page" aria-labelledby="blog-heading">
-    <h1 class="page-heading list-heading" id="blog-heading">Blog</h1>
+  <PageGrid as="section" aria-labelledby="blog-heading">
+    <h1 class="page-heading" id="blog-heading" slot="heading">Blog</h1>
     <PostList posts={page.data} />
     {
       (prev || next) && (
@@ -42,23 +43,20 @@ const next = page.url.next && withTrailingSlash(page.url.next);
         </nav>
       )
     }
-  </section>
+  </PageGrid>
 </BaseLayout>
 
 <style>
+  /* Like every list's closing links, Newer and Older Posts start where the
+     Post list starts. */
   .pagination {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
     margin-top: 3rem;
   }
 
   .pagination a {
     font-weight: 600;
-  }
-
-  /* Older Posts stays on the right, even on page 1 where it's alone. */
-  .pagination [rel="next"] {
-    margin-left: auto;
   }
 </style>

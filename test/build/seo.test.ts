@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { XMLParser } from "fast-xml-parser";
 import type { HTMLElement } from "node-html-parser";
@@ -157,11 +158,50 @@ describe.each(withCovers)("$title page head tags", (entry) => {
   });
 });
 
+/** Each published Post without a cover, and the file of its page. */
+const withoutCovers = publishedPosts()
+  .filter((post) => !post.cover)
+  .map((post) => ({ ...post, file: `blog/${post.id}/index.html` }));
+
+describe.each(withoutCovers)("$title Post page head tags", (post) => {
+  const head = headTags(readPage(post.file));
+
+  it("use a generated 1200 × 630 PNG as the share image", async () => {
+    expect(head.ogImage).not.toBe(defaultImage);
+    expect(head.ogImage).toMatch(new RegExp(`^${siteHome}.+\\.png$`));
+    expect(head.twitterImage).toBe(head.ogImage);
+    const file = path.join(outDir, fileAt(head.ogImage ?? "") ?? "");
+    const { format, width, height } = await sharp(file).metadata();
+    expect({ format, width, height }).toEqual({
+      format: "png",
+      width: 1200,
+      height: 630,
+    });
+  });
+});
+
+describe("generated share images", () => {
+  it("differ from Post to Post", () => {
+    const images = withoutCovers.map((post) =>
+      readFileSync(
+        path.join(
+          outDir,
+          fileAt(headTags(readPage(post.file)).ogImage ?? "") ?? "",
+        ),
+      ).toString("base64"),
+    );
+    expect(images.length).toBeGreaterThan(1);
+    expect(new Set(images).size).toBe(images.length);
+  });
+});
+
 describe("the default share image", () => {
-  it("is used by every page but Posts and Projects with a cover", () => {
-    const withCover = new Set(withCovers.map((entry) => entry.file));
-    const others = htmlFiles().filter((file) => !withCover.has(file));
-    expect(others.length).toBeGreaterThan(withCover.size);
+  it("is used by every page but Posts, and Projects with a cover", () => {
+    const ownImage = new Set(
+      [...withCovers, ...withoutCovers].map((entry) => entry.file),
+    );
+    const others = htmlFiles().filter((file) => !ownImage.has(file));
+    expect(others.length).toBeGreaterThan(ownImage.size);
     expect(
       others.filter(
         (file) => headTags(readPage(file)).ogImage !== defaultImage,

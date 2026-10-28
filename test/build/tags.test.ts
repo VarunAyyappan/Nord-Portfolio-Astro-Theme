@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { formatDay } from "../../src/lib/date";
 import { postSources, publishedPosts } from "./content";
 import { outputFiles, readPage } from "./output";
 
@@ -64,4 +65,15 @@ describe("Tag pages", () => {
       );
     },
   );
+
+  it.each([...tagsOf(published)])("%s dates each listed Post", (tag) => {
+    const dates = readPage(pages.get(tag) ?? "")
+      .querySelectorAll("main article time")
+      .map((time) => time.textContent.trim());
+    expect(dates).toEqual(
+      published
+        .filter((post) => post.tags.includes(tag))
+        .map((post) => formatDay(post.date)),
+    );
+  });
 });

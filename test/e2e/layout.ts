@@ -183,3 +183,33 @@ export async function expectRuleAbove(
 ) {
   await expect(locator).toHaveCSS("border-top", rules[kind][colorMode]);
 }
+
+/**
+ * Where the first line of the element's text sits, as the y position of
+ * its baseline: a zero-size probe set on the baseline just before the first
+ * character, measured and removed again.
+ */
+export async function firstBaseline(locator: Locator): Promise<number> {
+  return locator.evaluate((element) => {
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
+      acceptNode: (node) =>
+        node.textContent?.trim()
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_SKIP,
+    });
+    const text = walker.nextNode();
+    if (!text?.parentNode) throw new Error("The element has no text");
+    const probe = document.createElement("span");
+    probe.style.cssText =
+      "display: inline-block; width: 0; height: 0; vertical-align: baseline";
+    text.parentNode.insertBefore(probe, text);
+    const { bottom } = probe.getBoundingClientRect();
+    probe.remove();
+    return bottom;
+  });
+}
+
+/** Expects the first lines of both elements' text to share a baseline. */
+export async function expectSameBaseline(a: Locator, b: Locator) {
+  expect(px(await firstBaseline(a))).toBe(px(await firstBaseline(b)));
+}

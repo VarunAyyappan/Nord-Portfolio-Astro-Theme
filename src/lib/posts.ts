@@ -1,4 +1,6 @@
 import type { CollectionEntry } from "astro:content";
+import type { ImageMetadata } from "astro";
+import type { SitePath } from "../site.config";
 import { sectionPaths } from "./sections";
 import { getVisible } from "./visible";
 
@@ -27,6 +29,15 @@ export const feedPath = "/rss.xml";
 /** The site path of a Post's page, before the base path. */
 export function postPath(post: Post): string {
   return `${sectionPaths.blog}${post.id}/`;
+}
+
+/**
+ * The image a Post's link previews show: its cover, or, for a Post without
+ * one, the site path of the share image generated from its title
+ * (src/pages/blog/[id]/share.png.ts).
+ */
+export function postShareImage(post: Post): ImageMetadata | SitePath {
+  return post.data.cover ?? `${sectionPaths.blog}${post.id}/share.png`;
 }
 
 /** An average adult's silent reading speed. */

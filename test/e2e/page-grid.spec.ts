@@ -38,6 +38,16 @@ const headingPages: {
     content: (main) => main.getByRole("paragraph").first(),
   },
   {
+    name: "Blog index",
+    path: "./blog/",
+    content: (main) => main.getByRole("list").first(),
+  },
+  {
+    name: "Tag page",
+    path: "./blog/tags/engines/",
+    content: (main) => main.getByRole("list").first(),
+  },
+  {
     name: "Projects index",
     path: "./projects/",
     // The list of Project tiles, the first list on the page.

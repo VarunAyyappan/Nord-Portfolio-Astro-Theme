@@ -4,7 +4,7 @@ import PostMeta from "../../components/PostMeta.astro";
 import Prose from "../../components/Prose.astro";
 import Tags from "../../components/Tags.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getPosts, type Post } from "../../lib/posts";
+import { getPosts, type Post, postShareImage } from "../../lib/posts";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -19,11 +19,11 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, tags, cover } = post.data;
+const { title, description, tags } = post.data;
 const { Content } = await render(post);
 ---
 
-<BaseLayout {title} {description} image={cover} type="article">
+<BaseLayout {title} {description} image={postShareImage(post)} type="article">
   <article class="page" aria-labelledby="post-title">
     <header>
       <h1 class="page-heading" id="post-title">{title}</h1>

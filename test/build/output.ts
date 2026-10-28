@@ -48,9 +48,12 @@ export function htmlFiles(): string[] {
   return outputFiles().filter((file) => file.endsWith(".html"));
 }
 
-/** Reads a built text file, given its path relative to `outDir`. */
-export function readOutput(file: string): string {
-  return readFileSync(path.join(outDir, file), "utf8");
+/**
+ * Reads a built text file, given its path relative to `outDir`, or to `dir`
+ * for another build's output.
+ */
+export function readOutput(file: string, dir = outDir): string {
+  return readFileSync(path.join(dir, file), "utf8");
 }
 
 /** Parses a built HTML file, given its path relative to `outDir`. */
@@ -66,9 +69,13 @@ export function pageUrl(file: string): string {
 
 /**
  * Maps a URL path under the base path to the output file a static host would
- * serve for it, or `undefined` if there is none.
+ * serve for it, or `undefined` if there is none. Looks in `outDir`, or in
+ * `dir` for another build's output.
  */
-export function resolveToFile(urlPath: string): string | undefined {
+export function resolveToFile(
+  urlPath: string,
+  dir = outDir,
+): string | undefined {
   if (!urlPath.startsWith(basePath) && urlPath !== siteConfig.base) {
     return undefined;
   }
@@ -78,7 +85,7 @@ export function resolveToFile(urlPath: string): string | undefined {
       ? [`${route}index.html`]
       : [route, `${route}/index.html`, `${route}.html`];
   return candidates.find((candidate) => {
-    const full = path.join(outDir, candidate);
+    const full = path.join(dir, candidate);
     return existsSync(full) && statSync(full).isFile();
   });
 }
