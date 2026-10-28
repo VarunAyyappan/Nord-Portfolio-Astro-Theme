@@ -1,6 +1,6 @@
 import { expect, type Locator, type Page, test } from "@playwright/test";
 import { expectNoAxeViolations } from "./axe";
-import { box, expectAbove } from "./layout";
+import { box, expectAbove, rows } from "./layout";
 import { colorModes, viewports } from "./matrix";
 
 const [phone, desktop] = viewports;
@@ -29,32 +29,6 @@ async function expectToOpenProject(
   await expect(
     page.getByRole("heading", { level: 1, name: title }),
   ).toBeVisible();
-}
-
-/**
- * How the tiles are set in rows: one array per row, top to bottom, saying
- * of each tile whether it spans the whole list ("both"), or sits in its
- * left or right column.
- */
-async function rows(tiles: Locator) {
-  const list = await box(tiles.first().locator("xpath=ancestor::ul[1]"));
-  const middle = (list.left + list.right) / 2;
-  const near = (a: number, b: number) => Math.abs(a - b) < 1;
-  const found = new Map<number, string[]>();
-  for (const tile of await tiles.all()) {
-    const { left, right, top } = await box(tile);
-    const place =
-      near(left, list.left) && near(right, list.right)
-        ? "both"
-        : near(left, list.left) && right < middle
-          ? "left"
-          : near(right, list.right) && left > middle
-            ? "right"
-            : `elsewhere (${left}–${right})`;
-    const row = Math.round(top);
-    found.set(row, [...(found.get(row) ?? []), place]);
-  }
-  return [...found.entries()].toSorted(([a], [b]) => a - b).map(([, r]) => r);
 }
 
 for (const colorScheme of colorModes) {
