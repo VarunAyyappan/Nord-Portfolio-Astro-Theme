@@ -59,7 +59,7 @@ Set `draft: true` on a Post or Project to work on it privately. Drafts show in t
 2. Replace the files in each `src/content/` folder, including the filler images.
 3. Replace the files in `public/`, or remove `resume` from Site config.
 4. Rewrite this README for your own portfolio.
-5. Delete `AGENTS.md`, `CLAUDE.md` and `docs/agents/`. They set up coding agents for developing the theme itself, so replace them with your own if you use an agent to help fill in your site.
+5. Delete `AGENTS.md`, `CLAUDE.md`, `GLOSSARY.md`, `docs/agents/` and `docs/adr/`. They set up coding agents for developing the theme itself and record its design decisions, so replace them with your own if you use an agent to help fill in your site.
 
 The test suites use the filler content as their fixture, and some tests check for things your content may not have, such as a draft Post and Project, more Posts than fit on one Blog page, or a Post and Project with a cover. Update or delete those tests as your content replaces the filler.
 
