@@ -1,7 +1,7 @@
 ---
 import { formatDay } from "../lib/date";
 import { type Post, readingMinutes } from "../lib/posts";
-import DraftBadge from "./DraftBadge.astro";
+import DraftMarker from "./DraftMarker.astro";
 import MetaLine from "./MetaLine.astro";
 
 interface Props {
@@ -15,7 +15,7 @@ const { date, updated, draft } = post.data;
 ---
 
 <MetaLine class:list={{ detailed }}>
-  <time datetime={date.toISOString()}>{formatDay(date)}</time>
+  <span><time datetime={date.toISOString()}>{formatDay(date)}</time>{draft && <DraftMarker />}</span>
   {
     detailed && updated && (
       <span>
@@ -25,7 +25,6 @@ const { date, updated, draft } = post.data;
     )
   }
   {detailed && <span>{readingMinutes(post)} min read</span>}
-  {draft && <DraftBadge />}
 </MetaLine>
 
 <style>
