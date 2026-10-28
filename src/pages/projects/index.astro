@@ -2,15 +2,20 @@
 import ProjectGrid from "../../components/ProjectGrid.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getProjects } from "../../lib/projects";
+// PROTOTYPE (design directions)
+import ProjectsC from "../../components/prototype/ProjectsC.astro";
 
 const projects = await getProjects();
 ---
 
 <BaseLayout title="Projects">
-  <section class="page" aria-labelledby="projects-heading">
-    <h1 class="page-heading" id="projects-heading">Projects</h1>
-    <ProjectGrid projects={projects} />
-  </section>
+  {import.meta.env.DEV && <div data-only="c"><ProjectsC projects={projects} /></div>}
+  <div data-only="not-c">
+    <section class="page" aria-labelledby="projects-heading">
+      <h1 class="page-heading" id="projects-heading">Projects</h1>
+      <ProjectGrid projects={projects} />
+    </section>
+  </div>
 </BaseLayout>
 
 <style>

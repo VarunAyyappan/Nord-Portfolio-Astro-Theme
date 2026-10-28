@@ -1,0 +1,59 @@
+---
+// PROTOTYPE (design directions): variant C's Projects index. The page
+// heading hangs in the left column, as Home's section headings do, and the
+// Projects fill the right with the same tiles as Home.
+import type { Project } from "../../lib/projects";
+import ProjectTilesC from "./ProjectTilesC.astro";
+
+interface Props {
+  projects: Project[];
+}
+
+const { projects } = Astro.props;
+---
+
+<section class="ng-row" aria-labelledby="projects-heading-c">
+  <h1 class="ng-hanging" id="projects-heading-c">Projects</h1>
+  <div class="ng-main">
+    <ProjectTilesC projects={projects} />
+  </div>
+</section>
+
+<style>
+  .ng-row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4rem) 1.5rem 4rem;
+  }
+
+  .ng-hanging {
+    grid-column: 1 / span 4;
+    align-self: start;
+    position: sticky;
+    top: 2rem;
+    margin: 0;
+    font-size: clamp(2.75rem, 5.5vw, 4.25rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+
+  .ng-main {
+    grid-column: 5 / -1;
+  }
+
+  @media (width < 60em) {
+    .ng-hanging,
+    .ng-main {
+      grid-column: 1 / -1;
+    }
+
+    .ng-hanging {
+      position: static;
+      margin-bottom: 2rem;
+    }
+  }
+</style>

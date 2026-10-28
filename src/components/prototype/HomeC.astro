@@ -2,11 +2,11 @@
 // PROTOTYPE (design directions): variant C, "Nordic grid". Work first: the
 // Adopter's name and intro hold a sticky left column while their Projects
 // fill the right, cover-led. Section headings hang in the left column.
-import { Image } from "astro:assets";
 import { availability } from "../../lib/availability";
-import { formatDay, formatMonth } from "../../lib/date";
+import { formatDay } from "../../lib/date";
 import { type Post, postPath } from "../../lib/posts";
-import { type Project, projectPath } from "../../lib/projects";
+import type { Project } from "../../lib/projects";
+import ProjectTilesC from "./ProjectTilesC.astro";
 import { sectionPaths } from "../../lib/sections";
 import { withBase } from "../../lib/url";
 import { siteConfig } from "../../site.config";
@@ -47,31 +47,7 @@ const { projects, posts } = Astro.props;
           <h2 id="featured-heading" class="ng-visually-hidden">
             Featured Projects
           </h2>
-          <ul class="ng-projects">
-            {projects.map((project, i) => (
-              <li class:list={{ wide: i === 0 && projects.length % 2 === 1 }}>
-                <a href={withBase(projectPath(project))}>
-                  {project.data.cover ? (
-                    <Image
-                      src={project.data.cover}
-                      alt=""
-                      widths={[600, 1000, 1400]}
-                      sizes="(width < 60em) calc(100vw - 3rem), 48rem"
-                    />
-                  ) : (
-                    <span class="ng-plate">{project.data.title}</span>
-                  )}
-                  {project.data.cover && (
-                    <span class="ng-title">{project.data.title}</span>
-                  )}
-                </a>
-                <p class="ng-summary">{project.data.summary}</p>
-                <p class="ng-meta">
-                  {formatMonth(project.data.date)}, {project.data.stack.join(", ")}
-                </p>
-              </li>
-            ))}
-          </ul>
+          <ProjectTilesC projects={projects} />
           <a class="ng-all" href={withBase(sectionPaths.projects)}>
             All Projects
           </a>
@@ -232,77 +208,6 @@ const { projects, posts } = Astro.props;
     list-style: none;
   }
 
-  .ng-projects {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 3rem 1.5rem;
-  }
-
-  .ng-projects li.wide {
-    grid-column: 1 / -1;
-  }
-
-  .ng-projects a {
-    display: block;
-    text-decoration: none;
-  }
-
-  .ng-projects img,
-  .ng-plate {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 1200 / 630;
-    object-fit: cover;
-    background-color: var(--color-surface);
-  }
-
-  /* A Project without a cover gets its title as a typographic cover. */
-  .ng-plate {
-    display: flex;
-    align-items: end;
-    padding: 1.5rem;
-    background-color: light-dark(var(--nord4), var(--nord1)) !important;
-    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
-    font-weight: 800;
-    line-height: 1;
-    letter-spacing: -0.035em;
-    text-wrap: balance;
-    text-decoration: underline 0.1em transparent;
-    text-underline-offset: 0.15em;
-    transition: text-decoration-color var(--motion-duration) var(--motion-easing);
-  }
-
-  .ng-projects a:hover .ng-plate {
-    text-decoration-color: var(--color-accent);
-  }
-
-  .ng-title {
-    display: inline-block;
-    margin-top: 1rem;
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    text-decoration: underline 0.125em transparent;
-    text-underline-offset: 0.2em;
-    transition: text-decoration-color var(--motion-duration) var(--motion-easing);
-  }
-
-  .ng-projects a:hover .ng-title {
-    text-decoration-color: var(--color-accent);
-  }
-
-  .ng-summary {
-    margin: 0.375rem 0 0;
-    max-width: 36rem;
-  }
-
-  .ng-meta {
-    margin: 0.375rem 0 0;
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-  }
-
   .ng-all {
     display: inline-block;
     margin-top: 2.5rem;
@@ -392,10 +297,6 @@ const { projects, posts } = Astro.props;
 
     .ng-hanging {
       margin-bottom: 1.5rem;
-    }
-
-    .ng-projects {
-      grid-template-columns: 1fr;
     }
 
     .ng-posts li {
