@@ -10,12 +10,17 @@ import { feedPath } from "../lib/posts";
 import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
 import "../styles/global.css";
+// PROTOTYPE (design directions): dev-only variants, switched with ?variant=.
+import ChromeB from "../components/prototype/ChromeB.astro";
+import PrototypeSwitcher from "../components/prototype/PrototypeSwitcher.astro";
+import "../styles/prototype-variants.css";
 
 /** The page's title, description and share image (see SeoHead). */
 type Props = SeoHeadProps;
 
 // The settings that are saved; system is the absence of one.
 const savedColorModes = colorModeSettings.filter((mode) => mode !== "system");
+const dev = import.meta.env.DEV;
 ---
 
 <!doctype html>
@@ -23,6 +28,16 @@ const savedColorModes = colorModeSettings.filter((mode) => mode !== "system");
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {
+      dev && (
+        <script
+          is:inline
+          set:html={`// PROTOTYPE: picks the design variant from ?variant= before first paint.
+const v = new URLSearchParams(location.search).get("variant");
+if (["a", "b", "c"].includes(v)) document.documentElement.dataset.variant = v;`}
+        />
+      )
+    }
     <script is:inline define:vars={{ colorModeStorageKey, savedColorModes }}>
       // Applies a saved Color mode setting before first paint, so the wrong
       // mode never flashes. Blocking and inline on purpose. Any storage
@@ -44,14 +59,20 @@ const savedColorModes = colorModeSettings.filter((mode) => mode !== "system");
     />
     <Font cssVariable="--font-sans" preload />
     <Font cssVariable="--font-mono" />
+    {dev && <Font cssVariable="--font-newsreader" />}
+    {dev && <Font cssVariable="--font-recursive" />}
+    {dev && <Font cssVariable="--font-schibsted" />}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <Header />
+    {dev && <ChromeB part="top" />}
     <main id="main">
       <slot />
     </main>
     <Footer />
+    {dev && <ChromeB part="status" />}
+    {dev && <PrototypeSwitcher />}
   </body>
 </html>
 

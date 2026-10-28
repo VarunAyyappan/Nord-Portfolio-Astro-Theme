@@ -1,0 +1,215 @@
+---
+// PROTOTYPE (design directions): variant B's site chrome. Sections are tabs
+// along the top, and a status bar along the bottom holds Availability, the
+// social links and the Color mode toggle, the way an editor's status bar
+// holds the state of the open file.
+import { availability } from "../../lib/availability";
+import { feedPath } from "../../lib/posts";
+import { socialLinks } from "../../lib/social";
+import { base, withBase, withTrailingSlash } from "../../lib/url";
+import { siteConfig } from "../../site.config";
+import ColorModeToggle from "../ColorModeToggle.astro";
+import RssIcon from "../icons/Rss.astro";
+
+interface Props {
+  /** Which part of the chrome: the tab bar above main, or the status bar below. */
+  part: "top" | "status";
+}
+
+const { part } = Astro.props;
+const currentPath = withTrailingSlash(Astro.url.pathname);
+const links = siteConfig.navigation.map(({ label, href }) => {
+  const target = withBase(href);
+  const inSection = target !== base && currentPath.startsWith(target);
+  const current =
+    currentPath === target ? ("page" as const) : inSection ? true : undefined;
+  return { label, href: target, current };
+});
+---
+
+{part === "top" && (
+<header class="wb-bar proto-b-only">
+  <a class="wb-name" href={base}>{siteConfig.name}</a>
+  <nav aria-label="Main">
+    <ul class="wb-tabs">
+      {
+        links.map(({ label, href, current }) => (
+          <li>
+            <a href={href} aria-current={current}>
+              {label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+)}
+{part === "status" && (
+<footer class="wb-status proto-b-only">
+  {
+    availability && (
+      <p class="wb-availability">
+        <span
+          class="wb-dot"
+          style={`background-color: var(--color-availability-${availability.setting})`}
+          aria-hidden="true"
+        />
+        {availability.label}
+      </p>
+    )
+  }
+  <ul class="wb-social" aria-label="Elsewhere">
+    {
+      socialLinks.map(({ href, label, Icon }) => (
+        <li>
+          <a href={href} aria-label={label} rel="me">
+            <Icon />
+          </a>
+        </li>
+      ))
+    }
+    <li>
+      <a href={withBase(feedPath)} aria-label="RSS feed">
+        <RssIcon />
+      </a>
+    </li>
+  </ul>
+  <ColorModeToggle />
+  <p class="wb-copyright">&copy; {new Date().getFullYear()} {siteConfig.name}</p>
+</footer>
+)}
+
+<style>
+  .wb-bar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: end;
+    gap: 2rem;
+    padding: 0 1.5rem;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .wb-name {
+    padding-block: 0.875rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-decoration: none;
+    white-space: nowrap;
+    font-variation-settings: "CASL" 1;
+  }
+
+  nav {
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .wb-tabs {
+    display: flex;
+    margin: 0 0 -1px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wb-tabs a {
+    display: block;
+    padding: 0.875rem 1.125rem 0.75rem;
+    border: 1px solid transparent;
+    border-top: 0.1875rem solid transparent;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .wb-tabs a:hover {
+    color: var(--color-text);
+  }
+
+  .wb-tabs a[aria-current] {
+    border-color: var(--color-border);
+    border-top-color: var(--color-accent);
+    border-bottom-color: var(--color-background);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  .wb-copyright {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  .wb-status {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    min-height: 2.5rem;
+    padding: 0 0.75rem 0 1.5rem;
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-surface);
+    font-size: 0.8125rem;
+  }
+
+  .wb-availability {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 auto 0 0;
+  }
+
+  .wb-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+  }
+
+  .wb-social {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wb-social a {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    color: var(--color-text-muted);
+  }
+
+  .wb-social a:hover {
+    color: var(--color-text);
+  }
+
+  .wb-social :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  @media (width < 40em) {
+    .wb-bar {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 0;
+    }
+
+    .wb-name {
+      padding: 0.75rem 1rem 0.25rem;
+    }
+
+    .wb-social,
+    .wb-copyright {
+      display: none;
+    }
+  }
+</style>

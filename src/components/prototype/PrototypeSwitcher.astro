@@ -1,0 +1,81 @@
+---
+// PROTOTYPE (design directions): the floating bar that cycles ?variant=.
+// Rendered only in the dev server (see BaseLayout), which can't read the
+// query string of a prerendered page, so the variant is read in the browser.
+import { variantNames } from "./variant";
+---
+
+<div class="prototype-switcher" data-names={JSON.stringify(variantNames)}>
+  <button type="button" data-step="-1" aria-label="Previous variant">‹</button>
+  <span class="prototype-label"></span>
+  <button type="button" data-step="1" aria-label="Next variant">›</button>
+</div>
+
+<script>
+  const bar = document.querySelector<HTMLElement>(".prototype-switcher");
+  if (bar) {
+    const names: Record<string, string> = JSON.parse(bar.dataset.names ?? "{}");
+    const keys = Object.keys(names);
+    const key = document.documentElement.dataset.variant ?? "current";
+    const label = bar.querySelector(".prototype-label");
+    if (label) {
+      label.textContent = `${key === "current" ? "v1" : key.toUpperCase()}  ${names[key]}`;
+    }
+    const go = (step: number) => {
+      const next = keys[(keys.indexOf(key) + step + keys.length) % keys.length];
+      const url = new URL(location.href);
+      if (next === "current") url.searchParams.delete("variant");
+      else url.searchParams.set("variant", next);
+      location.replace(url);
+    };
+    for (const button of bar.querySelectorAll<HTMLButtonElement>("button")) {
+      button.addEventListener("click", () => go(Number(button.dataset.step)));
+    }
+    document.addEventListener("keydown", (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest("input, textarea, [contenteditable]")) return;
+      if (event.key === "ArrowLeft") go(-1);
+      if (event.key === "ArrowRight") go(1);
+    });
+    // Keep the variant when following a link to another page of the site.
+    if (key !== "current") {
+      for (const link of document.querySelectorAll<HTMLAnchorElement>("a[href]")) {
+        const url = new URL(link.href);
+        if (url.origin !== location.origin) continue;
+        url.searchParams.set("variant", key);
+        link.href = url.toString();
+      }
+    }
+  }
+</script>
+
+<style>
+  .prototype-switcher {
+    position: fixed;
+    bottom: 3.25rem;
+    left: 50%;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.375rem 0.5rem;
+    border-radius: 999px;
+    background: #000;
+    color: #fff;
+    font: 500 0.875rem/1 system-ui, sans-serif;
+    white-space: pre;
+    box-shadow: 0 0.25rem 1rem rgb(0 0 0 / 0.4);
+    transform: translateX(-50%);
+  }
+
+  .prototype-switcher button {
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    border-radius: 999px;
+    background: #333;
+    color: #fff;
+    font-size: 1.25rem;
+    cursor: pointer;
+  }
+</style>

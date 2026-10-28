@@ -33,5 +33,33 @@ export default defineConfig({
       subsets: ["latin"],
       fallbacks: ["monospace"],
     },
+    // PROTOTYPE (design directions): one family per variant.
+    {
+      provider: fontProviders.fontsource(),
+      name: "Newsreader",
+      cssVariable: "--font-newsreader",
+      weights: ["200 800"],
+      styles: ["normal", "italic"],
+      subsets: ["latin"],
+      fallbacks: ["serif"],
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: "Recursive",
+      cssVariable: "--font-recursive",
+      weights: ["300 1000"],
+      styles: ["normal"],
+      subsets: ["latin"],
+      fallbacks: ["sans-serif"],
+    },
+    {
+      provider: fontProviders.fontsource(),
+      name: "Schibsted Grotesk",
+      cssVariable: "--font-schibsted",
+      weights: ["400 900"],
+      styles: ["normal", "italic"],
+      subsets: ["latin"],
+      fallbacks: ["sans-serif"],
+    },
   ],
 });

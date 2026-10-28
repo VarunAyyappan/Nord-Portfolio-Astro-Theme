@@ -1,0 +1,376 @@
+---
+// PROTOTYPE (design directions): variant C, "Nordic grid". Work first: the
+// Adopter's name and intro hold a sticky left column while their Projects
+// fill the right, cover-led. Section headings hang in the left column.
+import { Image } from "astro:assets";
+import { availability } from "../../lib/availability";
+import { formatMonth } from "../../lib/date";
+import { type Post, postPath } from "../../lib/posts";
+import { type Project, projectPath } from "../../lib/projects";
+import { sectionPaths } from "../../lib/sections";
+import { withBase } from "../../lib/url";
+import { siteConfig } from "../../site.config";
+
+interface Props {
+  projects: Project[];
+  posts: Post[];
+}
+
+const { projects, posts } = Astro.props;
+---
+
+<div class="ng">
+  <section class="ng-row ng-top" aria-labelledby="hero-name">
+    <div class="ng-aside ng-intro">
+      <h1 id="hero-name">{siteConfig.name}</h1>
+      <p class="ng-tagline">{siteConfig.tagline}</p>
+      <p class="ng-text">{siteConfig.intro}</p>
+      {
+        availability && (
+          <p class="ng-availability">
+            <span
+              class="ng-dot"
+              style={`background-color: var(--color-availability-${availability.setting})`}
+              aria-hidden="true"
+            />
+            {availability.label}
+          </p>
+        )
+      }
+      <p class="ng-actions">
+        <a class="ng-button" href={withBase(sectionPaths.contact)}>Get in touch</a>
+      </p>
+    </div>
+    {
+      projects.length > 0 && (
+        <div class="ng-main" aria-labelledby="featured-heading" role="region">
+          <h2 id="featured-heading" class="ng-visually-hidden">
+            Featured Projects
+          </h2>
+          <ul class="ng-projects">
+            {projects.map((project, i) => (
+              <li class:list={{ wide: i === 0 && projects.length % 2 === 1 }}>
+                <a href={withBase(projectPath(project))}>
+                  {project.data.cover ? (
+                    <Image
+                      src={project.data.cover}
+                      alt=""
+                      widths={[600, 1000, 1400]}
+                      sizes="(width < 60em) calc(100vw - 3rem), 48rem"
+                    />
+                  ) : (
+                    <span class="ng-plate">{project.data.title}</span>
+                  )}
+                  {project.data.cover && (
+                    <span class="ng-title">{project.data.title}</span>
+                  )}
+                </a>
+                <p class="ng-summary">{project.data.summary}</p>
+                <p class="ng-meta">
+                  {formatMonth(project.data.date)}, {project.data.stack.join(", ")}
+                </p>
+              </li>
+            ))}
+          </ul>
+          <a class="ng-all" href={withBase(sectionPaths.projects)}>
+            All Projects
+          </a>
+        </div>
+      )
+    }
+  </section>
+
+  {
+    posts.length > 0 && (
+      <section class="ng-row" aria-labelledby="latest-heading">
+        <h2 id="latest-heading" class="ng-aside ng-hanging">
+          Latest Posts
+        </h2>
+        <div class="ng-main">
+          <ul class="ng-posts">
+            {posts.map((post) => (
+              <li>
+                <a href={withBase(postPath(post))}>{post.data.title}</a>
+                <p>{post.data.description}</p>
+              </li>
+            ))}
+          </ul>
+          <a class="ng-all" href={withBase(sectionPaths.blog)}>
+            All Posts
+          </a>
+        </div>
+      </section>
+    )
+  }
+
+  {
+    siteConfig.skills.length > 0 && (
+      <section class="ng-row" aria-labelledby="skills-heading">
+        <h2 id="skills-heading" class="ng-aside ng-hanging">
+          Skills
+        </h2>
+        <div class="ng-main ng-skills">
+          {siteConfig.skills.map(({ heading, skills }) => (
+            <div>
+              <h3>{heading}</h3>
+              <ul>
+                {skills.map((skill) => (
+                  <li>{skill}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+</div>
+
+<style>
+  .ng {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .ng-row {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    padding-block: 4rem;
+    border-top: 0.25rem solid var(--color-text);
+  }
+
+  .ng-top {
+    border-top: 0;
+    padding-top: clamp(2rem, 6vw, 4rem);
+  }
+
+  .ng-aside {
+    grid-column: 1 / span 4;
+  }
+
+  .ng-main {
+    grid-column: 5 / -1;
+  }
+
+  .ng-intro {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+    padding-right: 1.5rem;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.75rem, 5.5vw, 4.25rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.035em;
+  }
+
+  .ng-tagline {
+    margin: 1.5rem 0 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .ng-text {
+    margin: 1rem 0 0;
+    color: var(--color-text-muted);
+  }
+
+  .ng-availability {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1.5rem 0 0;
+    font-weight: 600;
+  }
+
+  .ng-dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+  }
+
+  .ng-actions {
+    margin: 1.75rem 0 0;
+  }
+
+  .ng-button {
+    display: inline-block;
+    padding: 0.75rem 1.25rem;
+    background-color: var(--color-text);
+    color: var(--color-background);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .ng-button:hover {
+    background-color: var(--color-text-muted);
+  }
+
+  .ng-visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ng-projects {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 3rem 1.5rem;
+  }
+
+  .ng-projects li.wide {
+    grid-column: 1 / -1;
+  }
+
+  .ng-projects a {
+    display: block;
+    text-decoration: none;
+  }
+
+  .ng-projects img,
+  .ng-plate {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1200 / 630;
+    object-fit: cover;
+    background-color: var(--color-surface);
+  }
+
+  /* A Project without a cover gets its title as a typographic cover. */
+  .ng-plate {
+    display: flex;
+    align-items: end;
+    padding: 1.5rem;
+    background-color: light-dark(var(--nord4), var(--nord1)) !important;
+    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+    text-decoration: underline 0.1em transparent;
+    text-underline-offset: 0.15em;
+    transition: text-decoration-color var(--motion-duration) var(--motion-easing);
+  }
+
+  .ng-projects a:hover .ng-plate {
+    text-decoration-color: var(--color-accent);
+  }
+
+  .ng-title {
+    display: inline-block;
+    margin-top: 1rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    text-decoration: underline 0.125em transparent;
+    text-underline-offset: 0.2em;
+    transition: text-decoration-color var(--motion-duration) var(--motion-easing);
+  }
+
+  .ng-projects a:hover .ng-title {
+    text-decoration-color: var(--color-accent);
+  }
+
+  .ng-summary {
+    margin: 0.375rem 0 0;
+    max-width: 36rem;
+  }
+
+  .ng-meta {
+    margin: 0.375rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+
+  .ng-all {
+    display: inline-block;
+    margin-top: 2.5rem;
+    font-weight: 700;
+  }
+
+  .ng-hanging {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  .ng-posts li {
+    padding-bottom: 1.5rem;
+  }
+
+  .ng-posts li + li {
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .ng-posts a {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    text-decoration-color: transparent;
+  }
+
+  .ng-posts a:hover {
+    text-decoration-color: var(--color-accent);
+  }
+
+  .ng-posts p {
+    margin: 0.375rem 0 0;
+    color: var(--color-text-muted);
+  }
+
+  .ng-skills {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+    gap: 1.5rem;
+  }
+
+  .ng-skills h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .ng-skills li {
+    padding: 0.125rem 0;
+    color: var(--color-text-muted);
+  }
+
+  @media (width < 60em) {
+    .ng-aside,
+    .ng-main {
+      grid-column: 1 / -1;
+    }
+
+    .ng-intro {
+      position: static;
+      padding: 0 0 3rem;
+    }
+
+    .ng-hanging {
+      margin-bottom: 1.5rem;
+    }
+
+    .ng-projects {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

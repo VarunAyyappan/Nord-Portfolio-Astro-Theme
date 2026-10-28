@@ -4,16 +4,29 @@ import PostList from "../components/PostList.astro";
 import ProjectGrid from "../components/ProjectGrid.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getLatestPosts } from "../lib/posts";
-import { getFeaturedProjects } from "../lib/projects";
+import { getProjects } from "../lib/projects";
+// PROTOTYPE (design directions)
+import HomeA from "../components/prototype/HomeA.astro";
+import HomeB from "../components/prototype/HomeB.astro";
+import HomeC from "../components/prototype/HomeC.astro";
+
 import { sectionPaths } from "../lib/sections";
 import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
 
-const featuredProjects = await getFeaturedProjects();
+// PROTOTYPE: every featured Project, uncapped (#25), so the variants show
+// how Home holds more than 3. v1 keeps its 3.
+const allFeatured = (await getProjects()).filter((p) => p.data.featured);
+const featuredProjects = allFeatured.slice(0, 3);
 const latestPosts = await getLatestPosts();
+const dev = import.meta.env.DEV;
 ---
 
 <BaseLayout>
+  {dev && <div data-only="a"><HomeA projects={allFeatured} posts={latestPosts} /></div>}
+  {dev && <div data-only="b"><HomeB projects={allFeatured} posts={latestPosts} /></div>}
+  {dev && <div data-only="c"><HomeC projects={allFeatured} posts={latestPosts} /></div>}
+  {(<div data-only="v1">
   <section class="page" aria-labelledby="hero-name">
     <h1 id="hero-name">{siteConfig.name}</h1>
     <p class="tagline">{siteConfig.tagline}</p>
@@ -71,6 +84,7 @@ const latestPosts = await getLatestPosts();
       </section>
     )
   }
+  </div>)}
 </BaseLayout>
 
 <style>

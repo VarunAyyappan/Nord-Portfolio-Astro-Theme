@@ -1,0 +1,339 @@
+---
+// PROTOTYPE (design directions): variant B, "Workbench". Structure first:
+// the chrome (ChromeB) does the introducing, and Home reads like an
+// overview of open work: dense rows, dates in their own column.
+import { Image } from "astro:assets";
+import { formatMonth } from "../../lib/date";
+import { type Post, postPath } from "../../lib/posts";
+import { type Project, projectPath } from "../../lib/projects";
+import { sectionPaths } from "../../lib/sections";
+import { withBase } from "../../lib/url";
+import { siteConfig } from "../../site.config";
+
+interface Props {
+  projects: Project[];
+  posts: Post[];
+}
+
+const { projects, posts } = Astro.props;
+const day = new Intl.DateTimeFormat("en-GB", {
+  day: "2-digit",
+  month: "short",
+  year: "numeric",
+});
+---
+
+<div class="wh">
+  <section class="wh-intro" aria-labelledby="hero-name">
+    <div>
+      <h1 id="hero-name">{siteConfig.name}</h1>
+      <p class="wh-tagline">{siteConfig.tagline}</p>
+      <p class="wh-text">{siteConfig.intro}</p>
+      <p class="wh-actions">
+        <a class="wh-button" href={withBase(sectionPaths.projects)}>
+          View Projects
+        </a>
+        <a href={withBase(sectionPaths.contact)}>Get in touch</a>
+      </p>
+    </div>
+    {
+      siteConfig.skills.length > 0 && (
+        <section class="wh-skills" aria-labelledby="skills-heading">
+          <h2 id="skills-heading">Skills</h2>
+          <dl>
+            {siteConfig.skills.map(({ heading, skills }) => (
+              <>
+                <dt>{heading}</dt>
+                <dd>{skills.join(", ")}</dd>
+              </>
+            ))}
+          </dl>
+        </section>
+      )
+    }
+  </section>
+
+  {
+    projects.length > 0 && (
+      <section aria-labelledby="featured-heading">
+        <div class="wh-head">
+          <h2 id="featured-heading">Featured Projects</h2>
+          <a href={withBase(sectionPaths.projects)}>All Projects</a>
+        </div>
+        <ul class="wh-projects">
+          {projects.map((project) => (
+            <li>
+              <div class="wh-thumb" aria-hidden="true">
+                {project.data.cover ? (
+                  <Image src={project.data.cover} alt="" widths={[128, 256]} sizes="8rem" />
+                ) : (
+                  <span>{project.data.title.slice(0, 1)}</span>
+                )}
+              </div>
+              <div>
+                <h3>
+                  <a href={withBase(projectPath(project))}>{project.data.title}</a>
+                </h3>
+                <p>{project.data.summary}</p>
+              </div>
+              <p class="wh-side">
+                <time datetime={project.data.date.toISOString()}>
+                  {formatMonth(project.data.date)}
+                </time>
+                <span>{project.data.stack.join(" / ")}</span>
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  {
+    posts.length > 0 && (
+      <section aria-labelledby="latest-heading">
+        <div class="wh-head">
+          <h2 id="latest-heading">Latest Posts</h2>
+          <a href={withBase(sectionPaths.blog)}>All Posts</a>
+        </div>
+        <ul class="wh-posts">
+          {posts.map((post) => (
+            <li>
+              <time datetime={post.data.date.toISOString()}>
+                {day.format(post.data.date)}
+              </time>
+              <a href={withBase(postPath(post))}>{post.data.title}</a>
+              <span>{post.data.description}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</div>
+
+<style>
+  .wh {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .wh > section {
+    padding-top: 3.5rem;
+  }
+
+  .wh-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: 3rem;
+    padding-top: clamp(2.5rem, 8vw, 5rem) !important;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.25rem, 5vw, 3.25rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-variation-settings: "CASL" 1;
+  }
+
+  .wh-tagline {
+    margin: 1rem 0 0;
+    font-size: 1.375rem;
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  .wh-text {
+    margin: 1rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 1.0625rem;
+  }
+
+  .wh-actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin: 1.75rem 0 0;
+    font-weight: 600;
+  }
+
+  .wh-button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    background-color: var(--color-text);
+    color: var(--color-background);
+    text-decoration: none;
+  }
+
+  .wh-button:hover {
+    background-color: var(--color-text-muted);
+  }
+
+  .wh-skills {
+    align-self: start;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.375rem;
+  }
+
+  .wh-skills h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+  }
+
+  .wh-skills dl {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+
+  .wh-skills dt {
+    color: var(--color-text-muted);
+  }
+
+  .wh-skills dd {
+    margin: 0;
+  }
+
+  .wh-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .wh-head h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-variation-settings: "CASL" 1;
+  }
+
+  .wh-head a {
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .wh-projects li {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) 14rem;
+    gap: 1.25rem;
+    align-items: start;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .wh-thumb {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: 0.25rem;
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: 1.75rem;
+    font-weight: 800;
+    font-variation-settings: "CASL" 1;
+  }
+
+  .wh-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .wh-projects h3 {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.3;
+  }
+
+  .wh-projects h3 a {
+    text-decoration-color: transparent;
+  }
+
+  .wh-projects h3 a:hover {
+    text-decoration-color: var(--color-accent);
+  }
+
+  .wh-projects p {
+    margin: 0.25rem 0 0;
+    color: var(--color-text-muted);
+  }
+
+  .wh-side {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    gap: 0.125rem;
+    margin: 0 !important;
+    font-size: 0.875rem;
+    text-align: right;
+  }
+
+  .wh-posts li {
+    display: grid;
+    grid-template-columns: 7.5rem minmax(0, 1fr);
+    column-gap: 1.25rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .wh-posts time {
+    grid-row: span 2;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    font-variant-numeric: tabular-nums;
+    padding-top: 0.125rem;
+  }
+
+  .wh-posts a {
+    font-weight: 600;
+    text-decoration-color: transparent;
+  }
+
+  .wh-posts a:hover {
+    text-decoration-color: var(--color-accent);
+  }
+
+  .wh-posts span {
+    color: var(--color-text-muted);
+  }
+
+  @media (width < 48em) {
+    .wh-intro {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .wh-projects li {
+      grid-template-columns: 3.5rem minmax(0, 1fr);
+    }
+
+    .wh-side {
+      grid-column: 2;
+      align-items: start;
+      text-align: left;
+    }
+
+    .wh-posts li {
+      grid-template-columns: 1fr;
+    }
+
+    .wh-posts time {
+      grid-row: auto;
+    }
+  }
+</style>
