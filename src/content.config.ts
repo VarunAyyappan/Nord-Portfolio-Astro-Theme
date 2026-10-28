@@ -152,9 +152,11 @@ const contact = defineCollection({
   loader: glob({ pattern: "contact.md", base: "./src/content/contact" }),
   schema: z.object({
     /**
-     * The kinds of work the Adopter is open to, e.g. "Freelance work" or
-     * "Speaking", listed under their own heading. Leave it out or empty and
-     * the heading is hidden.
+     * The kinds of work the Adopter is open to, written as they read in a
+     * sentence, e.g. ["Freelance work", "speaking"]. They are joined into
+     * one sentence under their own heading, "Freelance work and speaking.",
+     * and shown as written, so capitalize only the first and any proper
+     * nouns. Leave it out or empty and the heading is hidden.
      */
     openTo: z.array(z.string()).default([]),
     /** E.g. "Usually replies within 2 working days". */

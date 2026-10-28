@@ -53,12 +53,13 @@ describe("Contact details from the filler content", () => {
   const { openTo, responseTime, timezone } = contactSource();
   const page = readPage("contact/index.html");
 
-  it("lists what the Adopter is open to under its own heading, in order", () => {
+  it("says what the Adopter is open to as one sentence under its own heading, in order", () => {
     expect(openTo.length).toBeGreaterThan(1);
-    const items = sectionTitled(page, "Open to")
-      ?.querySelectorAll("li")
-      .map((item) => item.textContent.trim());
-    expect(items).toEqual(openTo);
+    const section = sectionTitled(page, "Open to");
+    expect(section?.querySelectorAll("li")).toEqual([]);
+    expect(section?.querySelector("p")?.textContent.trim()).toBe(
+      "Freelance work, full-time roles, speaking, mentoring, and open source.",
+    );
   });
 
   it("shows the response time and timezone", () => {

@@ -218,6 +218,11 @@ button {
   }
 }
 
+/* The content starts level with the heading beside it. */
+.page-grid-content > :first-child {
+  margin-top: 0;
+}
+
 /* The sections of a page's content are divided by a thick rule. */
 .page-grid-content > * + section {
   margin-top: 3rem;

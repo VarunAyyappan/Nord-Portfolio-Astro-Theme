@@ -3,6 +3,7 @@
  * rather than compared as pixels, so they hold on any machine's fonts.
  */
 import { expect, type Locator, type Page } from "@playwright/test";
+import type { colorModes } from "./matrix";
 
 /** An element's box in the viewport, in CSS pixels. */
 export interface Box {
@@ -125,4 +126,60 @@ export async function expectStaysInViewOnScroll(page: Page, locator: Locator) {
   const scrolled = await page.evaluate(() => window.scrollY);
   expect(scrolled, "the page scrolls past the element").toBeGreaterThan(bottom);
   await expect(locator).toBeInViewport({ ratio: 1 });
+}
+
+/**
+ * Expects nothing inside the element to be drawn as a box (a card, chip or
+ * pill): no background of its own, and no border all the way round. Code
+ * keeps its own styling, and images and decoration hidden from assistive
+ * technology, such as Availability's dot, are left out.
+ */
+export async function expectNoBoxes(locator: Locator) {
+  const boxed = await locator.evaluate((root) =>
+    [...root.querySelectorAll("*")]
+      .filter((element) => {
+        if (
+          element.closest(
+            'code, pre, kbd, samp, img, picture, svg, [aria-hidden="true"]',
+          )
+        ) {
+          return false;
+        }
+        const style = getComputedStyle(element);
+        const bordered = ["top", "right", "bottom", "left"].every(
+          (side) =>
+            style.getPropertyValue(`border-${side}-style`) !== "none" &&
+            Number.parseFloat(style.getPropertyValue(`border-${side}-width`)) >
+              0,
+        );
+        return bordered || style.backgroundColor !== "rgba(0, 0, 0, 0)";
+      })
+      .map((element) => element.outerHTML.slice(0, 80)),
+  );
+  expect(boxed).toEqual([]);
+}
+
+/**
+ * The rules that divide a page, as computed `border-top` values in each
+ * Color mode: a thick one in the text color between sections, and a thin
+ * one in the border color between the items in a list.
+ */
+const rules = {
+  thick: {
+    light: "4px solid rgb(46, 52, 64)",
+    dark: "4px solid rgb(236, 239, 244)",
+  },
+  thin: {
+    light: "1px solid rgb(216, 222, 233)",
+    dark: "1px solid rgb(76, 86, 106)",
+  },
+} as const;
+
+/** Expects a rule of the given kind along the element's top edge. */
+export async function expectRuleAbove(
+  locator: Locator,
+  kind: keyof typeof rules,
+  colorMode: (typeof colorModes)[number] = "light",
+) {
+  await expect(locator).toHaveCSS("border-top", rules[kind][colorMode]);
 }
