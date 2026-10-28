@@ -256,11 +256,6 @@ button {
   letter-spacing: -0.02em;
 }
 
-/* A List page's main heading, which is spaced from the list below it. */
-.list-heading {
-  margin-bottom: 2rem;
-}
-
 /* The title of one item among several: a Post in a list, a Project tile or
    an Experience entry. */
 .item-title {
