@@ -19,12 +19,12 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { title, description, tags } = post.data;
+const { title, description, tags, cover } = post.data;
 const { Content } = await render(post);
 ---
 
 <BaseLayout {title} {description} image={postShareImage(post)} type="article">
-  <DetailPage {title} titleId="post-title" summary={description}>
+  <DetailPage {title} titleId="post-title" summary={description} {cover}>
     <PostMeta slot="details" post={post} detailed />
     {tags.length > 0 && <Tags slot="links" tags={tags} />}
     <Content />

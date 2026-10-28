@@ -38,10 +38,17 @@ const detailPages = [
     cover: false,
   },
   {
-    name: "a Post",
+    name: "a Post with a cover",
     path: "./blog/notes-on-note-g/",
     summary:
       "Walking through the first published algorithm, one operation at a time.",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod",
+    cover: true,
+  },
+  {
+    name: "a Post without a cover",
+    path: "./blog/on-bernoulli-numbers/",
+    summary: "Why this sequence makes a good first program.",
     text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod",
     cover: false,
   },
