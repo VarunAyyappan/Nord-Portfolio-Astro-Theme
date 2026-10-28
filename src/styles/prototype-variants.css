@@ -284,20 +284,20 @@
   margin: 0;
 }
 
-:root[data-variant="c"] main .page .page-heading {
+:root[data-variant="c"] main .page:not(.post-page) .page-heading {
   font-size: clamp(2.75rem, 5.5vw, 4.25rem);
   line-height: 0.95;
 }
 
 /* About: the portrait sits above the heading in the left column. */
-:root[data-variant="c"] main .page > header {
+:root[data-variant="c"] main .page:not(.post-page) > header {
   display: flex;
   flex-direction: column;
   align-items: start;
   gap: 1.5rem;
 }
 
-:root[data-variant="c"] main .page > header img {
+:root[data-variant="c"] main .page:not(.post-page) > header img {
   width: 10rem;
   height: 10rem;
 }
