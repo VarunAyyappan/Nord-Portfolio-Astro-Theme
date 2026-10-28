@@ -242,9 +242,6 @@ const { projects, posts } = Astro.props;
     grid-column: 3 / -1;
   }
 
-  .ng-posts + .ng-all {
-    margin-left: calc((100% - 7 * 1.5rem) / 4 + 3rem);
-  }
 
   .ng-posts li + li {
     padding-top: 1.5rem;
@@ -306,10 +303,6 @@ const { projects, posts } = Astro.props;
     .ng-posts time {
       display: block;
       margin-bottom: 0.25rem;
-    }
-
-    .ng-posts + .ng-all {
-      margin-left: 0;
     }
   }
 </style>
