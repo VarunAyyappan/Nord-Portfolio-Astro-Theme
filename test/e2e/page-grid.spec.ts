@@ -37,6 +37,12 @@ const headingPages: {
     path: "./contact/",
     content: (main) => main.getByRole("paragraph").first(),
   },
+  {
+    name: "Projects index",
+    path: "./projects/",
+    // The list of Project tiles, the first list on the page.
+    content: (main) => main.getByRole("list").first(),
+  },
 ];
 
 const main = (page: Page) => page.getByRole("main");

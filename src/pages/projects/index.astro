@@ -1,4 +1,5 @@
 ---
+import PageGrid from "../../components/PageGrid.astro";
 import ProjectGrid from "../../components/ProjectGrid.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getProjects } from "../../lib/projects";
@@ -7,8 +8,8 @@ const projects = await getProjects();
 ---
 
 <BaseLayout title="Projects">
-  <section class="page" aria-labelledby="projects-heading">
-    <h1 class="page-heading list-heading" id="projects-heading">Projects</h1>
+  <PageGrid as="section" aria-labelledby="projects-heading">
+    <h1 slot="heading" class="page-heading" id="projects-heading">Projects</h1>
     <ProjectGrid projects={projects} />
-  </section>
+  </PageGrid>
 </BaseLayout>
