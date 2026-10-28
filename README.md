@@ -153,13 +153,15 @@ The steps below update from v1.0.0 to v2.0.0, so change both versions to yours.
    ```sh
    git switch -c theme-v2.0.0
    git diff --binary theme/v1.0.0 theme/v2.0.0 -- . \
-     ':!src/content' ':!public' ':!src/site.config.ts' \
+     ':!src/content' ':!public' \
      ':!aube-lock.yaml' ':!pnpm-lock.yaml' \
      ':!README.md' ':!AGENTS.md' ':!CLAUDE.md' ':!CONTEXT.md' ':!GLOSSARY.md' ':!docs' \
      | git apply --3way
    ```
 
-   The diff leaves out your content, `public/` files and Site config, so the filler content never comes back. It also leaves out the lockfile (see step 4) and the files you [rewrite or delete](#replacing-the-filler-content) when you replace the filler content. The fetch gave git the Theme's files, so `--3way` merges each change into your version of the file, and a conflict appears only where you changed the same lines of the Theme's code.
+   The diff leaves out your content and `public/` files, so the filler content never comes back. It also leaves out the lockfile (see step 4) and the files you [rewrite or delete](#replacing-the-filler-content) when you replace the filler content. The fetch gave git the Theme's files, so `--3way` merges each change into your version of the file, and a conflict appears only where you changed the same lines of the Theme's code.
+
+   `src/site.config.ts` is in the diff, because it holds the Site config's types and doc comments as well as your values. A release changes the types and comments and you change the values, so they usually merge without a conflict. If one appears, keep your values and the release's types and comments.
 
    If git says a file "does not exist in index", you deleted it, often along with the rest of the test suites. Nothing was applied, so add it to the list, e.g. `':!test'`, and run the command again.
 
@@ -175,7 +177,7 @@ The steps below update from v1.0.0 to v2.0.0, so change both versions to yours.
 
    v1.0.0's lockfile is `aube-lock.yaml`, and later releases' is `pnpm-lock.yaml`, so the first command removes v1.0.0's. With another package manager, run its install. If the type check then fails on two versions of one package, delete your lockfile and install again.
 
-5. **Check it.** Run `aube run check`, `aube run lint` and `aube run build`. Site config was left out, so if the release changed one of its fields, the type check names it, and the release notes say what to set. Then commit, and merge the branch.
+5. **Check it.** Run `aube run check`, `aube run lint` and `aube run build`. If the release made a Site config field stricter, the type check names the value of yours it now rejects, and the release notes say what to set. Then commit, and merge the branch.
 
 ## Commands
 
