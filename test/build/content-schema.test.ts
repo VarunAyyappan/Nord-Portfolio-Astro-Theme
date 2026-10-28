@@ -134,8 +134,7 @@ function buildWithFeatured({
       );
     });
   };
-  const build = buildCopy(feature, { keepDrafts });
-  return { ...build, titles: projects.map(({ title }) => title) };
+  return buildCopy(feature, { keepDrafts });
 }
 
 /** The titles of the Projects a copy's Home shows as featured, in order. */
@@ -147,50 +146,32 @@ function featuredOnHome(root: string): string[] {
   );
 }
 
-describe("featured Project limit", () => {
-  it("fails the build, naming each featured Project, when more than 3 are published", () => {
+describe("featured Projects", () => {
+  it("build without error, all shown on Home newest first, when more than 3 are featured", () => {
     const build = buildWithFeatured({ published: 4, drafts: 0 });
-    root = build.root;
-    expect(build.status).not.toBe(0);
-    expect(build.output).toContain("Up to 3 Projects can be featured");
-    for (const title of build.titles) {
-      expect(build.output).toContain(title);
-    }
-  });
-
-  it("doesn't count featured drafts", () => {
-    const build = buildWithFeatured({ published: 3, drafts: 1 });
-    root = build.root;
-    expect(build.output).not.toContain("Up to 3 Projects can be featured");
-    expect(build.status).toBe(0);
-  });
-
-  it("shows featured drafts, where drafts are kept, only in room the published ones leave", () => {
-    const build = buildWithFeatured({
-      published: 3,
-      drafts: 1,
-      keepDrafts: true,
-    });
     root = build.root;
     expect(build.status).toBe(0);
     expect(featuredOnHome(build.root)).toEqual([
+      "Featured Project 4",
       "Featured Project 3",
       "Featured Project 2",
       "Featured Project 1",
     ]);
   });
 
-  it("fills the room published ones leave with the newest featured drafts, where drafts are kept", () => {
+  it("show featured drafts like any other, newest first, where drafts are kept", () => {
     const build = buildWithFeatured({
-      published: 1,
-      drafts: 3,
+      published: 3,
+      drafts: 2,
       keepDrafts: true,
     });
     root = build.root;
     expect(build.status).toBe(0);
     expect(featuredOnHome(build.root)).toEqual([
-      "Featured Draft 3",
       "Featured Draft 2",
+      "Featured Draft 1",
+      "Featured Project 3",
+      "Featured Project 2",
       "Featured Project 1",
     ]);
   });

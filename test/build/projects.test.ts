@@ -107,9 +107,8 @@ describe("featured Projects on Home", () => {
   );
   const featured = publishedProjects().filter((project) => project.featured);
 
-  it("exist in the filler content, up to 3, beside one that isn't featured", () => {
-    expect(featured.length).toBeGreaterThan(0);
-    expect(featured.length).toBeLessThanOrEqual(3);
+  it("exist in the filler content, 4 of them, beside one that isn't featured", () => {
+    expect(featured).toHaveLength(4);
     expect(publishedProjects().some((project) => !project.featured)).toBe(true);
   });
 
