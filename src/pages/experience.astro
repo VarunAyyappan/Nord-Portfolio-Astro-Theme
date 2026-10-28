@@ -8,14 +8,23 @@ import { siteConfig } from "../site.config";
 
 const experience = await getExperience();
 const education = await getEducation();
+
+// A full URL is used as given, and opens like any other link: browsers
+// ignore `download` for a file on another site.
+const { resume } = siteConfig;
+const resumeLink = !resume
+  ? undefined
+  : resume.startsWith("https://")
+    ? { href: resume }
+    : { href: withBase(resume), download: true };
 ---
 
 <BaseLayout title="Experience">
   <div class="page">
     <h1 class="page-heading">Experience</h1>
     {
-      siteConfig.resume && (
-        <a class="resume" href={withBase(siteConfig.resume)} download>
+      resumeLink && (
+        <a class="resume" {...resumeLink}>
           Download résumé (PDF)
         </a>
       )
