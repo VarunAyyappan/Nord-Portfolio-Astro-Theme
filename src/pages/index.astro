@@ -1,7 +1,7 @@
 ---
 import Availability from "../components/Availability.astro";
 import PostList from "../components/PostList.astro";
-import ProjectGrid from "../components/ProjectGrid.astro";
+import ProjectTiles from "../components/ProjectTiles.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getLatestPosts } from "../lib/posts";
 import { getFeaturedProjects } from "../lib/projects";
@@ -34,7 +34,7 @@ const latestPosts = await getLatestPosts();
     featuredProjects.length > 0 && (
       <section class="page featured" aria-labelledby="featured-heading">
         <h2 class="section-heading" id="featured-heading">Featured Projects</h2>
-        <ProjectGrid projects={featuredProjects} headingLevel={3} />
+        <ProjectTiles projects={featuredProjects} headingLevel={3} />
         <a class="all" href={withBase(sectionPaths.projects)}>
           All Projects
         </a>
