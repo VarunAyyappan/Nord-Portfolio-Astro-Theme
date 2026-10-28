@@ -4,7 +4,7 @@
 // fill the right, cover-led. Section headings hang in the left column.
 import { Image } from "astro:assets";
 import { availability } from "../../lib/availability";
-import { formatMonth } from "../../lib/date";
+import { formatDay, formatMonth } from "../../lib/date";
 import { type Post, postPath } from "../../lib/posts";
 import { type Project, projectPath } from "../../lib/projects";
 import { sectionPaths } from "../../lib/sections";
@@ -90,8 +90,13 @@ const { projects, posts } = Astro.props;
           <ul class="ng-posts">
             {posts.map((post) => (
               <li>
-                <a href={withBase(postPath(post))}>{post.data.title}</a>
-                <p>{post.data.description}</p>
+                <time datetime={post.data.date.toISOString()}>
+                  {formatDay(post.data.date)}
+                </time>
+                <div>
+                  <a href={withBase(postPath(post))}>{post.data.title}</a>
+                  <p>{post.data.description}</p>
+                </div>
               </li>
             ))}
           </ul>
@@ -312,8 +317,28 @@ const { projects, posts } = Astro.props;
     letter-spacing: -0.02em;
   }
 
+  /* Each Post's date gets its own column, 2 of the 8 the list spans, so
+     the dates can be scanned down on their own. */
   .ng-posts li {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    column-gap: 1.5rem;
+    align-items: baseline;
     padding-bottom: 1.5rem;
+  }
+
+  .ng-posts time {
+    grid-column: span 2;
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+
+  .ng-posts li > div {
+    grid-column: 3 / -1;
+  }
+
+  .ng-posts + .ng-all {
+    margin-left: calc((100% - 7 * 1.5rem) / 4 + 3rem);
   }
 
   .ng-posts li + li {
@@ -371,6 +396,19 @@ const { projects, posts } = Astro.props;
 
     .ng-projects {
       grid-template-columns: 1fr;
+    }
+
+    .ng-posts li {
+      display: block;
+    }
+
+    .ng-posts time {
+      display: block;
+      margin-bottom: 0.25rem;
+    }
+
+    .ng-posts + .ng-all {
+      margin-left: 0;
     }
   }
 </style>

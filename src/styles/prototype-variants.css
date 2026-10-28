@@ -227,3 +227,29 @@
 :root[data-variant="b"] :is(.site-header, .site-footer) {
   display: none !important;
 }
+
+/* C: Blog index and Tag pages give each Post's date its own column too. */
+@media (width >= 40em) {
+  :root[data-variant="c"] .post-list article {
+    display: grid;
+    grid-template-columns: 10rem minmax(0, 1fr);
+    column-gap: 1.5rem;
+    align-items: baseline;
+  }
+
+  :root[data-variant="c"] .post-list article > * {
+    grid-column: 2;
+  }
+
+  /* The date column spans the whole entry, so a wrapped date or a draft
+     badge never pushes the title and description apart. */
+  :root[data-variant="c"] .post-list article > .meta {
+    flex-direction: column;
+    align-items: start;
+    gap: 0.25rem;
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    align-self: start;
+    padding-top: 0.3rem;
+  }
+}
