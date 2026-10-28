@@ -6,7 +6,7 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**", "!**/aube-lock.yaml"]
+    "includes": ["**", "!**/pnpm-lock.yaml"]
   },
   "formatter": {
     "enabled": true,
