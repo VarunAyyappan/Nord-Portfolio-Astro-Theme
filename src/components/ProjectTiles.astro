@@ -5,7 +5,7 @@
  * number, so the rows always come out even. On a phone, they stack.
  */
 import type { Project } from "../lib/projects";
-import ProjectCard from "./ProjectCard.astro";
+import ProjectTile from "./ProjectTile.astro";
 
 interface Props {
   projects: Project[];
@@ -14,13 +14,19 @@ interface Props {
 }
 
 const { projects, headingLevel } = Astro.props;
+/** Whether the tile at `index` spans both columns. */
+const isWide = (index: number) => index === 0 && projects.length % 2 === 1;
 ---
 
 <ul class="project-tiles">
   {
-    projects.map((project) => (
-      <li>
-        <ProjectCard project={project} headingLevel={headingLevel} />
+    projects.map((project, index) => (
+      <li class:list={{ wide: isWide(index) }}>
+        <ProjectTile
+          project={project}
+          headingLevel={headingLevel}
+          wide={isWide(index)}
+        />
       </li>
     ))
   }
@@ -44,8 +50,7 @@ const { projects, headingLevel } = Astro.props;
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    /* The first tile, when it is also an odd number from the end. */
-    li:first-child:nth-last-child(odd) {
+    .wide {
       grid-column: 1 / -1;
     }
   }
