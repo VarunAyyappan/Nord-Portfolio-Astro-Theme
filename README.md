@@ -118,6 +118,8 @@ The roles follow pairing rules that keep all text at WCAG AA contrast:
 
 The browser tests scan every page for contrast in both Color modes, so `aube run test:e2e` catches a change that breaks these rules. Code blocks stay dark in both Color modes (see `src/shiki/nord-theme.ts`).
 
+The share images generated for Posts without a cover don't read `global.css`: they use their own copies of the dark Color mode's background, text and accent colors, at the top of `src/share-image/render.ts`. If you change those roles, change the copies there too.
+
 ### Fonts
 
 The `fonts` list in `astro.config.ts` sets Schibsted Grotesk for text and headings and JetBrains Mono for code. They're downloaded from [Fontsource](https://fontsource.org) at build time and served from your own site. To swap one, change its `name` to any Fontsource family and adjust `weights` and `styles`. Keep `cssVariable` as it is.
