@@ -105,7 +105,7 @@
 
 html {
   font-family: var(--font-sans);
-  line-height: 1.6;
+  line-height: 1.55;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -157,18 +157,22 @@ button {
   padding: 3rem 1.5rem;
 }
 
+/* Headings are heavy and tightly set, and the type carries the design: the
+   bigger the heading, the tighter its letter-spacing and line-height. */
 .page-heading {
   margin: 0;
   font-size: clamp(2rem, 6vw, 3rem);
   font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
 }
 
 .section-heading {
   margin: 0 0 1.5rem;
   font-size: 1.75rem;
-  line-height: 1.2;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 /* A List page's main heading, which is spaced from the list below it. */
@@ -180,8 +184,10 @@ button {
    an Experience entry. */
 .item-title {
   margin: 0;
-  font-size: 1.25rem;
-  line-height: 1.3;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
 }
 
 /* A list of item titles that are all links would be a stack of underlines,
