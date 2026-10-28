@@ -28,17 +28,20 @@ import RssIcon from "./icons/Rss.astro";
 
 <style>
   /* The copyright on the left and the social links on the right, which
-     wrap below it when the row is too narrow for both. */
+     wrap below it when the row is too narrow for both. As wide as the page
+     grid, so its rule starts and ends where the content does. */
   .site-footer {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 0.5rem 1.5rem;
-    max-width: var(--grid-width);
-    width: 100%;
+    width: min(
+      100% - 2 * var(--grid-gutter),
+      var(--grid-width) - 2 * var(--grid-gutter)
+    );
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 2rem 0;
     border-top: var(--rule-thick);
     color: var(--color-text-muted);
     font-size: 0.875rem;
