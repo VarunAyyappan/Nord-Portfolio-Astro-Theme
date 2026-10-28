@@ -7,6 +7,7 @@ import RssIcon from "./icons/Rss.astro";
 ---
 
 <footer class="site-footer">
+  <p>&copy; {new Date().getFullYear()} {siteConfig.name}</p>
   <ul class="social" aria-label="Elsewhere">
     {
       socialLinks.map(({ label, href, Icon }) => (
@@ -23,30 +24,33 @@ import RssIcon from "./icons/Rss.astro";
       </a>
     </li>
   </ul>
-  <p>&copy; {new Date().getFullYear()} {siteConfig.name}</p>
 </footer>
 
 <style>
+  /* The copyright on the left and the social links on the right, which
+     wrap below it when the row is too narrow for both. */
   .site-footer {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 0.5rem;
-    max-width: var(--content-width);
+    justify-content: space-between;
+    gap: 0.5rem 1.5rem;
+    max-width: var(--grid-width);
     width: 100%;
     margin: 0 auto;
     padding: 2rem 1.5rem;
-    border-top: 1px solid var(--color-border);
+    border-top: 0.25rem solid var(--color-text);
     color: var(--color-text-muted);
     font-size: 0.875rem;
   }
 
+  /* The negative margin lines the icons, rather than their padded hit
+     areas, up with the footer's edges. */
   .social {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;
     gap: 0.5rem;
-    margin: 0;
+    margin: 0 -0.5rem;
     padding: 0;
     list-style: none;
   }

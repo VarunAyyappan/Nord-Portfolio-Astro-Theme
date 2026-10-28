@@ -50,9 +50,11 @@
   --color-availability-selective: var(--nord13);
   --color-availability-not-looking: var(--nord11);
 
-  /* Layout: the readable width that page content, the header and the
-     footer share. The `sizes` hints on Project covers assume it, so change
-     them with it. */
+  /* Layout: the widest the page grid gets, which the header and footer
+     span too. */
+  --grid-width: 78rem;
+  /* The readable width of page content. The `sizes` hints on Project
+     covers assume it, so change them with it. */
   --content-width: 48rem;
   /* The roomier top and bottom padding of Home and the 404 page, which
      grows with the viewport. */

@@ -81,6 +81,51 @@ test.describe("mobile menu without JavaScript", () => {
   });
 });
 
+/** The widest the header and footer get, 78rem, in CSS pixels. */
+const chromeMaxWidth = 78 * 16;
+
+test.describe("header and footer", () => {
+  for (const viewport of viewports) {
+    test(`span the page up to 78rem, centered, at ${viewport.name} width`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await page.goto("./");
+      const width = Math.min(viewport.width, chromeMaxWidth);
+      for (const landmark of ["banner", "contentinfo"] as const) {
+        const box = await page.getByRole(landmark).boundingBox();
+        expect({ landmark, width: box?.width, x: box?.x }).toEqual({
+          landmark,
+          width,
+          x: (viewport.width - width) / 2,
+        });
+      }
+    });
+  }
+
+  test("footer has the copyright on the left and the social links on the right, at desktop width", async ({
+    page,
+  }) => {
+    await page.setViewportSize(desktop);
+    await page.goto("./");
+    const footer = page.getByRole("contentinfo");
+    const copyright = await footer.getByText(/^©/).boundingBox();
+    const social = await footer
+      .getByRole("list", { name: "Elsewhere" })
+      .boundingBox();
+    const box = await footer.boundingBox();
+    if (!copyright || !social || !box) throw new Error("Footer not laid out");
+    // Side by side on one row, each nearer its own edge of the footer.
+    expect(copyright.x + copyright.width).toBeLessThanOrEqual(social.x);
+    expect(copyright.y).toBeLessThan(social.y + social.height);
+    expect(social.y).toBeLessThan(copyright.y + copyright.height);
+    expect(copyright.x - box.x).toBeLessThan(box.width / 4);
+    expect(box.x + box.width - (social.x + social.width)).toBeLessThan(
+      box.width / 4,
+    );
+  });
+});
+
 test.describe("RSS feed", () => {
   test("is served at the footer's RSS link", async ({ page }) => {
     await page.goto("./");
