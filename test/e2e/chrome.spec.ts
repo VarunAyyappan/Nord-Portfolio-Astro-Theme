@@ -1,5 +1,6 @@
 import { expect, type Page, test } from "@playwright/test";
 import { expectNoAxeViolations } from "./axe";
+import { expectSpans, pageGrid } from "./layout";
 import { colorModes, viewports } from "./matrix";
 
 const [phone, desktop] = viewports;
@@ -81,25 +82,35 @@ test.describe("mobile menu without JavaScript", () => {
   });
 });
 
-/** The widest the header and footer get, 78rem, in CSS pixels. */
+/** The widest the header gets, 78rem, in CSS pixels. */
 const chromeMaxWidth = 78 * 16;
 
 test.describe("header and footer", () => {
   for (const viewport of viewports) {
-    test(`span the page up to 78rem, centered, at ${viewport.name} width`, async ({
+    test(`header spans the page up to 78rem, centered, at ${viewport.name} width`, async ({
       page,
     }) => {
       await page.setViewportSize(viewport);
       await page.goto("./");
       const width = Math.min(viewport.width, chromeMaxWidth);
-      for (const landmark of ["banner", "contentinfo"] as const) {
-        const box = await page.getByRole(landmark).boundingBox();
-        expect({ landmark, width: box?.width, x: box?.x }).toEqual({
-          landmark,
-          width,
-          x: (viewport.width - width) / 2,
-        });
-      }
+      const box = await page.getByRole("banner").boundingBox();
+      expect({ width: box?.width, x: box?.x }).toEqual({
+        width,
+        x: (viewport.width - width) / 2,
+      });
+    });
+
+    test(`footer and its rule line up with the grid's edges at ${viewport.name} width`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await page.goto("./");
+      await expectSpans(
+        page.getByRole("contentinfo"),
+        await pageGrid(page),
+        1,
+        12,
+      );
     });
   }
 
