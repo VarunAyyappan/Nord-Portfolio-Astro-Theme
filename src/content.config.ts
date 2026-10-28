@@ -27,7 +27,7 @@ const projects = defineCollection({
   schema: ({ image }) =>
     z.object({
       title: z.string(),
-      /** One line, shown on the Project's card and under its title. */
+      /** One line, shown on the Project's tile and under its title. */
       summary: z.string(),
       /** Orders Projects, newest first. */
       date: z.coerce.date(dateError),

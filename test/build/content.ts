@@ -24,7 +24,9 @@ export interface ProjectSource {
   /** The file name without `.md`, which is the Project's id in its URL. */
   id: string;
   title: string;
+  summary: string;
   date: Date;
+  stack: string[];
   featured: boolean;
   draft: boolean;
   repository?: string;
@@ -82,7 +84,9 @@ export function projectSources(): ProjectSource[] {
     return {
       id,
       title: field(frontmatter, "title") ?? "",
+      summary: field(frontmatter, "summary") ?? "",
       date: new Date(field(frontmatter, "date") ?? ""),
+      stack: listField(frontmatter, "stack"),
       featured: field(frontmatter, "featured") === "true",
       draft: field(frontmatter, "draft") === "true",
       repository: field(frontmatter, "repository"),
