@@ -219,6 +219,18 @@ describe("latest Posts on Home", () => {
     );
   });
 
+  it("dates each Post", () => {
+    expect(
+      section
+        ?.querySelectorAll("article time")
+        .map((time) => time.textContent.trim()),
+    ).toEqual(
+      publishedPosts()
+        .slice(0, 3)
+        .map((post) => formatDay(post.date)),
+    );
+  });
+
   it("links to the Blog", () => {
     const links = section
       ?.querySelectorAll("a")

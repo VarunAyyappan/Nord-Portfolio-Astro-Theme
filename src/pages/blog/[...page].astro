@@ -47,19 +47,16 @@ const next = page.url.next && withTrailingSlash(page.url.next);
 </BaseLayout>
 
 <style>
+  /* Like every list's closing links, Newer and Older Posts start where the
+     Post list starts. */
   .pagination {
     display: flex;
-    justify-content: space-between;
-    gap: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
     margin-top: 3rem;
   }
 
   .pagination a {
     font-weight: 600;
-  }
-
-  /* Older Posts stays on the right, even on page 1 where it's alone. */
-  .pagination [rel="next"] {
-    margin-left: auto;
   }
 </style>
