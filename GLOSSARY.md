@@ -32,6 +32,10 @@ _Avoid_: Fake user, demo user
 A top-level area of a portfolio: Home, Projects, Blog, Experience, About or Contact.
 _Avoid_: Page (a section may span several pages), module
 
+**List page**:
+A page that lists Posts or Projects: a Blog index page, a Tag page or the Projects index.
+_Avoid_: Index, archive
+
 **Site config**:
 The single place where an adopter sets their identity: name, tagline, social links and their handles, an email subject, Availability, skills, navigation, an optional résumé PDF and the default share image.
 _Avoid_: Settings, profile, metadata
@@ -43,7 +47,7 @@ _Avoid_: Status, open to work, hiring status
 ### Content
 
 **Project**:
-A piece of work the adopter showcases, with its own detail page. Up to three projects can be **featured** on the Home section. Drafts don't count.
+A piece of work the adopter showcases, with its own detail page. Any number of projects can be **featured**, which shows them on the Home section.
 _Avoid_: Work, portfolio item, case study
 
 **Stack**:
