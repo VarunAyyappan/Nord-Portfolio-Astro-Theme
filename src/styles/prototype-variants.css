@@ -254,3 +254,182 @@
     padding-top: 0.3rem;
   }
 }
+
+/*
+ * C's page grid, shared by every page but Home and the Post and Project
+ * pages (which have their own): the page heading hangs in the left 4 of
+ * 12 columns, and everything else fills the right 8. Sections in the right
+ * column are separated by a thick rule, as on Home.
+ */
+:root[data-variant="c"] main .page:not(.post-page) {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: 1.5rem;
+  max-width: 78rem;
+  padding-block: clamp(2rem, 6vw, 4rem);
+}
+
+:root[data-variant="c"] main .page:not(.post-page) > * {
+  grid-column: 5 / -1;
+  min-width: 0;
+}
+
+:root[data-variant="c"] main .page:not(.post-page) > :is(.page-heading, header) {
+  grid-column: 1 / span 4;
+  grid-row: 1 / span 30;
+  align-self: start;
+  position: sticky;
+  top: 2rem;
+  margin: 0;
+}
+
+:root[data-variant="c"] main .page .page-heading {
+  font-size: clamp(2.75rem, 5.5vw, 4.25rem);
+  line-height: 0.95;
+}
+
+/* About: the portrait sits above the heading in the left column. */
+:root[data-variant="c"] main .page > header {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 1.5rem;
+}
+
+:root[data-variant="c"] main .page > header img {
+  width: 10rem;
+  height: 10rem;
+}
+
+:root[data-variant="c"] main .page > section + section,
+:root[data-variant="c"] main .page > :is(.intro, .details) + section,
+:root[data-variant="c"] main .page > .email + section {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 0.25rem solid var(--color-text);
+}
+
+:root[data-variant="c"] main .page .section-heading {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* The 404 page keeps one column: it has nothing to put beside its heading. */
+:root[data-variant="c"] main .page:has(#not-found-heading) > * {
+  grid-column: 1 / -1;
+}
+
+:root[data-variant="c"] main .page:has(#not-found-heading) > .page-heading {
+  position: static;
+  grid-row: auto;
+  font-size: clamp(3.5rem, 10vw, 7rem);
+}
+
+/* Stack: plain text, comma-separated, never pills. */
+:root[data-variant="c"] main .stack {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+:root[data-variant="c"] main .stack li {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+:root[data-variant="c"] main .stack li + li::before {
+  content: ", ";
+}
+
+/* Availability: the dot and its label, without the pill around them. */
+:root[data-variant="c"] main .availability {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 600;
+}
+
+/* Contact: sentence-case labels, Open to as plain text, and the social
+   networks as a plain list rather than boxed cards. */
+:root[data-variant="c"] main .details dt {
+  color: var(--color-text);
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+:root[data-variant="c"] main .open-to {
+  display: block;
+}
+
+:root[data-variant="c"] main .open-to li {
+  display: inline;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+
+:root[data-variant="c"] main .open-to li + li::before {
+  content: ", ";
+}
+
+:root[data-variant="c"] main .networks {
+  display: block;
+}
+
+:root[data-variant="c"] main .networks li + li {
+  border-top: 1px solid var(--color-border);
+}
+
+:root[data-variant="c"] main .networks a {
+  padding: 0.875rem 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
+
+/* Drafts: "Draft" in sentence case, never all caps. */
+:root[data-variant="c"] main .draft {
+  text-transform: none;
+}
+
+/* Blog pages: Newer and Older Posts line up under the titles. */
+:root[data-variant="c"] .pagination {
+  margin-left: calc(10rem + 1.5rem);
+}
+
+/* The footer spans the grid: copyright left, social links right. */
+:root[data-variant="c"] .site-footer {
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  border-top: 0.25rem solid var(--color-text);
+}
+
+@media (width < 60em) {
+  :root[data-variant="c"] main .page:not(.post-page) > *,
+  :root[data-variant="c"] main .page:not(.post-page) > :is(.page-heading, header) {
+    grid-column: 1 / -1;
+    grid-row: auto;
+    position: static;
+  }
+
+  :root[data-variant="c"] main .page:not(.post-page) > :is(.page-heading, header) {
+    margin-bottom: 2rem;
+  }
+
+  :root[data-variant="c"] .pagination {
+    margin-left: 0;
+  }
+}
+
+@media (width < 40em) {
+  :root[data-variant="c"] .site-footer {
+    flex-direction: column;
+    align-items: start;
+  }
+}
