@@ -1,8 +1,7 @@
 ---
-import { Image } from "astro:assets";
 import { render } from "astro:content";
+import DetailPage from "../../components/DetailPage.astro";
 import ProjectMeta from "../../components/ProjectMeta.astro";
-import Prose from "../../components/Prose.astro";
 import Stack from "../../components/Stack.astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getProjects, type Project } from "../../lib/projects";
@@ -29,84 +28,36 @@ const links = [
 ---
 
 <BaseLayout {title} description={summary} image={cover}>
-  <article class="page" aria-labelledby="project-title">
-    <header>
+  <DetailPage {title} titleId="project-title" {summary} {cover}>
+    <Fragment slot="details">
       <ProjectMeta project={project} />
-      <h1 class="page-heading" id="project-title">{title}</h1>
-      <p class="summary">{summary}</p>
-      <Stack items={stack} />
       {
-        links.length > 0 && (
-          <ul class="links">
-            {links.map(({ label, href }) => (
-              <li>
-                <a href={href}>{label}</a>
-              </li>
-            ))}
-          </ul>
+        stack.length > 0 && (
+          <div>
+            <h2 class="label-text">Stack</h2>
+            <Stack items={stack} onePerLine />
+          </div>
         )
       }
-    </header>
+    </Fragment>
     {
-      // sizes assumes the 48rem --content-width, less its 3rem padding.
-      cover && (
-        <Image
-          src={cover}
-          alt=""
-          widths={[720, 1440]}
-          sizes="(width < 48em) calc(100vw - 3rem), 45rem"
-          loading="eager"
-        />
+      links.length > 0 && (
+        <ul slot="links">
+          {links.map(({ label, href }) => (
+            <li>
+              <a href={href}>{label}</a>
+            </li>
+          ))}
+        </ul>
       )
     }
-    <Prose>
-      <Content />
-    </Prose>
-  </article>
+    <Content />
+  </DetailPage>
 </BaseLayout>
 
 <style>
-  header {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .summary {
-    margin: 0;
-    color: var(--color-text-muted);
-    font-size: 1.25rem;
-  }
-
-  .links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .links a {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 0.375rem;
-    font-weight: 600;
-    text-decoration-color: transparent;
-  }
-
-  .links a:hover {
-    border-color: var(--color-accent);
-    text-decoration-color: var(--color-accent);
-  }
-
-  img {
-    display: block;
-    width: 100%;
-    height: auto;
-    margin-bottom: 2rem;
-    border-radius: 0.5rem;
+  h2 {
+    margin: 0 0 0.25rem;
+    font-size: 0.9375rem;
   }
 </style>
