@@ -50,7 +50,9 @@ const { title, titleId, summary, cover } = Astro.props;
     {
       // sizes follows the text column: the full width less the page
       // grid's gutters on a phone, and 8 of the grid's 12 columns from
-      // 60em, which stop growing with the grid at 78rem.
+      // 60em, which stop growing with the grid at 78rem. It's worked out
+      // from --grid-width, --grid-gutter and --grid-gap in global.css, so
+      // change it with them.
       cover && (
         <Image
           src={cover}

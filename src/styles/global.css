@@ -59,7 +59,9 @@
 
   /* Layout: the widest the page grid gets, which the header and footer
      span too, the gutter that insets their content from its edges, and the
-     gap between the grid's 12 columns. */
+     gap between the grid's 12 columns. The `sizes` hints on covers in
+     DetailPage.astro and ProjectTile.astro are worked out from all three,
+     so change them with these. */
   --grid-width: 78rem;
   --grid-gutter: 1.5rem;
   --grid-gap: 1.5rem;
