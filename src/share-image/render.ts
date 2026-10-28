@@ -1,10 +1,11 @@
+import { existsSync } from "node:fs";
 import path from "node:path";
 import sharp from "sharp";
 
 /**
  * Renders the share image of a Post without a cover: its title over the site
  * name, in Schibsted Grotesk on Nord's darkest background, at link preview
- * size.
+ * size, with the site's favicon at the bottom right, in line with the name.
  *
  * The same title renders to the same pixels on any machine that builds the
  * site. Text is drawn by the libvips that ships with `sharp`, from the font
@@ -20,8 +21,13 @@ export async function renderShareImage({
   siteName: string;
 }): Promise<Uint8Array<ArrayBuffer>> {
   useOwnFontConfig();
-  const name = await renderText(siteName, nameStyle, maxTextWidth);
-  const titleHeight = size.height - 2 * margin - nameGap - name.height;
+  const logo = await renderLogo();
+  const nameWidth = logo ? maxTextWidth - logo.width - logoGap : maxTextWidth;
+  const name = await renderText(siteName, nameStyle, nameWidth);
+  // The name and the logo share the bottom line, their middles in line.
+  const footerHeight = Math.max(name.height, logo ? logoHeight : 0);
+  const footerMiddle = size.height - margin - footerHeight / 2;
+  const titleHeight = size.height - 2 * margin - nameGap - footerHeight;
   const titleText = await fitTitle(title, titleHeight);
   const png = await sharp({
     create: { ...size, channels: 3, background: colors.background },
@@ -31,8 +37,17 @@ export async function renderShareImage({
       {
         input: name.data,
         left: margin,
-        top: size.height - margin - name.height,
+        top: Math.round(footerMiddle - name.height / 2),
       },
+      ...(logo
+        ? [
+            {
+              input: logo.data,
+              left: size.width - margin - logo.width,
+              top: Math.round(footerMiddle - logoHeight / 2),
+            },
+          ]
+        : []),
     ])
     .png()
     .toBuffer();
@@ -50,6 +65,12 @@ const nameGap = 40;
 
 /** The widest a line of text can be before it wraps, in pixels. */
 const maxTextWidth = size.width - 2 * margin;
+
+/** How tall the logo is, in pixels: as tall as the site name's letters. */
+const logoHeight = 28;
+
+/** The least space between the site name and the logo, in pixels. */
+const logoGap = 40;
 
 /**
  * Copies of the dark Color mode's roles in src/styles/global.css, which the
@@ -106,6 +127,46 @@ const assetsDir = path.resolve("src/share-image");
 
 /** The theme's typeface, as a variable font. */
 const fontFile = path.join(assetsDir, "SchibstedGrotesk-Variable.ttf");
+
+/**
+ * The site's favicon, which the share images show as their logo, so a
+ * different favicon changes them too.
+ */
+const faviconFile = path.resolve("public/favicon.svg");
+
+/** The logo, rendered, as a PNG on the share image's background. */
+interface RenderedLogo {
+  data: Buffer;
+  width: number;
+}
+
+/**
+ * Renders the favicon on the share image's background, trimmed to what shows
+ * there and scaled to the logo's height, or returns nothing when the site has
+ * no `favicon.svg`. The Theme's favicon is a mark on a square of the same
+ * background color, so only the mark shows, and it lines up with the margin.
+ */
+async function renderLogo(): Promise<RenderedLogo | undefined> {
+  if (!existsSync(faviconFile)) return undefined;
+  // Rasterized well above the logo's size and scaled down, so it stays sharp.
+  // 72 dpi is one pixel per SVG unit.
+  const { width = 1, height = 1 } = await sharp(faviconFile).metadata();
+  const density = (72 * 8 * logoHeight) / Math.max(width, height);
+  // Separate steps, since in one pipeline sharp trims before it flattens.
+  const flattened = await sharp(faviconFile, { density })
+    .flatten({ background: colors.background })
+    .png()
+    .toBuffer();
+  const trimmed = await sharp(flattened)
+    .trim({ background: colors.background })
+    .png()
+    .toBuffer();
+  const { data, info } = await sharp(trimmed)
+    .resize({ height: logoHeight })
+    .png()
+    .toBuffer({ resolveWithObject: true });
+  return { data, width: info.width };
+}
 
 /**
  * Points fontconfig at this folder's configuration. libvips reads it the
