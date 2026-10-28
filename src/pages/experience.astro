@@ -4,6 +4,7 @@ import PageGrid from "../components/PageGrid.astro";
 import Stack from "../components/Stack.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getEducation, getExperience } from "../lib/experience";
+import { isSitePath } from "../lib/site-path";
 import { withBase } from "../lib/url";
 import { siteConfig } from "../site.config";
 
@@ -15,9 +16,9 @@ const education = await getEducation();
 const { resume } = siteConfig;
 const resumeLink = !resume
   ? undefined
-  : resume.startsWith("https://")
-    ? { href: resume }
-    : { href: withBase(resume), download: true };
+  : isSitePath(resume)
+    ? { href: withBase(resume), download: true }
+    : { href: resume };
 ---
 
 <BaseLayout title="Experience">

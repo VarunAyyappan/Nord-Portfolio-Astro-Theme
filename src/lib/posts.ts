@@ -1,7 +1,7 @@
 import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
-import type { SitePath } from "../site.config";
 import { sectionPaths } from "./sections";
+import type { SitePath } from "./site-path";
 import { getVisible } from "./visible";
 
 export type Post = CollectionEntry<"posts">;
@@ -27,7 +27,7 @@ export async function getLatestPosts(): Promise<Post[]> {
 export const feedPath = "/rss.xml";
 
 /** The site path of a Post's page, before the base path. */
-export function postPath(post: Post): string {
+export function postPath(post: Post): SitePath {
   return `${sectionPaths.blog}${post.id}/`;
 }
 
@@ -37,7 +37,7 @@ export function postPath(post: Post): string {
  * (src/pages/blog/[id]/share.png.ts).
  */
 export function postShareImage(post: Post): ImageMetadata | SitePath {
-  return post.data.cover ?? `${sectionPaths.blog}${post.id}/share.png`;
+  return post.data.cover ?? `${postPath(post)}share.png`;
 }
 
 /** An average adult's silent reading speed. */
@@ -88,6 +88,6 @@ export async function getTags(): Promise<Tag[]> {
 }
 
 /** The site path of a Tag's page, before the base path. */
-export function tagPath(name: string): string {
+export function tagPath(name: string): SitePath {
   return `${sectionPaths.blog}tags/${tagSlug(name)}/`;
 }

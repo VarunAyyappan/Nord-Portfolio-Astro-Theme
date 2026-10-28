@@ -150,3 +150,30 @@ describe("PGP key, with a key file", () => {
     ).toContain("PGP PUBLIC KEY");
   });
 });
+
+describe("PGP key, at another site's address", () => {
+  // It starts with "/", but browsers read "//keys.example/…" as another site.
+  const keyPath = "//keys.example/pgp-key.asc";
+  let build: CopyBuild;
+  beforeAll(() => {
+    build = buildCopy((root) => {
+      const contactFile = path.join(
+        root,
+        path.relative(process.cwd(), contactDir),
+        "contact.md",
+      );
+      const contact = readFileSync(contactFile, "utf8");
+      writeFileSync(
+        contactFile,
+        contact.replace(/^---\n/, `---\npgpKey: "${keyPath}"\n`),
+      );
+    });
+  });
+  afterAll(() => removeCopy(build.root));
+
+  it("fails the build, naming the field", () => {
+    expect(build.status).not.toBe(0);
+    expect(build.output).toContain("does not match collection schema");
+    expect(build.output).toMatch(/\bpgpKey\b/);
+  });
+});

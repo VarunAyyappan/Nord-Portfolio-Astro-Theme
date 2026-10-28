@@ -1,6 +1,7 @@
 import { defineCollection } from "astro:content";
 import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { isSitePath, type SitePath } from "./lib/site-path";
 
 /** What a frontmatter date that can't be read fails the build with. */
 const dateError = { error: "Expected a date like 2026-06-12" };
@@ -172,8 +173,10 @@ const contact = defineCollection({
      * Contact shows no key link.
      */
     pgpKey: z
-      .string()
-      .startsWith("/", { error: 'Expected a path starting with "/"' })
+      .custom<SitePath>(
+        (value) => typeof value === "string" && isSitePath(value),
+        { error: 'Expected a path on this site, starting with a single "/"' },
+      )
       .optional(),
   }),
 });

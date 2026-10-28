@@ -5,18 +5,23 @@ import { colorModes, viewports } from "./matrix";
 
 const [phone, desktop] = viewports;
 
+/** The list of Project tiles on the Projects index. */
+const indexList = (page: Page) =>
+  page.getByRole("main").getByRole("list").first();
+
 /** The Project tiles on the Projects index, newest first. */
-const indexTiles = (page: Page) => page.getByRole("main").getByRole("article");
+const indexTiles = (page: Page) => indexList(page).getByRole("article");
 
 /** The newest Project's tile on the index, which has a cover and both links. */
 const newestTile = (page: Page) => indexTiles(page).first();
 
-/** The featured Projects' tiles on Home, newest first. */
-const homeTiles = (page: Page) =>
+/** The list of featured Projects' tiles on Home. */
+const homeList = (page: Page) =>
   page
     .getByRole("main")
     .getByRole("region", { name: "Featured Projects" })
-    .getByRole("article");
+    .getByRole("list")
+    .first();
 
 /** Runs `open` on a tile, then expects that Project's detail page. */
 async function expectToOpenProject(
@@ -66,7 +71,7 @@ test.describe("Project tiles", () => {
     await page.setViewportSize(desktop);
     await page.goto("./projects/");
     // The Filler content publishes 5 Projects.
-    expect(await rows(indexTiles(page))).toEqual([
+    expect(await rows(indexList(page))).toEqual([
       ["both"],
       ["left", "right"],
       ["left", "right"],
@@ -79,22 +84,22 @@ test.describe("Project tiles", () => {
     await page.setViewportSize(desktop);
     await page.goto("./");
     // The Filler content features 4 published Projects.
-    expect(await rows(homeTiles(page))).toEqual([
+    expect(await rows(homeList(page))).toEqual([
       ["left", "right"],
       ["left", "right"],
     ]);
   });
 
-  for (const [place, path, tiles] of [
-    ["the Projects index", "./projects/", indexTiles],
-    ["Home", "./", homeTiles],
+  for (const [place, path, list] of [
+    ["the Projects index", "./projects/", indexList],
+    ["Home", "./", homeList],
   ] as const) {
     test(`stack in one column at phone width, on ${place}`, async ({
       page,
     }) => {
       await page.setViewportSize(phone);
       await page.goto(path);
-      const found = await rows(tiles(page));
+      const found = await rows(list(page));
       expect(found.length).toBeGreaterThan(1);
       expect(found).toEqual(found.map(() => ["both"]));
     });

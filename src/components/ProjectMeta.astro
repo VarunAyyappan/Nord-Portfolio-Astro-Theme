@@ -1,7 +1,7 @@
 ---
 import { formatMonth } from "../lib/date";
 import type { Project } from "../lib/projects";
-import DraftMarker from "./DraftMarker.astro";
+import MetaDate from "./MetaDate.astro";
 import MetaLine from "./MetaLine.astro";
 
 interface Props {
@@ -12,5 +12,5 @@ const { date, draft } = Astro.props.project.data;
 ---
 
 <MetaLine>
-  <span><time datetime={date.toISOString()}>{formatMonth(date)}</time>{draft && <DraftMarker />}</span>
+  <MetaDate date={date} text={formatMonth(date)} draft={draft} />
 </MetaLine>

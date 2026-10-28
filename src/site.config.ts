@@ -1,4 +1,5 @@
 import { sectionPaths } from "./lib/sections";
+import type { SitePath } from "./lib/site-path";
 
 /**
  * Site config: the single place where an Adopter sets their identity.
@@ -75,13 +76,6 @@ export interface NavLink {
    */
   href: SitePath;
 }
-
-/**
- * A path on this site, starting with "/", before the base path, e.g.
- * "/blog/" or "/share.png". It is a path, not a file's place in the project:
- * public/share.png is "/share.png".
- */
-export type SitePath = `/${string}`;
 
 /**
  * Links to the Adopter elsewhere, shown as icons in the footer and listed on

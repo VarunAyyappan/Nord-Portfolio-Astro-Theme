@@ -13,6 +13,10 @@
  *     accents.
  *   - Light mode: Snow Storm backgrounds, Polar Night text. Frost and Aurora
  *     only on non-text elements, since all of them fail AA on nord6.
+ *
+ * The share images generated for Posts without a cover can't read these:
+ * src/share-image/render.ts keeps its own copies of the dark mode's
+ * background, text and accent, so change them there too.
  */
 :root {
   /* Polar Night */
@@ -55,7 +59,9 @@
 
   /* Layout: the widest the page grid gets, which the header and footer
      span too, the gutter that insets their content from its edges, and the
-     gap between the grid's 12 columns. */
+     gap between the grid's 12 columns. The `sizes` hints on covers in
+     DetailPage.astro and ProjectTile.astro are worked out from all three,
+     so change them with these. */
   --grid-width: 78rem;
   --grid-gutter: 1.5rem;
   --grid-gap: 1.5rem;

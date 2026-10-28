@@ -24,7 +24,9 @@ const { title, summary, stack, cover } = project.data;
 const Heading = `h${headingLevel}` as const;
 // Below 60em the tiles stack, as wide as the page grid. Above it, the list
 // fills the page grid's right 8 columns, at most 49.5rem, and a tile takes
-// all of that or one of its two columns.
+// all of that or one of its two columns. These are worked out from
+// --grid-width, --grid-gutter and --grid-gap in global.css, so change them
+// with those.
 const sizes = `(width < 60em) calc(100vw - 3rem), ${wide ? "49.5rem" : "24rem"}`;
 ---
 

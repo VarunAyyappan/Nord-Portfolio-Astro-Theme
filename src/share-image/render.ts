@@ -51,7 +51,10 @@ const nameGap = 40;
 /** The widest a line of text can be before it wraps, in pixels. */
 const maxTextWidth = size.width - 2 * margin;
 
-/** Nord colors, as in src/styles/global.css. */
+/**
+ * Copies of the dark Color mode's roles in src/styles/global.css, which the
+ * renderer can't read. Change them here too when those roles change.
+ */
 const colors = {
   /** nord0, the dark Color mode's background. */
   background: "#2e3440",
