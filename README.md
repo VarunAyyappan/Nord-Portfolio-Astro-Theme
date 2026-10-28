@@ -167,6 +167,8 @@ The steps below update from v1.0.0 to v2.0.0, so change both versions to yours.
 
 3. **Resolve the conflicts.** `git status` lists them, and you resolve them as in any merge. To keep your own version of a file you replaced, run `git checkout --ours -- <file>`. Then `git add` each file you resolved.
 
+   `package.json` always conflicts next to its `version`, since `create astro` removed the line after it, `"private": true`, when you scaffolded. Take the release's `version`, so it records the release you're now on, and keep your own dependencies alongside the release's.
+
 4. **Update the lockfile.** With aube or pnpm, take the new release's lockfile and install, which adds any dependencies of your own:
 
    ```sh
