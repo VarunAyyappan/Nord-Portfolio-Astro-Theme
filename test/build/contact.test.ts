@@ -151,9 +151,9 @@ describe("PGP key, with a key file", () => {
   });
 });
 
-describe("PGP key, at another site's address", () => {
-  // It starts with "/", but browsers read "//keys.example/…" as another site.
-  const keyPath = "//keys.example/pgp-key.asc";
+describe("PGP key, without its leading slash", () => {
+  // A file in public/ is served at "/pgp-key.asc", not "pgp-key.asc".
+  const keyPath = "pgp-key.asc";
   let build: CopyBuild;
   beforeAll(() => {
     build = buildCopy((root) => {
