@@ -1,0 +1,17 @@
+---
+/**
+ * The date a Post or Project's meta line starts with. A draft's is followed
+ * by a bold ", draft", with no space between. Drafts show in the dev server
+ * only, so Visitors never see it.
+ */
+interface Props {
+  date: Date;
+  /** The date as the line shows it, e.g. "June 2026". */
+  text: string;
+  draft: boolean;
+}
+
+const { date, text, draft } = Astro.props;
+---
+
+<span><time datetime={date.toISOString()}>{text}</time>{draft && <strong>, draft</strong>}</span>
