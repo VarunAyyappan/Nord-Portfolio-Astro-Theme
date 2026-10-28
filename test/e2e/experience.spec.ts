@@ -1,5 +1,6 @@
 import { test } from "@playwright/test";
 import { expectNoAxeViolations } from "./axe";
+import { expectRuleAbove } from "./layout";
 import { colorModes, viewports } from "./matrix";
 
 for (const colorScheme of colorModes) {
@@ -15,5 +16,16 @@ for (const colorScheme of colorModes) {
         await expectNoAxeViolations(page);
       });
     }
+
+    test("divides the roles from Education with a thick rule", async ({
+      page,
+    }) => {
+      await page.goto("./experience/");
+      await expectRuleAbove(
+        page.getByRole("main").getByRole("region", { name: "Education" }),
+        "thick",
+        colorScheme,
+      );
+    });
   });
 }

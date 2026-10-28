@@ -1,0 +1,30 @@
+---
+/**
+ * Lays a page out on the page grid (see global.css): whatever goes in the
+ * `heading` slot, usually the page's `h1`, sits in the left 4 columns and
+ * stays in view as the page scrolls, and the rest fills the right 8. Leave
+ * the slot empty for content that spans all 12 columns. On a phone, the
+ * heading stacks above the content.
+ */
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {
+  /** The element that holds the page: an article, a section or a plain div. */
+  as?: "article" | "section" | "div";
+}
+
+const { as: Tag = "div", class: className, ...attributes } = Astro.props;
+---
+
+<Tag class:list={["page-grid", className]} {...attributes}>
+  {
+    Astro.slots.has("heading") && (
+      <div class="page-grid-heading">
+        <slot name="heading" />
+      </div>
+    )
+  }
+  <div class="page-grid-content">
+    <slot />
+  </div>
+</Tag>

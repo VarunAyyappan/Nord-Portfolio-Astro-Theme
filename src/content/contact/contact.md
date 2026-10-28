@@ -1,5 +1,5 @@
 ---
-openTo: [Freelance work, Full-time roles, Speaking, Mentoring, Open source]
+openTo: [Freelance work, full-time roles, speaking, mentoring, open source]
 responseTime: Usually replies within 2 working days
 timezone: London (UTC+0)
 # A placeholder. Replace it with your key's fingerprint, or remove it.

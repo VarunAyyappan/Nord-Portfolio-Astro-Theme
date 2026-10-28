@@ -1,6 +1,7 @@
 ---
 import { getEntry, render } from "astro:content";
 import Availability from "../components/Availability.astro";
+import PageGrid from "../components/PageGrid.astro";
 import Prose from "../components/Prose.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { emailLink, networkLinks } from "../lib/social";
@@ -13,11 +14,14 @@ if (!contact) {
 const { openTo, responseTime, timezone, pgpFingerprint, pgpKey } =
   contact.data;
 const { Content } = await render(contact);
+
+// "Open to" reads as one sentence: "Freelance work, speaking, and mentoring."
+const openToSentence = `${new Intl.ListFormat("en").format(openTo)}.`;
 ---
 
 <BaseLayout title="Contact">
-  <div class="page">
-    <h1 class="page-heading">Contact</h1>
+  <PageGrid>
+    <h1 class="page-heading" slot="heading">Contact</h1>
     <Availability />
     <div class="intro">
       <Prose>
@@ -54,11 +58,7 @@ const { Content } = await render(contact);
       openTo.length > 0 && (
         <section aria-labelledby="open-to-heading">
           <h2 class="section-heading" id="open-to-heading">Open to</h2>
-          <ul class="open-to">
-            {openTo.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
+          <p class="open-to">{openToSentence}</p>
         </section>
       )
     }
@@ -99,7 +99,7 @@ const { Content } = await render(contact);
         </section>
       )
     }
-  </div>
+  </PageGrid>
 </BaseLayout>
 
 <style>
@@ -133,50 +133,32 @@ const { Content } = await render(contact);
     margin: 0.25rem 0 0;
   }
 
-  section {
-    margin-top: 3rem;
-  }
-
   .open-to {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
     margin: 0;
-    padding: 0;
-    list-style: none;
+    font-size: 1.125rem;
   }
 
-  .open-to li {
-    padding: 0.25rem 0.75rem;
-    border-left: 0.1875rem solid var(--color-accent);
-    border-radius: 0.25rem;
-    background-color: var(--color-surface);
-    font-size: 0.9375rem;
-  }
-
+  /* The social links as a plain list, divided by thin rules. */
   .networks {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
-    gap: 0.75rem;
     margin: 0;
     padding: 0;
     list-style: none;
+  }
+
+  .networks li + li {
+    border-top: var(--rule-thin);
   }
 
   .networks a {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    background-color: var(--color-surface);
+    padding: 0.875rem 0;
     font-weight: 600;
     text-decoration-color: transparent;
   }
 
   .networks a:hover {
-    border-color: var(--color-accent);
     text-decoration-color: var(--color-accent);
   }
 
