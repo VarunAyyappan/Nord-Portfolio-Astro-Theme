@@ -41,7 +41,7 @@ aube run dev
 
 Every field is documented where it's defined: content fields in [`src/content.config.ts`](src/content.config.ts) and Site config fields in [`src/site.config.ts`](src/site.config.ts). Each field shows whether it's optional and its default, with a comment on any field whose name doesn't explain itself. A field that doesn't match fails the build with an error naming the file, so the easiest way to add an entry is to copy a filler file and edit it.
 
-Set `featured: true` on up to three Projects to show them on Home, newest first. Featuring more fails the build with an error naming them, and drafts don't count. In the dev server, featured drafts fill only the room the published ones leave.
+Set `featured: true` on any number of Projects to show them on Home, newest first. A featured draft shows in the dev server only, like any other draft.
 
 A Project or Post's file name is its URL, e.g. `notes-on-note-g.md` is served at `/blog/notes-on-note-g/`. Images go beside the Markdown file and are linked relatively, e.g. `./covers/my-project.png`, so they're optimized at build time. Posts and Projects are plain Markdown, not MDX, and code blocks are highlighted in Nord colors with no setup.
 
@@ -78,7 +78,9 @@ The theme ships with the demo's project site settings, so change both before you
 
 ### GitHub Pages
 
-`.github/workflows/deploy.yml` deploys the site on every push to `main`. To turn it on, set **Settings → Pages → Source** to **GitHub Actions** in your repo. `.github/workflows/ci.yml` checks every pull request with Biome, type checking, both test suites and a build. You can also run it on any branch from the **Actions** tab.
+`.github/workflows/deploy.yml` deploys the site on every push to `main`. To turn it on, set **Settings → Pages → Source** to **GitHub Actions** in your repo. Before it builds, Deploy type checks the site and content (`aube run check`) and lints with Biome (`aube run lint`), and it doesn't deploy if either fails. Neither depends on the filler content, so your pushes deploy without your editing any tests.
+
+`.github/workflows/ci.yml` runs Biome's lint and format checks, the type check, both test suites and a build. It runs only on pull requests, or when you start it on any branch from the **Actions** tab, so if you push straight to `main`, the test suites don't run on your changes.
 
 For a custom domain, enter it under **Settings → Pages → Custom domain**, follow GitHub's instructions for your DNS records, then turn on **Enforce HTTPS**. You don't need a `CNAME` file, since the site deploys from a workflow.
 
