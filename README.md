@@ -193,4 +193,4 @@ With another package manager, use its equivalent, e.g. `npm run dev`.
 | `aube run check` | Type checks the site and content. |
 | `aube run lint` / `aube run format` | Lints / formats with Biome. `aube exec biome ci` checks both, as CI does. |
 | `aube run test` | Builds the site and runs the build-output tests (Vitest). |
-| `aube run test:e2e` | Builds the site and runs the browser tests (Playwright), including an accessibility scan. Run `aube exec playwright install chromium` once first. |
+| `aube run test:e2e` | Builds the site and runs the browser tests (Playwright), including an accessibility scan. Run `aube exec playwright install chromium` once first. It serves the site on a free port, so a running dev server doesn't get in the way; set `E2E_PORT` to choose one. |
