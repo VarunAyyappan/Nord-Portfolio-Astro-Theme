@@ -1,6 +1,6 @@
 # Releasing the Theme
 
-How a release goes from its PR to a published, tagged GitHub Release that Adopters can update to. Branch names and how a release PR merges are in `issue-tracker.md` under **Closing work**.
+How a release goes from its PR to a published, tagged GitHub Release that Adopters can update to. Branch names and how a release PR merges are in `issue-tracker.md` under **Closing work**. Give the branch its release name, `release-X.Y.Z`, when you create it: renaming a branch on GitHub closes its open PR, which can't be reopened.
 
 A release is a one-way door: Adopters' update steps fetch its tag as `theme/vX.Y.Z`, so once published the tag never moves. Each step below ends on something checkable; finish it before starting the next.
 
